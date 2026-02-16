@@ -10,15 +10,17 @@ pyClim provides you with a set of Python functions so you can perform a complete
 
 ## Install
 
-To install the pyClim package:
+To install the pyClim package, use the following command in your terminal:
 
 ```
 pip install pyclim
 ```
 
-## Examples
+## Documentation
 
-An example script and a set of example data are provided so you can run the example script and check every kind of figure pyClim can produce. Some of them are shown below:
+You can learn about how pyClim works and see some examples on its documentation website:
+
+https://pyclim.readthedocs.io/en/latest/index.html
 
 ## Contact
 

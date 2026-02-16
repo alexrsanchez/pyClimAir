@@ -1,7 +1,7 @@
 Installation
 ============
 
-pyClim, first install it using pip:
+You can install pyClim with the following command:
 
 .. code:: python
     
