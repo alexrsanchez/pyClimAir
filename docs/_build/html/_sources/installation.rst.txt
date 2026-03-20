@@ -1,10 +1,10 @@
 Installation
 ============
 
-pyClim, first install it using pip:
+You can install pyClim with the following command:
 
 .. code:: python
-
+    
     pip install pyclim
 
 For testing purposes, you can also install from TestPyPI:

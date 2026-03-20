@@ -2,9 +2,13 @@
 build-backend = "setuptools.build_meta"
 requires = ["setuptools >= 77.0.3"]
 
+[tool.setuptools.packages.find]
+where = ["src/"]
+include = ["clim", "air", "common"]
+
 [project]
 authors = [
-  {name = "Alejandro RodrÃ­guez SÃ¡nchez", email = "ars.rodriguezs@gmail.com"}
+  {name = "Alejandro Rodri­guez Sanchez", email = "ars.rodriguezs@gmail.com"}
 ]
 classifiers = [
   "Programming Language :: Python :: 3",
@@ -16,19 +20,20 @@ dependencies = [
   'numpy',
   'matplotlib',
   'scipy',
-  'pre-commit'
+  'pre-commit',
+  'scikit-learn'
 ]
 description = "A Python package that makes analysing climatological data easy, and pretty!"
 keywords = ["climate", "timeseries", "plotting"]
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
 maintainers = [
-  {name = "Alejandro RodrÃ­guez SÃ¡nchez", email = "ars.rodriguezs@gmail.com"}
+  {name = "Alejandro Rodri­guez Sanchez", email = "ars.rodriguezs@gmail.com"}
 ]
-name = "pyclim"
+name = "pyclimair"
 readme = "README.md"
-requires-python = ">=3.12"
-version = "1.0.1"
+requires-python = ">=3.11"
+version = "0.0.0"
 
 [project.urls]
 Homepage = "https://https://github.com/alexrsanchez/pyClim"

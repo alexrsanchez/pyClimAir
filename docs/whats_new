@@ -1,0 +1,20 @@
+What's new
+==========
+
+Version 1.1.0
+=============
+
+New Features
+------------
+- compare_probdist
+
+Fixes
+-----
+
+- In :func:`pyclimair.plot_variable_trends`, :func:`pyclimair.compute_and_plot_exceedances` and :func:`pyclimair.plot_periodaverages`, when grouping_stat is 'sum', if all values are NaN it now plots as NaN instead of zero. This fixes wrong trend and averages computations due to unrealistic zeros.
+
+- :func:`pyclimair.categories_evolution` now shows NaN values, fixing unrealistic frequencies
+
+Enhancements
+------------
+- :func:`pyclimair.categories_evolution` now creates categories' labels automatically, disappearing the "categories_labels" argument.
