@@ -13,29 +13,42 @@ import os
 
 # ruff: noqa
 
-# Import pyclim
-from pyclim import (
+# Import pyclimair
+from pyclimair.common import (
     quality_control,
     compute_climate,
+    compute_daily_records_oneyear,
     compute_records,
+    plot_records_count,
     compute_and_plot_exceedances,
-    plot_anomalies,
-    plot_accumulated_anomalies,
+    plot_variable_trends,
     plot_data_vs_climate,
     plot_data_vs_climate_withrecords,
     plot_data_vs_climate_withrecords_multivar,
+    plot_periodstats,
     plot_data_and_accum_anoms,
     plot_data_and_annual_cycle,
-    plot_periodaverages,
-    plot_records_count,
     plot_timeseries,
-    plot_variable_trends,
-    plot_annual_cycles,
-    annual_meteogram,
-    categories_evolution,
     timeseries_extremevalues,
+    plot_annual_cycles,
     get_annual_cycle,
+    annual_meteogram,
+    plot_accumulated_anomalies,
+    plot_anomalies,
+    compare_probdist,
+    categories_evolution,
+    threevar_windrose,
+    threevar_windrose_trend
 )
+
+from pyclimair.air import (
+    annual_meteogram_with_pollutant
+)
+
+from pyclimair.clim import (
+    compare_with_globaldataset
+)
+
 
 matplotlib.use("Agg")
 
@@ -198,6 +211,14 @@ df1_complete["Year"] = df1_complete.index.year
 df1_complete["DayofYear"] = df1_complete.index.dayofyear
 
 # Pass quality control
+df1_complete = quality_control(df1_complete, ['Tmean', 'WindSpeed','asd'], t_units='C', wind_units='km/h')
+#diff = df1_complete1[df1_complete.index.year == 2025]['Tmean'] - df1_complete[df1_complete.index.year == 2025]['Tmean']
+
+climate_df = compute_climate(df1_complete.loc[df1_complete.index.isin(df1.index),df1_complete.columns.isin(df1.columns)], climate_vars, [1991,2020], separate_df=False)
+climate_df_sep = compute_climate(df1_complete.loc[:,df1_complete.columns.isin(df1.columns)], climate_vars, [1991,2020])
+
+
+# Pass quality control
 df1_complete = quality_control(
     df1_complete, ["Tmean", "WindSpeed"], t_units="C", wind_units="km/h"
 )
@@ -216,6 +237,15 @@ climate_df_sep = compute_climate(
     climate_vars,
     [1991, 2020],
 )
+
+### 3D polar plots
+threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='year', grouping_stat='mean')
+threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='season', grouping_stat='mean')
+threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='month', grouping_stat='mean')
+
+threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='year', grouping_stat='mean')
+threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='season', grouping_stat='mean')
+threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='month', grouping_stat='mean')
 
 
 ### Anomalies
@@ -308,7 +338,7 @@ plot_data_vs_climate(
 ### Plot mean or median value of a certain period for every year with data
 for var in list(set(df1_complete.columns) & set(variables)):
     units = units_list[var]
-    plot_periodaverages(
+    plot_periodstats(
         df1_complete,
         climate_df_sep,
         var,
@@ -317,7 +347,7 @@ for var in list(set(df1_complete.columns) & set(variables)):
         dt.datetime(2025, 9, 1),
         station_name,
         database,
-        plotdir + "/%speriodaverages.png" % var,
+        plotdir + "/%speriodmedian.png" % var,
         stat="median",
         window=10,
     )
@@ -512,6 +542,19 @@ annual_meteogram(
     plotdir + "/%i_meteogram_bars.png" % year_to_plot,
     plot_anoms=True,
 )
+
+# Plot annual meteogram with pollutant
+annual_meteogram_with_pollutant(
+    df1_complete,
+    climate_df_sep, 
+    2023, 
+    'NO2', 
+    climate_normal_period, 
+    database, station_name, 
+    plotdir+'/%i_meteogram_withpols_inside.png' %year_to_plot, 
+    plot_anoms=False, 
+    pol_subplot=False)
+
 
 # Timeseries
 plot_timeseries(
@@ -734,18 +777,6 @@ for var in sorted(
         "Tmean",
         "ºC",
         categories,
-        [str(x) for x in range(1, len(categories))],
-        colors,
-        database,
-        station_name,
-        plotdir + "/categories_Tmean.png",
-        time_scale="year",
-    )
-    categories_evolution(
-        df1_complete,
-        "Tmean",
-        "ºC",
-        categories,
         [],
         colors,
         database,
@@ -828,3 +859,13 @@ for var in sorted(
         plotdir + "/categories_rainfall_month_default.png",
         time_scale="month",
     )
+
+# Probability distributions
+df_normalclimate = df1_complete[(df1_complete.index.year >=climate_normal_period[0]) & (df1_complete.index.year <= climate_normal_period[1])]
+
+compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_probdist.png', dist_type='histogram')
+compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_probdist_season.png', dist_type='histogram', grouping_freq='season')
+compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_CDF.png', dist_type='cumulative')
+compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_CDF_season.png', dist_type='cumulative', grouping_freq='season')
+compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_both.png', dist_type='both')
+compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_both_season.png', dist_type='both', grouping_freq='season')

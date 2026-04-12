@@ -10,11 +10,12 @@ from scipy import stats, interpolate
 import os
 from pathlib import Path
 
-##############################################################
-#### Python module for climatological data analysis ##########
-#### Author: Alejandro Rodríguez Sánchez #####################
-#### Contact: ars.rodriguezs@gmail.com #######################
-##############################################################
+"""
+Plotting functions for climatological data
+
+Author: Alejandro Rodríguez Sánchez
+Contact: ars.rodriguezs@gmail.com
+"""
 
 # ruff: noqa
 

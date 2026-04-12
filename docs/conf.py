@@ -6,10 +6,10 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "pyclim"
+project = "pyclimair"
 copyright = "2026, Alejandro Rodríguez Sánchez"
 author = "Alejandro Rodríguez Sánchez"
-release = "1.0.1"
+release = "0.0.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

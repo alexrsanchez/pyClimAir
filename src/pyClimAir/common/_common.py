@@ -10,13 +10,14 @@ from scipy import stats, interpolate
 import os
 from pathlib import Path
 from sklearn.linear_model import LinearRegression
+from pyclimair.utils import fill_between_colormap
 
-##############################################################
-#### Python module for climatological data analysis ##########
-#### Author: Alejandro Rodríguez Sánchez #####################
-#### Contact: ars.rodriguezs@gmail.com #######################
-##############################################################
+"""
+Plotting functions common to climatological and air quality data.
 
+Author: Alejandro Rodríguez Sánchez
+Contact: ars.rodriguezs@gmail.com
+"""
 # ruff: noqa
 
 
@@ -184,31 +185,6 @@ def compute_climate(
 
     return climate_df
 
-
-def fill_between_colormap(x, y1, y2, cmap, **kwargs):
-    cmap = matplotlib.cm.get_cmap("RdBu_r")
-
-    xx = x.values
-    yy1 = y1.values
-    yy2 = y2.values
-
-    yy = yy1 - yy2
-
-    extreme_value = max(abs(np.nanmin(yy)), abs(np.nanmax(yy)))
-
-    normalize = matplotlib.colors.Normalize(vmin=-extreme_value, vmax=extreme_value)
-    npts = len(xx)
-    for i in range(npts - 1):
-        a = plt.fill_between(
-            [xx[i], xx[i + 1]],
-            [yy1[i], yy1[i + 1]],
-            [yy2[i], yy2[i + 1]],
-            color=cmap(normalize(yy[i])),
-            edgecolor=None,
-            **kwargs,
-        )
-
-    return cmap, normalize
 
 
 def compute_daily_records_oneyear(
@@ -2816,7 +2792,6 @@ def plot_data_vs_climate_withrecords_multivar(
                 alpha=0.5,
                 label="10%-90%",
             )
-            # ax[1].fill_between(df_climate.loc[inidate:enddate, '%s_p095'].index,df_climate.loc[inidate:enddate,'%s_p095' %vars_list[1]],df_climate.loc[inidate:enddate,'%s_p005' %vars_list[1]],color='grey',alpha=0.25,label="5%-95%")
             if fillcolor_gradient is False:
                 ax[1].fill_between(
                     df_climate.loc[
@@ -3462,7 +3437,7 @@ def plot_data_vs_climate_withrecords_multivar(
     fig.savefig(filename, dpi=300)
 
 
-def plot_periodaverages(
+def plot_periodstats(
     df: pd.DataFrame,
     df_climate: pd.DataFrame,
     var: str,
@@ -5467,11 +5442,8 @@ def plot_annual_cycles(
             lw=0.9,
             zorder=0,
         )
-        # ax.plot(np.arange(0,len(df1_complete_join.loc[df1_complete_join.index.year == ye].index),1), df1_complete_join.loc[df1_complete_join.index.year == ye, sorted(list(set(df1_complete_join.columns) & set(variables)), key=lambda x: variables.index(x))[i]],color='grey', alpha=0.2, lw=0.9, zorder=0)
     # Ploteo años destacados con colores
     for ye in range(len(highlighted_years)):  # and not in [year_to_plot]:
-        # ax.plot(df1_complete_join.loc[df1_complete_join.index.year == annual_vals[sorted(list(set(df1_complete_join.columns) & set(variables)), key=lambda x: variables.index(x))[i]].sort_values().index[-5:][ye]].index, df1_complete_join.loc[df1_complete_join.index.year == annual_vals[sorted(list(set(df1_complete_join.columns) & set(variables)), key=lambda x: variables.index(x))[i]].sort_values().index[-5:][ye], sorted(list(set(df1_complete_join.columns) & set(variables)), key=lambda x: variables.index(x))[i]],color=colores[ye])
-        #                ax.plot(np.arange(0,len(df1_complete_join.loc[df1_complete_join.index.year == annual_vals[sorted(list(set(df1_complete_join.columns) & set(variables)), key=lambda x: variables.index(x))[i]].sort_values().index[-3:][ye]].index),1), df1_complete_join.loc[df1_complete_join.index.year == annual_vals[sorted(list(set(df1_complete_join.columns) & set(variables)), key=lambda x: variables.index(x))[i]].sort_values().index[-3:][ye], sorted(list(set(df1_complete_join.columns) & set(variables)), key=lambda x: variables.index(x))[i]],color=colores[ye], label=df1_complete_join[df1_complete_join.index.year.isin(annual_vals[sorted(list(set(df1_complete_join.columns) & set(variables)), key=lambda x: variables.index(x))[i]].sort_values().index[-3:])].index.year.unique()[ye], lw=1.1, zorder=1)
         ax.plot(
             np.arange(
                 0,
@@ -5710,7 +5682,10 @@ def plot_annual_cycles(
     fig.savefig(filename, dpi=300)
 
 
-def get_annual_cycle(df: pd.DataFrame, df_climate: pd.DataFrame, vars_list: list[str]):
+def get_annual_cycle(
+        df: pd.DataFrame, 
+        df_climate: pd.DataFrame, 
+        vars_list: list[str]):
     """
     This function allows to extract the annual cycles of selected variables
 

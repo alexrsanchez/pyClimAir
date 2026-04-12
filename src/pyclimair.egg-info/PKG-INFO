@@ -1,17 +1,18 @@
 Metadata-Version: 2.4
 Name: pyclimair
 Version: 0.0.0
-Summary: A Python package that makes analysing climatological data easy, and pretty!
+Summary: A Python package that makes analysing climatological and/or air quality data easy, and pretty!
 Author-email: Alejandro Rodri­guez Sanchez <ars.rodriguezs@gmail.com>
 Maintainer-email: Alejandro Rodri­guez Sanchez <ars.rodriguezs@gmail.com>
 License-Expression: MIT
 Project-URL: Homepage, https://https://github.com/alexrsanchez/pyClim
 Project-URL: Issues, https://https://github.com/alexrsanchez/pyClim/issues
-Keywords: climate,timeseries,plotting
+Keywords: climate,air quality,timeseries,plotting
 Classifier: Programming Language :: Python :: 3
 Classifier: Operating System :: OS Independent
 Requires-Python: >=3.11
 Description-Content-Type: text/markdown
+License-File: LICENSE
 License-File: LICENSE.txt
 Requires-Dist: pandas
 Requires-Dist: seaborn
@@ -22,27 +23,27 @@ Requires-Dist: pre-commit
 Requires-Dist: scikit-learn
 Dynamic: license-file
 
-# pyClim
+# pyClimAir
 
-## A Python module to plot climatological data
+## A Python module to plot climatological and air quality data
 
 ![Getting Started](./docs/pyClim_logo.png)
 
-pyClim is a Python package that makes analysing climatological data easy, and pretty!
+pyClimAir is a Python package that makes analysing climatological and/or air quality data easy, and pretty!
 
-pyClim provides you with a set of Python functions so you can perform a complete analysis of your climatological data with publication-quality figures.
+pyClimAir provides you with a set of Python functions so you can perform a complete analysis of your data with publication-quality figures.
 
 ## Install
 
-To install the pyClim package, use the following command in your terminal:
+To install the pyClimAir package, use the following command in your terminal:
 
 ```
-pip install pyclim
+pip install pyclimair
 ```
 
 ## Documentation
 
-You can learn about how pyClim works and see some examples on its documentation website:
+You can learn about how pyClimAir works and see some examples on its documentation website:
 
 https://pyclim.readthedocs.io/en/latest/index.html
 

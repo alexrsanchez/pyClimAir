@@ -10,12 +10,12 @@ from scipy import stats, interpolate
 import os
 from pathlib import Path
 
-##############################################################
-#### Python module for climatological  #######################
-#### and air quality data analysis ###########################
-#### Author: Alejandro Rodríguez Sánchez #####################
-#### Contact: ars.rodriguezs@gmail.com #######################
-##############################################################
+"""
+Air quality plotting functions
+
+Author: Alejandro Rodríguez Sánchez
+Contact: ars.rodriguezs@gmail.com
+"""
 
 # ruff: noqa
 
