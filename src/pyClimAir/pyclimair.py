@@ -11,7 +11,8 @@ import os
 from pathlib import Path
 
 ##############################################################
-#### Python module for climatological data analysis ##########
+#### Python module for climatological  #######################
+#### and air quality data analysis ###########################
 #### Author: Alejandro Rodríguez Sánchez #####################
 #### Contact: ars.rodriguezs@gmail.com #######################
 ##############################################################
@@ -6641,508 +6642,6 @@ def compare_with_globaldataset(
     plt.tight_layout()
     plt.savefig(filename, dpi=300)
 
-def categories_evolution(
-    df,
-    var,
-    units,
-    categories_breaks,
-    categories_labels,
-    categories_colors,
-    database,
-    station_name,
-    filename,
-    time_scale="year",
-    grouping_stat="mean",
-):
-    """
-    This function allows to plot the evolution of a certain variable by grouping it into categories
-
-    Arguments
-    ----------
-    df: DataFrame
-        DataFrame containing the data
-    var: str
-        Name of the variable to be plotted
-    units: str
-        Units of the variable to be plotted
-    categories_breaks: list
-        List containing the breaks of each category
-    categories_labels: list
-        List containing the labels of each category
-    categories_colors: list
-        List containing the colours of each category
-    station_name: str
-        Name of the location of the data
-    database: str
-        Name of the database from which the plotted data comes
-    station_name: str
-        Name of the location of the data
-    filename: str
-        Absolute path where the plot is going to be saved
-    time_scale: str
-        Time scale to which aggregate the number of exceedances
-    grouping_stat: str
-        The statistic for data grouping
-
-    """
-
-    df = df.copy()
-
-    yearmin = df[var].first_valid_index().year  # df.index.year.min()
-    yearmax = df[var].last_valid_index().year
-
-    print('Remember to include the lowest and highest limits in "categories_breaks"!!')
-
-    if len(categories_labels) != len(categories_breaks) - 1:
-        print(
-            "Check your categories lists. The length of the labels list should be one less than the length of the categories values"
-        )
-
-    # For avoiding outlier values be set as NaN
-    if max(categories_breaks) < df[var].max():
-        print('Your maximum break is lower than the maximum value of your data. Adding a new break...')
-        categories_breaks.extend([int(np.ceil(df[var].max()))])
-
-        print('Resetting your labels...')
-        categories_labels = []
-
-        print('Adding new color...')
-        categories_colors.extend(["darkviolet"])
-
-
-    if len(categories_labels) == 0:
-        print("Your list of labels is empty. Setting labels using categories values...")
-        for i in range(1, len(categories_breaks)):
-            categories_labels.append(
-                "%s-%s" % (categories_breaks[i - 1], categories_breaks[i])
-            )
-
-
-
-    if len(categories_colors) < len(categories_labels):
-        print(
-            "The number of colors is lower than the number of labels. Setting colors to default values..."
-        )
-        categories_colors = [
-            "blue",
-            "cyan",
-            "green",
-            "yellow",
-            "orange",
-            "red",
-            "lightgray",
-            "pink",
-            "sienna",
-            "black",
-            "darkviolet",
-            "teal",
-            "darkgrey",
-            "magenta",
-        ]
-
-        if len(categories_colors) > len(categories_labels):
-            raise ValueError(
-                "Categories' number is too large. Please reduce your categories."
-            )
-
-        categories_colors = categories_colors[: len(categories_labels)]
-    
-
-    #### Step 1: Create categories of the desired variable
-    bins = categories_breaks
-    labels = categories_labels
-    binned = pd.DataFrame(pd.cut(df[var], bins=bins, labels=labels))
-
-    if time_scale.lower() == "year":
-        binned_list = [g for n, g in binned.groupby(pd.Grouper(freq="YS"))]
-        binned_df = pd.DataFrame(index=categories_labels)
-        nan_df = pd.DataFrame(index=categories_labels)
-
-        for i in range(len(binned_list)):
-            # binned_list[i]['freq'] = 0.0
-            year = binned_list[i].index.year.unique()[0]
-            binned_list_freq = binned_list[i][var].value_counts(normalize=True, dropna=False)
-            nan_counts = binned_list[i].isna().sum() # For hatching
-
-            binned_list[i]["%s" % year] = binned_list[i][var].map(
-                binned_list_freq.squeeze()
-            )
-
-            #binned_list[i] = binned_list[i].drop_duplicates().dropna().set_index(var)
-            binned_list[i][var] = binned_list[i][var].astype(str) # Convert from category to string
-            binned_list[i][var] = binned_list[i][var].fillna(len(categories_labels)) # Assign new category for NaN values
-            binned_list[i] = binned_list[i].drop_duplicates().set_index(var)
-
-            if nan_counts.max() > 0 :
-                # Add new category label and assign color to NaN
-                categories_colors.extend(['grey'])
-                categories_labels.extend(['NaN'])
-
-
-            binned_df = pd.concat([binned_df, binned_list[i]["%s" % year]], axis=1)
-
-        binned_df = binned_df.T.mul(100)
-        fig, ax = plt.subplots(figsize=(15, 7), sharex=True)
-        # for boolean, weight_count in binned_df.items():
-        #    p = ax.bar(species, weight_count, width, label=boolean, bottom=bottom)
-        #    bottom += weight_count
-        binned_df.plot.bar(
-            stacked=True,
-            color=categories_colors,
-            ax=ax,
-            width=0.99,
-            zorder=100,
-            alpha=0.7,
-        )
-
-        text = AnchoredText(
-            "Alejandro Rodríguez Sánchez",
-            loc=1,
-            bbox_to_anchor=(0.24, 0.185),
-            bbox_transform=ax.transAxes,
-            prop={"size": 12},
-            frameon=True,
-        )
-        text.patch.set_alpha(0.5)
-        plt.text(
-            0.031,
-            0.955,
-            "Period with data: %i-%i" % (yearmin, yearmax),
-            fontsize=14,
-            transform=plt.gcf().transFigure,
-        )
-        plt.text(
-            0.78,
-            0.955,
-            "Database: %s" % database,
-            fontsize=14,
-            transform=plt.gcf().transFigure,
-        )
-        plt.text(
-            0.78,
-            0.925,
-            "Location: %s" % station_name,
-            fontsize=14,
-            transform=plt.gcf().transFigure,
-        )
-        # plt.suptitle('%s evolution and %i-period mean' %(var, averaging_period), fontsize=22, y=0.97)
-        plt.suptitle(
-            "%s [%s] grouped by categories" % (var, units), fontsize=22, y=0.97
-        )
-        plt.subplots_adjust(
-            left=0.07, right=0.98, hspace=0.1, wspace=0.1, bottom=0.075, top=0.85
-        )
-        # fig.autofmt_xdate()
-
-        ax.tick_params(labelsize=17, rotation=0)
-        ax.set_ylabel("Frequency [%]", fontsize=17)
-        ax.grid(color="grey")
-        ax.legend(
-            fontsize=15,
-            ncol=len(categories_colors),
-            loc="upper left",
-            bbox_to_anchor=(0.0, 1.1),
-            frameon=False,
-        ).set_zorder(101)
-        ax.set_ylim([0, 100])
-
-        # Plot always 10 labels at most
-        labels = binned_df.index
-        xticks_spacing = int(np.ceil(len(labels) / 10))
-        ax.set_xticks(ax.get_xticks()[::xticks_spacing])  # .values)
-        ax.minorticks_off()
-
-        fig.savefig(filename, dpi=300)
-
-    if time_scale.lower() == "season":
-        # Group to season
-        month_to_season_lu = np.array(
-            [
-                None,
-                "DJF",
-                "DJF",
-                "MAM",
-                "MAM",
-                "MAM",
-                "JJA",
-                "JJA",
-                "JJA",
-                "SON",
-                "SON",
-                "SON",
-                "DJF",
-            ]
-        )
-        grp_ary = month_to_season_lu[binned.index.month]
-        binned["season"] = grp_ary
-        binned["Year"] = binned.index.year
-
-        season_names = ['DJF', 'MAM', 'JJA', 'SON']
-
-        df_list = {}
-        for j in range(4):
-            df_list[j] = binned[binned.season == season_names[j]]
-
-
-        nan_counts_int = 0
-
-        fig, axs = plt.subplots(figsize=(17, 10), ncols=2, nrows=2, sharex=True)
-        ax = axs.flatten()
-        for j in range(4):
-            binned_list = [g for n, g in df_list[j].groupby(pd.Grouper(freq="YS"))]
-            binned_df = pd.DataFrame(index=categories_labels)
-
-            for i in range(len(binned_list)):
-                # binned_list[i]['freq'] = 0.0
-                year = binned_list[i].index.year.unique()[0]
-                binned_list_freq = binned_list[i][var].value_counts(normalize=True, dropna=False)
-                
-                nan_counts = binned_list[i].isna().sum() # For hatching
-
-                binned_list[i]["%s" % year] = binned_list[i][var].map(
-                    binned_list_freq.squeeze()
-                )
-                #binned_list[i] = (
-                #    binned_list[i].drop_duplicates().dropna().set_index(var)
-                #)  #
-
-                binned_list[i][var] = binned_list[i][var].astype(str) # Convert from category to string
-                binned_list[i][var] = binned_list[i][var].fillna(len(categories_labels)) # Assign new category for NaN values
-                binned_list[i] = binned_list[i].drop_duplicates().set_index(var)
-
-                if nan_counts.max() > 0 and nan_counts_int == 0:
-                    # Add new category label and assign color to NaN
-                    categories_colors.extend(['grey'])
-                    #categories_labels.extend(['NaN'])
-                    nan_counts_int += 1
-
-                binned_df = pd.concat([binned_df, binned_list[i]["%s" % year]], axis=1)
-
-            binned_df = binned_df.T.mul(100)
-
-            binned_df.plot.bar(
-                stacked=True,
-                color=categories_colors,
-                ax=ax[j],
-                width=0.99,
-                zorder=100,
-                alpha=0.7,
-            )
-            text = AnchoredText(
-                "Alejandro Rodríguez Sánchez",
-                loc=1,
-                bbox_to_anchor=(0.24, 0.185),
-                bbox_transform=ax[j].transAxes,
-                prop={"size": 12},
-                frameon=True,
-            )
-            text.patch.set_alpha(0.5)
-            # Plot always 7 labels at most
-            labels = binned_df.index
-            xticks_spacing = int(np.ceil(len(labels) / 7))
-            ax[j].set_xticks(ax[j].get_xticks()[::xticks_spacing])  # .values)
-            ax[j].minorticks_off()
-
-            ax[j].tick_params(labelsize=16, rotation=0)
-            ax[j].grid(color="grey")
-            ax[j].set_ylim([0, 100])
-
-            ax[j].set_title(
-                [
-                    "December-January-February",
-                    "March-April-May",
-                    "June-July-August",
-                    "September-October-November",
-                ][j],
-                fontsize=17,
-            )
-
-            if j == 1:
-                ax[j].legend(
-                    fontsize=15,
-                    ncol=len(categories_colors),
-                    loc="lower left",
-                    bbox_to_anchor=(-1.12, 1.055),
-                    frameon=False,
-                ).set_zorder(101)
-            else:
-                ax[j].legend().set_visible(False)
-
-        ax[0].set_ylabel("Frequency [%]", fontsize=17)
-        ax[2].set_ylabel("Frequency [%]", fontsize=17)
-        plt.text(
-            0.031,
-            0.955,
-            "Period with data: %i-%i" % (yearmin, yearmax),
-            fontsize=14,
-            transform=plt.gcf().transFigure,
-        )
-        plt.text(
-            0.78,
-            0.955,
-            "Database: %s" % database,
-            fontsize=14,
-            transform=plt.gcf().transFigure,
-        )
-        plt.text(
-            0.78,
-            0.925,
-            "Location: %s" % station_name,
-            fontsize=14,
-            transform=plt.gcf().transFigure,
-        )
-        # plt.suptitle('%s evolution and %i-period mean' %(var, averaging_period), fontsize=22, y=0.97)
-        plt.suptitle(
-            "%s [%s] grouped by categories" % (var, units), fontsize=24, y=0.975
-        )
-        plt.subplots_adjust(
-            left=0.07, right=0.98, hspace=0.2, wspace=0.1, bottom=0.05, top=0.85
-        )
-
-        fig.savefig(filename, dpi=300)
-
-    if time_scale.lower() == "month":
-        df_list = {}
-        month_names = [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
-        ]
-
-        for j in range(1, 13):
-            df_list[j] = binned[binned.index.month == j]
-
-        nan_counts_int = 0
-
-
-        fig, axs = plt.subplots(
-            figsize=(15.5, 12.25), ncols=3, nrows=4, sharex=True, sharey=True
-        )
-        ax = axs.flatten()
-        for j in range(12):
-            binned_list = [
-                g for n, g in df_list[j + 1].groupby(pd.Grouper(freq="YS"))
-            ]  # binned.groupby(pd.Grouper(freq='AS')).apply(grouping_stat, numeric_only=True)
-            binned_df = pd.DataFrame(columns=categories_labels)
-            # binned_df.columns = categories_labels
-
-            for i in range(len(binned_list)):
-                # binned_list[i]['freq'] = 0.0
-                year = binned_list[i].index.year.unique()[0]
-                binned_list_freq = binned_list[i][var].value_counts(normalize=True, dropna=False)
-
-                nan_counts = binned_list[i].isna().sum() # For hatching
-
-                binned_list[i]["%s" % year] = binned_list[i][var].map(
-                    binned_list_freq.squeeze()
-                )
-
-
-                binned_list[i][var] = binned_list[i][var].astype(str) # Convert from category to string
-                binned_list[i][var] = binned_list[i][var].fillna(len(categories_labels)) # Assign new category for NaN values
-                binned_list[i] = binned_list[i].drop_duplicates().set_index(var)
-
-                if nan_counts.max() > 0 and nan_counts_int == 0:
-                    # Add new category label and assign color to NaN
-                    categories_colors.extend(['grey'])
-                    #categories_labels.extend(['NaN'])
-                    nan_counts_int += 1
-
-                #                binned_df = pd.concat([binned_df, binned_list[i]['%s' %year]], axis=1)
-                binned_df = pd.concat([binned_df, binned_list[i].T], axis=0)
-
-
-            binned_df = binned_df.mul(100)
-            binned_df.index = binned_df.index.astype(
-                int
-            )  # pd.to_datetime(binned_df.index)
-
-            binned_df.plot.bar(
-                stacked=True,
-                color=categories_colors,
-                ax=ax[j],
-                width=0.991,
-                zorder=100,
-                alpha=0.7,
-            )
-            text = AnchoredText(
-                "Alejandro Rodríguez Sánchez",
-                loc=1,
-                bbox_to_anchor=(0.24, 0.185),
-                bbox_transform=ax[j].transAxes,
-                prop={"size": 12},
-                frameon=True,
-            )
-            text.patch.set_alpha(0.5)
-            # fig.autofmt_xdate()
-
-            ax[j].tick_params(labelsize=15, rotation=0)
-            ax[j].grid(color="grey")
-            ax[j].set_ylim([0, 100])
-
-            # Plot always 7 labels at most
-            labels = binned_df.index
-            xticks_spacing = int(np.ceil(len(labels) / 7))
-            ax[j].set_xticks(ax[j].get_xticks()[::xticks_spacing])  # .values)
-            ax[j].minorticks_off()
-
-            if j == 0:
-                ax[j].legend(
-                    fontsize=14,
-                    ncol=len(categories_colors),
-                    loc="lower left",
-                    bbox_to_anchor=(0.01, 1.075),
-                    frameon=False,
-                ).set_zorder(101)
-            else:
-                ax[j].legend().set_visible(False)
-
-            ax[j].set_title(month_names[j], fontsize=17)
-
-        ax[0].set_ylabel("Frequency [%]", fontsize=16)
-        ax[3].set_ylabel("Frequency [%]", fontsize=16)
-        ax[6].set_ylabel("Frequency [%]", fontsize=16)
-        ax[9].set_ylabel("Frequency [%]", fontsize=16)
-
-        plt.text(
-            0.031,
-            0.96,
-            "Period with data: %i-%i" % (yearmin, yearmax),
-            fontsize=14,
-            transform=plt.gcf().transFigure,
-        )
-        plt.text(
-            0.78,
-            0.96,
-            "Database: %s" % database,
-            fontsize=14,
-            transform=plt.gcf().transFigure,
-        )
-        plt.text(
-            0.78,
-            0.94,
-            "Location: %s" % station_name,
-            fontsize=14,
-            transform=plt.gcf().transFigure,
-        )
-        # plt.suptitle('%s evolution and %i-period mean' %(var, averaging_period), fontsize=22, y=0.97)
-        plt.suptitle(
-            "%s [%s] grouped by categories" % (var, units), fontsize=24, y=0.975
-        )
-        plt.subplots_adjust(
-            left=0.07, right=0.98, hspace=0.2, wspace=0.12, bottom=0.035, top=0.89
-        )
-        fig.savefig(filename, dpi=300)
-
 def compare_probdist(
     df:pd.DataFrame,
     df_climate: pd.DataFrame,
@@ -8431,3 +7930,355 @@ def annual_meteogram_with_pollutant(
         )
         # fig.autofmt_xdate()
         fig.savefig(filename, dpi=300)
+
+def categories_evolution(
+    df,
+    var,
+    units,
+    categories_breaks,
+    categories_labels,
+    categories_colors,
+    database,
+    station_name,
+    filename,
+    time_scale="year",
+):
+    """
+    This function allows to plot the evolution of a certain variable by grouping it into categories
+
+    Arguments
+    ----------
+    df: DataFrame
+        DataFrame containing the data
+    var: str
+        Name of the variable to be plotted
+    units: str
+        Units of the variable to be plotted
+    categories_breaks: list
+        List containing the breaks of each category
+    categories_labels: list
+        List containing the labels of each category
+    categories_colors: list
+        List containing the colours of each category
+    station_name: str
+        Name of the location of the data
+    database: str
+        Name of the database from which the plotted data comes
+    station_name: str
+        Name of the location of the data
+    filename: str
+        Absolute path where the plot is going to be saved
+    time_scale: str
+        Time scale to which aggregate the number of exceedances
+    """
+
+    df = df.copy()
+
+    yearmin = df[var].first_valid_index().year  # df.index.year.min()
+    yearmax = df[var].last_valid_index().year
+
+    print('Remember to include the lowest and highest limits in "categories_breaks"!!')
+
+    if len(categories_labels) != len(categories_breaks) - 1:
+        print(
+            "Check your categories lists. The length of the labels list should be one less than the length of the categories values"
+        )
+
+    # For avoiding outlier values be set as NaN
+    if max(categories_breaks) < df[var].max():
+        print('Your maximum break is lower than the maximum value of your data. Adding a new break...')
+        categories_breaks.extend([int(np.ceil(df[var].max()))])
+
+        print('Resetting your labels...')
+        categories_labels = []
+
+        print('Adding new color...')
+        categories_colors.extend(["darkviolet"])
+
+
+    if len(categories_labels) == 0:
+        print("Your list of labels is empty. Setting labels using categories values...")
+        for i in range(1, len(categories_breaks)):
+            categories_labels.append(
+                "%s-%s" % (categories_breaks[i - 1], categories_breaks[i])
+            )
+
+
+
+    if len(categories_colors) < len(categories_labels):
+        print(
+            "The number of colors is lower than the number of labels. Setting colors to default values..."
+        )
+        categories_colors = [
+            "blue",
+            "cyan",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "lightgray",
+            "pink",
+            "sienna",
+            "black",
+            "darkviolet",
+            "teal",
+            "darkgrey",
+            "magenta",
+        ]
+
+        if len(categories_colors) > len(categories_labels):
+            raise ValueError(
+                "Categories' number is too large. Please reduce your categories."
+            )
+
+        categories_colors = categories_colors[: len(categories_labels)]
+    
+
+    #### Step 1: Create categories of the desired variable
+    bins = categories_breaks
+    labels = categories_labels
+    binned = pd.DataFrame(pd.cut(df[var], bins=bins, labels=labels, include_lowest=True))
+
+    if time_scale.lower() == "year":
+        df_list = {}
+        df_list[0] = binned #[g for n, g in binned.groupby(pd.Grouper(freq="YS"))]
+
+        nrow = 1
+        ncol = 1
+
+        Xsize = 15
+        Ysize = 7
+
+    if time_scale.lower() == "season":
+        # Group to season
+        month_to_season_lu = np.array(
+            [
+                None,
+                "DJF",
+                "DJF",
+                "MAM",
+                "MAM",
+                "MAM",
+                "JJA",
+                "JJA",
+                "JJA",
+                "SON",
+                "SON",
+                "SON",
+                "DJF",
+            ]
+        )
+        grp_ary = month_to_season_lu[binned.index.month]
+        binned["season"] = grp_ary
+        binned["Year"] = binned.index.year
+
+        season_names = ['DJF', 'MAM', 'JJA', 'SON']
+
+        month_names =  [
+                    "December-January-February",
+                    "March-April-May",
+                    "June-July-August",
+                    "September-October-November",
+                ]
+
+        df_list = {}
+        for j in range(4):
+            df_list[j] = binned[binned.season == season_names[j]].drop(columns=['season'], errors='ignore')
+
+        nrow = 2
+        ncol = 2
+
+        Xsize = 17
+        Ysize = 10
+
+    if time_scale.lower() == "month":
+        df_list = {}
+        month_names = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ]
+
+        for j in range(12):
+            df_list[j] = binned[binned.index.month == j+1]
+
+        nrow = 4
+        ncol = 3
+
+        Xsize = 15.65
+        Ysize = 12.25
+
+    nan_counts_int = 0
+
+    fig, axs = plt.subplots(nrows=nrow, ncols=ncol, figsize=(Xsize, Ysize), sharex=True)
+    if time_scale.lower() == 'year':
+        ax = [axs]
+    else:
+        ax = axs.flatten()
+
+    for j in range(len(df_list)):
+        binned_list = [g for n, g in df_list[j].groupby(pd.Grouper(freq="YS"))]
+        binned_df = pd.DataFrame(index=categories_labels)
+
+        for i in range(len(binned_list)):
+            # binned_list[i]['freq'] = 0.0
+            year = binned_list[i].index.year.unique()[0]
+            binned_list_freq = binned_list[i][var].value_counts(normalize=True, dropna=False)
+
+            nan_counts = binned_list[i].isna().sum() # For hatching
+
+            binned_list[i]["%s" % year] = binned_list[i][var].map(
+                binned_list_freq.squeeze()
+            )
+
+            binned_list[i][var] = binned_list[i][var].astype(str) # Convert from category to string
+            binned_list[i][var] = binned_list[i][var].fillna('NaN') # Assign new category for NaN values
+            binned_list[i] = binned_list[i].drop_duplicates().set_index(var)
+
+            if nan_counts.max() > 0 and nan_counts_int == 0:
+                # Add new category label and assign color to NaN
+                categories_colors.extend(['grey'])
+                #categories_labels.extend(['NaN'])
+                nan_counts_int += 1
+
+            binned_df = pd.concat([binned_df, binned_list[i]['%s' %year]], axis=1)
+            #binned_df = pd.concat([binned_df, binned_list[i].T], axis=0)
+
+        binned_df = binned_df.T.mul(100)
+
+        binned_df.plot.bar(
+            stacked=True,
+            color=categories_colors,
+            ax=ax[j],
+            width=0.99,
+            zorder=100,
+            alpha=0.7,
+        )
+        text = AnchoredText(
+            "Alejandro Rodríguez Sánchez",
+            loc=1,
+            bbox_to_anchor=(0.24, 0.185),
+            bbox_transform=ax[j].transAxes,
+            prop={"size": 12},
+            frameon=True,
+        )
+        text.patch.set_alpha(0.5)
+
+
+        ax[j].grid(color="grey")
+        ax[j].set_ylim([0, 100])
+
+        if j == 1:
+            ax[j].legend(
+                fontsize=15,
+                ncol=len(categories_colors),
+                loc="lower left",
+                bbox_to_anchor=(-1.12, 1.055),
+                frameon=False,
+            ).set_zorder(101)
+        else:
+            ax[j].legend().set_visible(False)
+
+        if len(ax) > 1:
+            ax[j].tick_params(labelsize=15, rotation=0)
+            ax[j].set_title(
+                month_names[j],
+                fontsize=17,
+            )
+
+            if len(ax) == 4:
+                ax[0].set_ylabel("Frequency [%]", fontsize=17)
+                ax[2].set_ylabel("Frequency [%]", fontsize=17)
+            elif len(ax) == 12:
+                ax[0].set_ylabel("Frequency [%]", fontsize=16)
+                ax[3].set_ylabel("Frequency [%]", fontsize=16)
+                ax[6].set_ylabel("Frequency [%]", fontsize=16)
+                ax[9].set_ylabel("Frequency [%]", fontsize=16)
+
+            # Plot always 7 labels at most
+            labels = binned_df.index
+            xticks_spacing = int(np.ceil(len(labels) / 7))
+            ax[j].set_xticks(ax[j].get_xticks()[::xticks_spacing])  # .values)
+            ax[j].minorticks_off()
+
+            if j == 0:
+                ax[j].legend(
+                    fontsize=14,
+                    ncol=len(categories_colors),
+                    loc="lower left",
+                    bbox_to_anchor=(0.01, 1.075),
+                    frameon=False,
+                ).set_zorder(101)
+            else:
+                ax[j].legend().set_visible(False)
+
+            ax[j].set_title(month_names[j], fontsize=17)
+
+        else:
+            ax[j].tick_params(labelsize=17, rotation=0)
+            ax[j].set_ylabel("Frequency [%]", fontsize=17)
+            ax[j].legend(
+                fontsize=15,
+                ncol=len(categories_colors),
+                loc="upper left",
+                bbox_to_anchor=(0.0, 1.1),
+                frameon=False,
+            ).set_zorder(101)
+
+            # Plot always 10 labels at most
+            labels = binned_df.index
+            xticks_spacing = int(np.ceil(len(labels) / 10))
+            ax[j].set_xticks(ax[j].get_xticks()[::xticks_spacing])  # .values)
+            ax[j].minorticks_off()
+
+    plt.text(
+        0.031,
+        0.955,
+        "Period with data: %i-%i" % (yearmin, yearmax),
+        fontsize=14,
+        transform=plt.gcf().transFigure,
+    )
+    plt.text(
+        0.78,
+        0.955,
+        "Database: %s" % database,
+        fontsize=14,
+        transform=plt.gcf().transFigure,
+    )
+    plt.text(
+        0.78,
+        0.925,
+        "Location: %s" % station_name,
+        fontsize=14,
+        transform=plt.gcf().transFigure,
+    )
+    # plt.suptitle('%s evolution and %i-period mean' %(var, averaging_period), fontsize=22, y=0.97)
+    plt.suptitle(
+        "%s [%s] grouped by categories" % (var, units), fontsize=24, y=0.975
+    )
+
+    if len(ax) == 1:
+        plt.subplots_adjust(
+            left=0.07, right=0.98, hspace=0.2, wspace=0.1, bottom=0.05, top=0.85
+        )
+    elif len(ax) == 4:
+        plt.subplots_adjust(
+            left=0.07, right=0.98, hspace=0.2, wspace=0.1, bottom=0.05, top=0.85
+        )
+    elif len(ax) == 12:
+        plt.subplots_adjust(
+            left=0.07, right=0.98, hspace=0.2, wspace=0.12, bottom=0.035, top=0.85
+        )
+
+    fig.savefig(filename, dpi=300)
+
+

@@ -16,21 +16,5 @@ All the tools included in pyClimAir are located within three subpackages:
 # ruff: noqa
 
 
-from .pyclimair import *
-import importlib as _importlib
+from .pyclimair.clim._clim import compare_with_globaldataset
 
-_submodules = [
-    "clim",
-    "air",
-    "common"
-    ]
-
-
-def __getattr__(name):
-    if name in _submodules:
-        return _importlib.import_module(f"pyclimair.{name}")
-    else:
-        try:
-            return globals()[name]
-        except KeyError:
-            raise AttributeError(f"Module 'pyclimair' has no attribute '{name}'")

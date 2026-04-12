@@ -23,8 +23,8 @@ dependencies = [
   'pre-commit',
   'scikit-learn'
 ]
-description = "A Python package that makes analysing climatological data easy, and pretty!"
-keywords = ["climate", "timeseries", "plotting"]
+description = "A Python package that makes analysing climatological and/or air quality data easy, and pretty!"
+keywords = ["climate", "air quality", "timeseries", "plotting"]
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
 maintainers = [

@@ -11,7 +11,8 @@ import os
 from pathlib import Path
 
 ##############################################################
-#### Python module for climatological data analysis ##########
+#### Python module for climatological  #######################
+#### and air quality data analysis ###########################
 #### Author: Alejandro Rodríguez Sánchez #####################
 #### Contact: ars.rodriguezs@gmail.com #######################
 ##############################################################

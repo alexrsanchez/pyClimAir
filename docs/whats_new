@@ -18,3 +18,5 @@ Fixes
 Enhancements
 ------------
 - :func:`pyclimair.categories_evolution` now creates categories' labels automatically, disappearing the "categories_labels" argument.
+
+- Former function pyclimair.plot_periodaverages has been renamed to `pyclimair.plot_periodstats`, as it can also plot other statistics than averages.
