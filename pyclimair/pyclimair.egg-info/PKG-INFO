@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: pyclimair
-Version: 0.0.2
+Version: 0.0.3
 Summary: A Python package that makes analysing climatological and/or air quality data easy, and pretty!
 Author-email: Alejandro Rodri­guez Sanchez <ars.rodriguezs@gmail.com>
 Maintainer-email: Alejandro Rodri­guez Sanchez <ars.rodriguezs@gmail.com>
