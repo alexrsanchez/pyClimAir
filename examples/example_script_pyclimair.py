@@ -38,7 +38,8 @@ from pyclimair.common import (
     compare_probdist,
     categories_evolution,
     threevar_windrose,
-    threevar_windrose_trend
+    threevar_windrose_trend,
+    threevar_windrose_probability
 )
 
 from pyclimair.air import (
@@ -49,69 +50,11 @@ from pyclimair.clim import (
     compare_with_globaldataset
 )
 
+from pyclimair.utils import(
+    get_continuous_cmap
+)
 
 matplotlib.use("Agg")
-
-# light_jet = cmap_map(lambda x: x*0.85, mpl.cm.jet)
-
-
-def hex_to_rgb(value):
-    """
-    Converts hex to rgb colours
-    value: string of 6 characters representing a hex colour.
-    Returns: list length 3 of RGB values"""
-
-    ### From: https://github.com/CJP123/continuous_cmap/
-
-    value = value.strip("#")  # removes hash symbol if present
-    lv = len(value)
-    return tuple(int(value[i : i + lv // 3], 16) for i in range(0, lv, lv // 3))
-
-
-def rgb_to_dec(value):
-    """
-    Converts rgb to decimal colours (i.e. divides each value by 256)
-    value: list (length 3) of RGB values
-    Returns: list (length 3) of decimal values"""
-
-    ### From: https://github.com/CJP123/continuous_cmap/
-
-    return [v / 256 for v in value]
-
-
-def get_continuous_cmap(hex_list, float_list=None, N_colors=256):
-    """creates and returns a color map that can be used in heat map figures.
-    If float_list is not provided, colour map graduates linearly between each color in hex_list.
-    If float_list is provided, each color in hex_list is mapped to the respective location in float_list.
-
-    Parameters
-    ----------
-    hex_list: list of hex code strings
-    float_list: list of floats between 0 and 1, same length as hex_list. Must start with 0 and end with 1.
-
-    Returns
-    ----------
-    colour map"""
-
-    ### From: https://github.com/CJP123/continuous_cmap/
-
-    rgb_list = [rgb_to_dec(hex_to_rgb(i)) for i in hex_list]
-    if float_list:
-        pass
-    else:
-        float_list = list(np.linspace(0, 1, len(rgb_list)))
-
-    cdict = dict()
-    for num, col in enumerate(["red", "green", "blue"]):
-        col_list = [
-            [float_list[i], rgb_list[i][num], rgb_list[i][num]]
-            for i in range(len(float_list))
-        ]
-        cdict[col] = col_list
-    cmp = matplotlib.colors.LinearSegmentedColormap(
-        "my_cmp", segmentdata=cdict, N=N_colors
-    )
-    return cmp
 
 
 # Create metadata
@@ -123,6 +66,7 @@ year_to_plot = 2025
 climate_normal_period = [1991, 2020]
 variables = ["Tmin", "Tmean", "Tmax", "Rainfall", "WindSpeed"]
 database = "Example"
+cmap_probability = matplotlib.cm.get_cmap('Blues',10) # Colormap for 3D polar probability plots
 
 # Mapping variables
 units_list = {}  # ['ºC','ºC','ºC', 'm/s'] #,'mm']
@@ -188,8 +132,14 @@ iniyear = int(df1.Year.values[0])
 
 
 df1["DayofYear"] = df1.index.dayofyear
-
 df1["Accum.Rainfall"] = df1.groupby(df1.index.year)["Rainfall"].cumsum()
+
+# Correct values
+if str(df1['WindDir'].dtype) in ['object','str']:
+    df1['WindDir'] = df1['WindDir'].replace(wd_map).astype(float)
+    df1['WindDir'] = df1['WindDir'].replace(-999,np.nan)
+    df1['WindSpeed'] = df1['WindSpeed'].replace(-999,np.nan)
+
 
 climate_vars = [
     "Tmax",
@@ -239,14 +189,38 @@ climate_df_sep = compute_climate(
 )
 
 ### 3D polar plots
-threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='year', grouping_stat='mean')
-threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='season', grouping_stat='mean')
-threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='month', grouping_stat='mean')
+threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', 
+                  database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                  grouping_freq='year', grouping_stat='mean')
+threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', 
+                  database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                  grouping_freq='season', grouping_stat='mean')
+threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', 
+                  database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                  grouping_freq='month', grouping_stat='mean')
 
-threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='year', grouping_stat='mean')
-threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='season', grouping_stat='mean')
-threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', grouping_freq='month', grouping_stat='mean')
+threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 
+                        'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                        grouping_freq='year', grouping_stat='mean')
+threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 
+                        'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                        grouping_freq='season', grouping_stat='mean')
+threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 
+                        'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                        grouping_freq='month', grouping_stat='mean')
 
+threevar_windrose_probability(df1_complete, ['WindSpeed','WindDir','Tmin'], '>20', 
+                              climate_normal_period, 'ºC', database, station_name, 
+                              plotdir+'/3var_probwindrose_Tmin_step1.png', 
+                              grouping_freq='year', cmap=cmap_probability)
+threevar_windrose_probability(df1_complete, ['WindSpeed','WindDir','Tmin'], '>20', 
+                              climate_normal_period, 'ºC', database, station_name, 
+                              plotdir+'/3var_probwindrose_Tmin_season_step1.png', 
+                              grouping_freq='season', cmap=cmap_probability)
+threevar_windrose_probability(df1_complete, ['WindSpeed','WindDir','Tmin'], '>20', 
+                              climate_normal_period, 'ºC', database, station_name, 
+                              plotdir+'/3var_probwindrose_Tmin_month_step1.png', 
+                              grouping_freq='month', cmap=cmap_probability)
 
 ### Anomalies
 plot_anomalies(
@@ -863,9 +837,33 @@ for var in sorted(
 # Probability distributions
 df_normalclimate = df1_complete[(df1_complete.index.year >=climate_normal_period[0]) & (df1_complete.index.year <= climate_normal_period[1])]
 
-compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_probdist.png', dist_type='histogram')
-compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_probdist_season.png', dist_type='histogram', grouping_freq='season')
-compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_CDF.png', dist_type='cumulative')
-compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_CDF_season.png', dist_type='cumulative', grouping_freq='season')
-compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_both.png', dist_type='both')
-compare_probdist(df1_complete, df_normalclimate, [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', climate_normal_period, database, station_name, plotdir+'/Tmax_both_season.png', dist_type='both', grouping_freq='season')
+
+compare_probdist(
+    df1_complete, df_normalclimate, 
+    [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', 
+    climate_normal_period, database, station_name, 
+    plotdir+'/Tmax_probdist.png', dist_type='histogram'
+    )
+compare_probdist(
+    df1_complete, df_normalclimate, 
+    [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', 
+    climate_normal_period, database, station_name, 
+    plotdir+'/Tmax_probdist_season.png', dist_type='histogram',
+    grouping_freq='season'
+    )
+
+compare_probdist(
+    df1_complete, df_normalclimate, 
+    [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', 
+    climate_normal_period, database, station_name, 
+    plotdir+'/Tmax_CDF_season.png', dist_type='cumulative',
+    grouping_freq='season'
+    )
+
+compare_probdist(
+    df1_complete, df_normalclimate, 
+    [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', 
+    climate_normal_period, database, station_name, 
+    plotdir+'/Tmax_both_month.png', dist_type='both',
+    grouping_freq='month'
+    )

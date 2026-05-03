@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 from sklearn.linear_model import LinearRegression
 from pyclimair.utils import fill_between_colormap
+from matplotlib.lines import Line2D
 
 """
 Plotting functions common to climatological and air quality data.
@@ -4568,20 +4569,23 @@ def plot_timeseries(
     ax.grid(color="black", alpha=0.5)
     ax.set_ylabel("%s [%s]" % (var, units), fontsize=16)
     ax.tick_params(axis="both", labelsize=16)
+
     if plot_MA is False:
         ax.set_title(
             "Timeseries of %s [%i-%i]"
             % (var, df.index.year.min(), df.index.year.max()),
             fontsize=20,
         )
+        ax.legend(bbox_to_anchor=(1.1, -0.11), ncol=10, fontsize=12).set_visible(True)
     else:
         ax.set_title(
-            "Timeseries of %s MA [%i-%i]"
-            % (var, df.index.year.min(), df.index.year.max()),
+            "Timeseries of %i-period MA %s [%i-%i]"
+            % (window, var, df.index.year.min(), df.index.year.max()),
             fontsize=20,
         )
 
-    ax.legend(bbox_to_anchor=(1, -0.10), ncol=3, fontsize=12).set_visible(True)
+        ax.legend(bbox_to_anchor=(0.88, -0.11), ncol=10, fontsize=12).set_visible(True)
+        
     ax.set_xlim(
         [df.index[0] - dt.timedelta(days=15), df.index[-1] + dt.timedelta(days=15)]
     )
@@ -4615,6 +4619,8 @@ def plot_timeseries(
         fontsize=12,
         transform=plt.gcf().transFigure,
     )
+
+    plt.subplots_adjust(bottom=0.14)
     fig.savefig(filename, dpi=300)
 
     return None
@@ -5747,15 +5753,14 @@ def get_annual_cycle(
 
     return accum_mean_df
 
-
 def annual_meteogram(
-    df: pd.DataFrame,
-    df_climate: pd.DataFrame,
-    year_to_plot: int,
-    climate_normal_period: list[int],
-    database: str,
-    station_name: str,
-    filename: str,
+    df,
+    df_climate,
+    year_to_plot,
+    climate_normal_period,
+    database,
+    station_name,
+    filename,
     plot_anoms=False,
     show_seasons=True,
 ):
@@ -5769,15 +5774,15 @@ def annual_meteogram(
     df_climate: DataFrame
         DataFrame containing the climatological normal data
     year_to_plot: int
-        Integer indicating the year to be plotted
+        Year to be plotted
     climate_normal_period: list
-        List containing the first and last year of the reference period to be used as climatological normal
+        First and last year of the reference period to be used as climatological normal
     database: str
-        String representing the name of the database from which the plotted data comes
+        Name of the database from which the plotted data comes
     station_name: str
-        String representing the name of the location of the data
+        Name of the location of the data
     filename: str
-        String containing the absolute path where the plot is going to be saved
+        Absolute path where the plot is going to be saved
     plot_anoms: boolean
         If true, temperature and wind values will be plotted as departures from the climatological selected statistic
     show_seasons: boolean
@@ -5800,8 +5805,11 @@ def annual_meteogram(
     df = df.copy()
     df_climate = df_climate.copy()
 
-    yearmin = df.index.year.min()
-    yearmax = df.index.year.max()
+    #yearmin = df.index.year.min()
+    #yearmax = df.index.year.max()
+
+    yearmin = df['Temp'].first_valid_index().year  # df.index.year.min()
+    yearmax = df['Temp'].last_valid_index().year
 
     df = df[df.index.year == year_to_plot]
     df_climate = df_climate[df_climate.index.year == year_to_plot]
@@ -5833,6 +5841,7 @@ def annual_meteogram(
         offset_formats=["", "", "", "", "", ""],
     )
 
+    # Plot temperatures
     (Tmedian,) = ax[0].plot(
         df_climate.loc[df_climate.index.year == year_to_plot, "Temp"].index,
         df_climate.loc[df_climate.index.year == year_to_plot, "Temp"],
@@ -5879,6 +5888,7 @@ def annual_meteogram(
                 alpha=0.7,
             )
 
+    # Plot rainfall
     (accumrainmedian,) = ax[1].plot(
         df_climate.loc[df_climate.index.year == year_to_plot, "Accum. Rainfall"].index,
         df_climate.loc[df_climate.index.year == year_to_plot, "Accum. Rainfall"],
@@ -5907,6 +5917,7 @@ def annual_meteogram(
         alpha=0.7,
     )
 
+    # Plot wind speed
     (windmedian,) = ax[2].plot(
         df_climate.loc[df_climate.index.year == year_to_plot, "WindSpeed_median"].index,
         df_climate.loc[df_climate.index.year == year_to_plot, "WindSpeed_median"],
@@ -5956,7 +5967,7 @@ def annual_meteogram(
     for i in range(len(ax)):
         ax[i].tick_params(labelsize=16)
         ax[i].grid(color="black")
-        ax[i].legend(fontsize=14)
+        #ax[i].legend(fontsize=14, ncol=2)
         ax[i].set_xlim(
             df.index.min() - dt.timedelta(days=2), df.index.max() + dt.timedelta(days=2)
         )
@@ -6007,7 +6018,7 @@ def annual_meteogram(
                 zorder=-10,
             )
 
-    ax1.legend(fontsize=14.5)
+    #ax1.legend(fontsize=14.5, loc='upper left', bbox_to_anchor=(0.575, 0.99), ncol=2)
     ax1.tick_params(labelsize=18)
 
     ax[0].set_title("Daily temperature", fontsize=21)
@@ -6078,7 +6089,7 @@ def annual_meteogram(
     text.patch.set_alpha(0.5)
     plt.text(
         0.031,
-        0.955,
+        0.96,
         "Climate normal period: %i-%i"
         % (climate_normal_period[0], climate_normal_period[1]),
         fontsize=16,
@@ -6086,33 +6097,39 @@ def annual_meteogram(
     )
     plt.text(
         0.031,
-        0.93,
+        0.934,
         "Period with data: %i-%i" % (yearmin, yearmax),
         fontsize=16,
         transform=plt.gcf().transFigure,
     )
     plt.text(
-        0.79,
-        0.955,
+        0.75,
+        0.96,
         "Database: %s" % database,
         fontsize=16,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
     plt.text(
-        0.79,
-        0.93,
+        0.75,
+        0.934,
         "Location: %s" % station_name,
         fontsize=16,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
+
+    # Custom legend
+    custom_lines = [Line2D([0], [0], color='red', lw=4),
+                    Line2D([0], [0], color='black', lw=4)]
+
+    fig.legend(custom_lines, [year_to_plot, 'Climate normal'], bbox_to_anchor=(0.65,0.96), ncol=2, fontsize=15, frameon=False)
+
     plt.subplots_adjust(
         left=0.05, right=0.95, hspace=0.12, wspace=0.1, bottom=0.03, top=0.9
     )
     # fig.autofmt_xdate()
     fig.savefig(filename, dpi=300)
-
 
 def plot_accumulated_anomalies(
     df: pd.DataFrame,
@@ -8158,3 +8175,412 @@ def threevar_windrose_trend(
 
     fig.suptitle("%s trend [%s/year] for different wind speeds and directions" % (extra_var, units), fontsize=25, y=0.955, wrap=True)
     fig.savefig(filename, dpi=300)
+
+def threevar_windrose_probability(    
+    df: pd.DataFrame,
+    vars_list: list[str],
+    condition: str,
+    study_period: list[int],
+    units: str,
+    database: str,
+    station_name: str,
+    filename: str,
+    grouping_freq='year',
+    cmap='Blues',
+    wspd_step=1.
+):
+    """
+    This function allows to plot the probability of a value for a third variable for each wind direction and speed
+
+    Arguments
+    ----------
+    df: DataFrame
+        DataFrame containing the data
+    vars_list: int
+       List of strings indicating the names of the variable to be plotted. 
+       Two of them must represent wind speed and wind direction
+    condition: str
+        String containing the condition for which to compute the probability of occurrence (i.e.: '>20')
+    study_period: list
+        List containing the first and last year of the reference period to be used for the analysis
+    database: str
+        String representing the name of the database from which the plotted data comes
+    units: str
+        String representing the units of the third variable
+    station_name: str
+        String representing the name of the location of the data
+    filename: str
+        String containing the absolute path where the plot is going to be saved
+    grouping_freq: str
+        The time scale into which the data is going to be grouped
+    grouping_stat: str
+        The statistic for data grouping
+    cmap: str or matplotlib colormap
+        Colormap for the third variable representation
+    wspd_step: float
+        Step of the wind speed aggregation
+
+    """
+
+    df = df.copy()
+    df = df[vars_list]
+
+    yearmin = df.first_valid_index().year  # df.index.year.min()
+    yearmax = df.last_valid_index().year
+
+    # Select desired period
+    df = df[(df.index.year >= study_period[0]) & (df.index.year <= study_period[1])]
+
+    yearmin_an = df.first_valid_index().year 
+    yearmax_an = df.last_valid_index().year
+
+    extra_var = [x for x in vars_list if 'wind' not in x.lower()][0]
+
+    # Extract limit value:
+    limit = float(''.join(filter(str.isdigit, condition)))
+
+    # Set resolution of windroses
+
+    # Wind Direction must be in radians:
+    if df['WindDir'].max() > 2*np.pi:
+        df['WindDir_rad'] = np.radians(df['WindDir'])
+
+    else:
+        df['WindDir_rad'] = df['WindDir']
+
+    wdir_sorted = df['WindDir_rad'].sort_values().dropna()
+    wdir_shifted = wdir_sorted.diff()
+    wdir_shifted = wdir_shifted[wdir_shifted != 0]
+
+    wspd_sorted = df['WindSpeed'].sort_values().dropna()
+    wspd_shifted = wspd_sorted.diff()
+    wspd_shifted = wspd_shifted[wspd_shifted != 0]
+
+    wspd_factor = wspd_step # Step of the wind speed aggregation
+
+    # Create groups of wind direction and wind speed, for data aggregation
+    azimuths_list_deg = np.linspace(0, 2*np.pi, int(np.ceil(2*np.pi/(max(np.radians(22.5),wdir_shifted.abs().min()))))) - max(np.radians(22.5),wdir_shifted.abs().min())/2  #Maximum 16 WD
+    azimuths_list_deg_centroid = np.linspace(0, 2*np.pi, int(np.ceil(2*np.pi/(max(np.radians(22.5),wdir_shifted.abs().min())))))
+    #labels = ["{0} - {1}".format(azimuths_list_deg[i], azimuths_list_deg[i + 1]) for i in range(len(azimuths_list)-1)]
+    df['WindDir centroid'] = pd.cut(df['WindDir_rad'], azimuths_list_deg, right=False, labels=azimuths_list_deg_centroid[:-1])
+
+
+    zeniths_list = np.arange(0, np.ceil(df.WindSpeed.max()), wspd_factor ) - wspd_factor #(np.ceil(df.WindSpeed.max())/32)/2
+    zeniths_list_centroid = np.arange(0, np.ceil(df.WindSpeed.max()), wspd_factor ) #[float((zeniths_list[i] + zeniths_list[i+1])/2) for i in range(len(zeniths_list)-1)]
+    df['WindSpeed centroid'] = pd.cut(df['WindSpeed'], zeniths_list, right=False, labels=zeniths_list_centroid[:-1])
+
+    month_names = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ]
+
+    
+    if grouping_freq.lower() == 'year':
+        # Aggregate data for each category and remove unnecessary columns
+        #df_list = [df.groupby(['WindDir centroid', 'WindSpeed centroid']).apply(
+        #    grouping_stat, numeric_only=True).drop(
+        #    columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()]
+
+        if '>' in condition and '=' not in condition:
+            df_list = [df.assign(probability=100*(df[extra_var] > limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True).drop(
+                        columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()]
+        if '>' in condition and '=' in condition:
+            df_list = [df.assign(probability=100*(df[extra_var] >= limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True).drop(
+                        columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()]
+        if '<' in condition and '=' not in condition:
+            df_list = [df.assign(probability=100*(df[extra_var] < limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True).drop(
+                        columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()]
+        if '<' in condition and '=' in condition:
+            df_list = [df.assign(probability=100*(df[extra_var] <= limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True).drop(
+                        columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()]
+            
+        if '==' in condition:
+             df_list = [df.assign(probability=100*(df[extra_var] == limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True).drop(
+                        columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()]           
+
+        min_vals = [df.dropna()[extra_var].min()]
+        max_vals = [df.dropna()[extra_var].max()]
+
+        nrow = 1
+        ncol = 1
+
+        Xsize=15
+        Ysize=9
+        
+    elif grouping_freq.lower() == 'season':
+        # Group to season
+        month_to_season_lu = np.array(
+            [
+                None,
+                "DJF",
+                "DJF",
+                "MAM",
+                "MAM",
+                "MAM",
+                "JJA",
+                "JJA",
+                "JJA",
+                "SON",
+                "SON",
+                "SON",
+                "DJF",
+            ]
+        )
+        grp_ary = month_to_season_lu[df.index.month]
+        df["season"] = grp_ary
+
+        df_list = {}
+
+        min_vals = []
+        max_vals =  []
+
+        season_names = [
+            "DJF",
+            "MAM",
+            "JJA",
+            "SON"
+        ]
+        for i in range(4):
+            if '>' in condition and '=' not in condition:
+                df_list[i] = (
+                    df[df.season == season_names[i]]
+                    .dropna().assign(probability=100*(df[extra_var] > limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True).drop(columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                )
+
+            if '>' in condition and '=' in condition:
+                df_list[i] = (
+                    df[df.season == season_names[i]]
+                    .dropna().assign(probability=100*(df[extra_var] >= limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True).drop(columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                )
+            if '<' in condition and '=' not in condition:
+                df_list[i] = (
+                    df[df.season == season_names[i]]
+                    .dropna().assign(probability=100*(df[extra_var] < limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True).drop(columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                )
+            if '<' in condition and '=' in condition:
+                df_list[i] = (
+                    df[df.season == season_names[i]]
+                    .dropna().assign(probability=100*(df[extra_var] <= limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True).drop(columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                )
+                
+            if '==' in condition:
+                df_list[i] = (
+                    df[df.season == season_names[i]]
+                    .dropna().assign(probability=100*(df[extra_var] == limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True).drop(columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                )
+        
+
+            # For bins definition
+            min_vals.append(np.floor(df_list[i][extra_var].min()))
+            max_vals.append(np.ceil(df_list[i][extra_var].max()))
+
+        # For plotting purposes
+        nrow = 2
+        ncol = 2
+
+        Xsize=18
+        Ysize=16.5
+
+    elif grouping_freq.lower() == 'month':
+        df_list = {}
+        min_vals = []
+        max_vals = []
+        for i in range(1, 13):
+                #df_list[i-1] = (
+                #    df[df.index.month == i].dropna().groupby(
+                #    ['WindDir centroid', 'WindSpeed centroid']).apply(
+                #    grouping_stat, numeric_only=True).drop(
+                #    columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                #)
+
+            if '>' in condition and '=' not in condition:
+                df_list[i-1] = (
+                    df[df.index.month == i].dropna().assign(probability=100*(df[extra_var] > limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True)
+                    .drop(columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                )
+            if '>' in condition and '=' in condition:
+                df_list[i-1] = (
+                    df[df.index.month == i].dropna().assign(probability=100*(df[extra_var] >= limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True)
+                    .drop(columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                )
+            if '<' in condition and '=' not in condition:
+                df_list[i-1] = (
+                    df[df.index.month == i].dropna().assign(probability=100*(df[extra_var] < limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True)
+                    .drop(columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                )
+            if '>' in condition and '=' in condition:
+                df_list[i-1] = (
+                    df[df.index.month == i].dropna().assign(probability=100*(df[extra_var] <= limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True)
+                    .drop(columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                )
+            if '==' in condition:
+                df_list[i-1] = (
+                    df[df.index.month == i].dropna().assign(probability=100*(df[extra_var] == limit))
+                    .groupby(['WindDir centroid','WindSpeed centroid'])
+                    .mean(numeric_only=True)
+                    .drop(columns=['WindDir_rad','WindDir','WindSpeed']).reset_index()
+                )
+
+
+            # For bins definition
+            min_vals.append(np.floor(df_list[i-1][extra_var].min()))
+            max_vals.append(np.ceil(df_list[i-1][extra_var].max()))
+
+
+        # For plotting purposes
+        nrow = 3
+        ncol = 4
+
+        Xsize=23
+        Ysize=19
+
+
+    fig, axs = plt.subplots(ncols=ncol, nrows=nrow, figsize=(Xsize,Ysize), subplot_kw={"projection":"polar"})
+    if len(df_list) == 1:
+        ax = {}
+        ax[0] = axs
+    else:
+        ax = axs.flatten()
+
+    for p in range(len(df_list)):
+        azimuths, zeniths = np.meshgrid(azimuths_list_deg_centroid, zeniths_list_centroid)
+        #azimuths, zeniths = np.meshgrid(np.linspace(0, 2*np.pi, 36), np.linspace(0, np.ceil(df.WindSpeed.max()), 36 ))
+        Z = interpolate.griddata((df_list[p]['WindDir centroid'], df_list[p]['WindSpeed centroid']), df_list[p]['probability'], (azimuths, zeniths), method='linear')
+
+        ax[p].set_theta_zero_location('N')
+        ax[p].set_theta_direction(-1)
+        img = ax[p].pcolormesh(azimuths, zeniths, Z, cmap=cmap, vmin=0.001, vmax=100)
+#        img = ax[p].pcolormesh(azimuths, zeniths, Z, cmap=cmap, vmin=np.nanmin(min_vals), vmax=np.nanmax(max_vals))
+        ax[p].grid(color='k')
+        ax[p].tick_params(axis='both',labelsize=17)
+        ax[p].set_facecolor('grey')
+
+        #cntf = ax[p].contourf(theta, r, df_list[p][extra_var], cmap='jet',extend='both')
+            #levels=np.linspace(np.mean(np.log10(E)), np.amax(np.log10(E)), 15))
+
+        #ax.set_rlim(0, .3)
+        label_position=ax[p].get_rlabel_position()
+        #ax[p].text(np.radians(label_position+25),ax[p].get_rmax()/1.5,'f (Hz)',
+        #        rotation=label_position,ha='center',va='center')
+
+        if len(df_list) == 4:
+            ax[p].set_title(
+                    [
+                        "December-January-February",
+                        "March-April-May",
+                        "June-July-August",
+                        "September-October-November",
+                    ][p],
+                    fontsize=21,
+                )
+            
+        if len(df_list) == 12:
+            ax[p].set_title(
+                    month_names[p],
+                    fontsize=22,
+                )
+    
+    #cbar=fig.colorbar(img, ax=axs, orientation='vertical', fraction=.05, pad=0.15) #plt.colorbar(img)
+    plt.text(
+        0.025,
+        0.98,
+        "Analysed period: %i-%i"
+        % (yearmin_an, yearmax_an),
+        fontsize=16,
+        transform=plt.gcf().transFigure,
+    )
+    plt.text(
+        0.28,
+        0.98,
+        "Period with data: %i-%i" % (yearmin, yearmax),
+        fontsize=16,
+        transform=plt.gcf().transFigure,
+    )
+    plt.text(
+        0.55,
+        0.98,
+        "Database: %s" % database,
+        fontsize=16,
+        transform=plt.gcf().transFigure,
+        wrap=True,
+    )
+    plt.text(
+        0.78,
+        0.98,
+        "Location: %s" % station_name,
+        fontsize=16,
+        transform=plt.gcf().transFigure,
+        wrap=True,
+    )
+
+    if len(df_list) == 4:
+        plt.subplots_adjust(
+            left=0.02, right=0.83, hspace=0.185, wspace=0.15, bottom=0.03, top=0.88
+        )
+
+        cbar_ax = fig.add_axes([0.885, 0.08, 0.04, 0.8])
+        cbar = fig.colorbar(img, cax=cbar_ax)
+        cbar.ax.set_title('%', fontsize=22)
+        cbar.ax.tick_params(labelsize=20)
+
+    elif len(df_list) == 12:
+        plt.subplots_adjust(
+            left=0.03, right=0.885, hspace=0.13, wspace=0.25, bottom=0.03, top=0.88
+        )
+
+        cbar_ax = fig.add_axes([0.915, 0.08, 0.04, 0.8])
+        cbar = fig.colorbar(img, cax=cbar_ax)
+        cbar.ax.set_title('%', fontsize=22)
+        cbar.ax.tick_params(labelsize=20)
+
+    else:
+        plt.subplots_adjust(
+            left=0.02, right=0.8, hspace=0.13, wspace=0.12, bottom=0.05, top=0.86
+        )
+
+        cbar_ax = fig.add_axes([0.85, 0.08, 0.04, 0.8])
+        cbar = fig.colorbar(img, cax=cbar_ax)
+        cbar.ax.set_title('%', fontsize=20)
+        cbar.ax.tick_params(labelsize=18)
+
+    fig.suptitle("Probability of %s%s [%s] for different wind speeds and directions" % (extra_var, condition, units), fontsize=25, y=0.955, wrap=True)
+    fig.savefig(filename, dpi=300)
+

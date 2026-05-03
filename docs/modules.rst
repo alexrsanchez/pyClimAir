@@ -1,7 +1,7 @@
-pyClim
-======
+pyClimAir
+=========
 
 .. toctree::
    :maxdepth: 4
 
-   pyclim
+   pyclimair

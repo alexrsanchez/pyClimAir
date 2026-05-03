@@ -1,6 +1,6 @@
 
 # First: Import Python file(s) with all the functions
-from ._common import (
+from .common import (
     quality_control,
     compute_climate,
     compute_daily_records_oneyear,
@@ -24,7 +24,8 @@ from ._common import (
     compare_probdist,
     categories_evolution,
     threevar_windrose,
-    threevar_windrose_trend
+    threevar_windrose_trend,
+    threevar_windrose_probability
 )
 
 
@@ -51,7 +52,8 @@ __all__ = ['quality_control',
            'compare_probdist',
            'categories_evolution',
            'threevar_windrose',
-           'threevar_windrose_trend'
+           'threevar_windrose_trend',
+           'threevar_windrose_probability'
            ]
 #from .pyclimair import *
 

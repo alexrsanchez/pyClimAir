@@ -1,0 +1,56 @@
+Metadata-Version: 2.4
+Name: pyclimair
+Version: 0.0.5
+Summary: A Python package that makes analysing climatological and/or air quality data easy, and pretty!
+Author-email: Alejandro Rodri­guez Sanchez <ars.rodriguezs@gmail.com>
+Maintainer-email: Alejandro Rodri­guez Sanchez <ars.rodriguezs@gmail.com>
+License-Expression: MIT
+Project-URL: Homepage, https://https://github.com/alexrsanchez/pyClim
+Project-URL: Issues, https://https://github.com/alexrsanchez/pyClim/issues
+Keywords: climate,air quality,timeseries,plotting
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+License-File: LICENSE.txt
+Requires-Dist: pandas
+Requires-Dist: seaborn
+Requires-Dist: numpy
+Requires-Dist: matplotlib
+Requires-Dist: scipy
+Requires-Dist: pre-commit
+Requires-Dist: scikit-learn
+Dynamic: license-file
+
+# pyClimAir
+
+## A Python module to plot climatological and air quality data
+
+![Getting Started](./docs/pyClim_logo.png)
+
+pyClimAir is a Python package that makes analysing climatological and/or air quality data easy, and pretty!
+
+pyClimAir provides you with a set of Python functions so you can perform a complete analysis of your data with publication-quality figures.
+
+## Install
+
+To install the pyClimAir package, use the following command in your terminal:
+
+```
+pip install pyclimair
+```
+
+## Documentation
+
+You can learn about how pyClimAir works and see some examples on its documentation website:
+
+https://pyclim.readthedocs.io/en/latest/index.html
+
+## Contact
+
+Do you have any questions or suggestions? Have you found a bug? Open an issue or reach out:
+
+Alejandro Rodríguez Sánchez
+
+Email: ars.rodriguezs@gmail.com

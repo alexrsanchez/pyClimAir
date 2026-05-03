@@ -1,22 +1,34 @@
 What's new
 ==========
 
-Version 1.1.0
+Version 1.0.0
 =============
+
+This release reorganizes the functions with the aim of expanding the package for air quality users and improve the scalability of the package, and adds several new functionalities: one for air quality purposes and three common for climatological and air quality purposes.
 
 New Features
 ------------
-- compare_probdist
+- Added :func:`pyclimair.common.compare_probdist` which compares the probability distribution of a variable in a certain period versus the climatological normal.
+
+- Added :func:`pyclimair.common.threevar_windrose` which allows to plot a variable as a function of wind speed and direction and for different temporal aggregations: yearly, seasonal or monthly.
+
+- Added :func:`pyclimair.common.threevar_windrose_trend` which allows to plot the linear trend of a given variable as a function of wind speed and direction and for different temporal aggregations: yearly, seasonal or monthly.
+
+- Added :func:`pyclimair.common.threevar_windrose_probability` which allows to compute the probability of occurrence of a given condition as a function of wind speed and direction and for different temporal aggregations: yearly, seasonal or monthly.
+
+- Added :func:`pyclimair.air.annual_meteogram_with_pollutant` which allows to plot a meteorological meteogram with an air pollutant as a fourth variable.
+
+
 
 Fixes
 -----
 
-- In :func:`pyclimair.plot_variable_trends`, :func:`pyclimair.compute_and_plot_exceedances` and :func:`pyclimair.plot_periodaverages`, when grouping_stat is 'sum', if all values are NaN it now plots as NaN instead of zero. This fixes wrong trend and averages computations due to unrealistic zeros.
+- In :func:`pyclimair.common.plot_variable_trends`, :func:`pyclimair.common.compute_and_plot_exceedances` and :func:`pyclimair.common.plot_periodaverages`, when grouping_stat is 'sum', if all values are NaN it now plots as NaN instead of zero. This fixes wrong trend and averages computations due to unrealistic zeros.
 
 - :func:`pyclimair.categories_evolution` now shows NaN values, fixing unrealistic frequencies
 
 Enhancements
 ------------
-- :func:`pyclimair.categories_evolution` now creates categories' labels automatically, disappearing the "categories_labels" argument.
+- :func:`pyclimair.common.categories_evolution` now creates categories' labels automatically, disappearing the "categories_labels" argument.
 
-- Former function pyclimair.plot_periodaverages has been renamed to `pyclimair.plot_periodstats`, as it can also plot other statistics than averages.
+- Former function pyclimair.plot_periodaverages has been renamed to `pyclimair.common.plot_periodstats`, as it can also plot other statistics than averages.

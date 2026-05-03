@@ -2,10 +2,6 @@
 build-backend = "setuptools.build_meta"
 requires = ["setuptools >= 77.0.3"]
 
-[tool.setuptools.packages.find]
-where = ["src/"]
-include = ["clim", "air", "common", "utils"]
-
 [project]
 authors = [
   {name = "Alejandro Rodri­guez Sanchez", email = "ars.rodriguezs@gmail.com"}
@@ -36,5 +32,5 @@ requires-python = ">=3.11"
 version = "0.0.5"
 
 [project.urls]
-Homepage = "https://https://github.com/alexrsanchez/pyClim"
-Issues = "https://https://github.com/alexrsanchez/pyClim/issues"
+Homepage = "https://https://github.com/alexrsanchez/pyClimAir"
+Issues = "https://https://github.com/alexrsanchez/pyClimAir/issues"

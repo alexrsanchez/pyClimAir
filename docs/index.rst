@@ -8,8 +8,8 @@
 .. documentation for details.
 
 
-Welcome to pyClim's documentation!
-==================================
+Welcome to pyClimAir's documentation!
+=====================================
 
 .. image:: pyClim_logo_025.png
 

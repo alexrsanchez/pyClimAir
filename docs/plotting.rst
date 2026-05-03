@@ -25,7 +25,55 @@ The first step for plotting is, of course, to load the data:
     from scipy import stats, interpolate, signal
 
     # Import pyclim
-    from pyclim_test import *
+import numpy as np
+import matplotlib
+import pandas as pd
+import datetime as dt
+
+import os
+
+# Import pyclimair
+from pyclimair.common import (
+    quality_control,
+    compute_climate,
+    compute_daily_records_oneyear,
+    compute_records,
+    plot_records_count,
+    compute_and_plot_exceedances,
+    plot_variable_trends,
+    plot_data_vs_climate,
+    plot_data_vs_climate_withrecords,
+    plot_data_vs_climate_withrecords_multivar,
+    plot_periodstats,
+    plot_data_and_accum_anoms,
+    plot_data_and_annual_cycle,
+    plot_timeseries,
+    timeseries_extremevalues,
+    plot_annual_cycles,
+    get_annual_cycle,
+    annual_meteogram,
+    plot_accumulated_anomalies,
+    plot_anomalies,
+    compare_probdist,
+    categories_evolution,
+    threevar_windrose,
+    threevar_windrose_trend,
+    threevar_windrose_probability
+)
+
+from pyclimair.air import (
+    annual_meteogram_with_pollutant
+)
+
+from pyclimair.clim import (
+    compare_with_globaldataset
+)
+
+from pyclimair.utils import(
+    get_continuous_cmap
+)
+
+
 
     # Load the example data
     path = "%s/data/" % os.getcwd()
@@ -143,7 +191,7 @@ And for monthly anomalies, freq='1ME':
 Plotting accumulated anomalies
 ------------------------------
 
-Use the :func:`pyclim.plot_accumulated_anomalies` function to plot the accumulated anomalies during a year. Again, the 'freq' parameter allows the user to vary the temporal aggregation of the accumulated anomalies.
+Use the :func:`pyclim.common.plot_accumulated_anomalies` function to plot the accumulated anomalies during a year. Again, the 'freq' parameter allows the user to vary the temporal aggregation of the accumulated anomalies.
 
 Accumulated anomalies from day to day:
 
@@ -205,7 +253,7 @@ Monthly accumulated anomalies:
 Computing and plotting record values
 ------------------------------------
 
-For computing the record values, use the :func:`pyclim.compute_daily_records` function. Then, one can plot the evolution of the number of high and low records with :func:`pyclim.plot_records_count`. The following example illustrates how to compute and plot the number of days in each year exceeding a daily record.
+For computing the record values, use the :func:`pyclim.common.compute_daily_records` function. Then, one can plot the evolution of the number of high and low records with :func:`pyclim.common.plot_records_count`. The following example illustrates how to compute and plot the number of days in each year exceeding a daily record.
 
 .. image:: ../examples/plots/annual_records_Tmean.png
 
@@ -290,7 +338,7 @@ Once more, the user can set the temporal frequency of the records' aggregation u
 Plotting data versus the climatological normal values
 -----------------------------------------------------
 
-One interesting functionality of the pyClim package is the ability to plot data versus its climatological normal values, including the occurrence of record values given that a DataFrame including records is provided.
+One interesting functionality of the pyClimAir package is the ability to plot data versus its climatological normal values, including the occurrence of record values given that a DataFrame including records is provided.
 
 .. image:: ../examples/plots/Tmeantimeseries_climatemedian19912020_withrecords.png
 
@@ -344,7 +392,7 @@ One interesting functionality of the pyClim package is the ability to plot data 
 Classify data by categories
 ---------------------------
 
-Another visual way to represent the evolution of your data is to classify them by categories and then see the evolution of the occurrency of each category. This is done in pyClim with the :func:`pyclim.categories_evolution()` function.
+Another visual way to represent the evolution of your data is to classify them by categories and then see the evolution of the occurrency of each category. This is done in pyClim with the :func:`pyclim.common.categories_evolution()` function.
 The user can see the evolution of each category, grouped by their monthly, seasonal and yearly occurrences. If no categories' labels are given, the script computes the labels from the given categories. An example is shown below:
 
 .. image:: ../examples/plots/categories_Tmean_default.png
@@ -389,9 +437,9 @@ The 'time_scale' parameter allows to modify the temporal aggregation of the data
 Identifying trends in a dataset
 -------------------------------
 
-pyClim also allows you to rapidly identify trends in a dataset. Several functions allow to do that.
+pyClimAir also allows you to rapidly identify trends in a dataset. Several functions allow to do that.
 
-The :func:`pyclim.plot_variable_trends()` function, plots the time evolution of a certain variable. It also plots the mean value of each 'averaging_period' periods. The 'grouping' argument controls the temporal frequency of the variable aggregation, and the 'grouping_stat' controls the statistic to be plotted. It can be set to 'mean', if the user wants to know the temporal evolution of the average value of a variable, or to 'sum' (to see the evolution of the accumulated value of a variable, for example the total rainfall).
+The :func:`pyclim.common.plot_variable_trends()` function, plots the time evolution of a certain variable. It also plots the mean value of each 'averaging_period' periods. The 'grouping' argument controls the temporal frequency of the variable aggregation, and the 'grouping_stat' controls the statistic to be plotted. It can be set to 'mean', if the user wants to know the temporal evolution of the average value of a variable, or to 'sum' (to see the evolution of the accumulated value of a variable, for example the total rainfall).
 The optional argument 'alldatamean', which is set to True by default, allows to plot the average value of all the analysed period.
 
 .. image:: ../examples/plots/Rainfall_sum_withmean.png
@@ -427,7 +475,7 @@ The optional argument 'alldatamean', which is set to True by default, allows to 
         rain_limit=1,
     )
 
-Another function that allows to identify trends is the :func:`timeseries_extremevalues()` function, which allows the user to plot the evolution of extreme values of a given variable. As usual, the user can control the time discretization of the extreme values. Below, an example for annual and seasonal values is given.
+Another function that allows to identify trends is the :func:`pyclimair.common.timeseries_extremevalues()` function, which allows the user to plot the evolution of extreme values of a given variable. As usual, the user can control the time discretization of the extreme values. Below, an example for annual and seasonal values is given.
 
 .. image:: ../examples/plots/Annualextremevalues_Tmax_lines.png
 
@@ -463,7 +511,7 @@ Another function that allows to identify trends is the :func:`timeseries_extreme
 Period averages
 ---------------
 
-Use the :func:`pyclim.plot_periodaverages` function to plot the evolution of the mean or median value of a variable between two days. In the example below, the evolution of the daily mean temperature between June 1st (included) and September 1st (not included) is plotted:
+Use the :func:`pyclim.common.plot_periodaverages` function to plot the evolution of the mean or median value of a variable between two days. In the example below, the evolution of the daily mean temperature between June 1st (included) and September 1st (not included) is plotted:
 
 .. image:: ../examples/plots/examplesTmaxperiodaverages.png
 
@@ -491,8 +539,8 @@ Use the :func:`pyclim.plot_periodaverages` function to plot the evolution of the
 Meteograms
 ----------
 
-pyClim also offers the possibility of displaying data in form of a meteogram. A meteogram is a graphical presentation of one or more meteorological variables with respect to time. pyClim offers to construct a meteogram using Temperature, Rainfall and Wind Speed data, as showed in the example below.
-In pyClim, the meteogram shows, for each variable, a comparison of the given year data with the climatological normal values (provided that a DataFrame with the climate normal values is given). If the "plot_anoms" parameter is set to True, the values of the given year are represented as departures from the climatological normal values, as in this example.
+pyClimAir also offers the possibility of displaying data in form of a meteogram. A meteogram is a graphical presentation of one or more meteorological variables with respect to time. pyClim offers to construct a meteogram using Temperature, Rainfall and Wind Speed data, as showed in the example below.
+In pyClimAir, the meteogram shows, for each variable, a comparison of the given year data with the climatological normal values (provided that a DataFrame with the climate normal values is given). If the "plot_anoms" parameter is set to True, the values of the given year are represented as departures from the climatological normal values, as in this example.
 
 .. image:: ../examples/plots/2025_meteogram_bars.png
 
@@ -508,3 +556,65 @@ In pyClim, the meteogram shows, for each variable, a comparison of the given yea
         plotdir + "/%i_meteogram_bars.png" % year_to_plot,
         plot_anoms=True,
     )
+
+Since version 1.0.0, pyClimAir allows to include a fourth variable in the meteograms, with the aim of comparing the temporal evolution of air pollutants with relevant meteorological variables. This capability is included in :func:`pyclimair.air.annual_meteogram_with_pollutant`:
+
+.. code:: python
+
+    annual_meteogram_with_pollutant(
+        df1_complete,
+        climate_df_sep, 
+        2023, 
+        'NO2', 
+        climate_normal_period, 
+        database, station_name, 
+        plotdir+'/%i_meteogram_withpols_inside.png' %year_to_plot, 
+        plot_anoms=False, 
+        pol_subplot=False
+        )
+
+Comparing probability distributions
+-----------------------------------
+
+A capability introduced in version 1.0.0 is the function :func:`pyclimair.common.compare_probdist()`, which allows to compare the probability distribution of a certain period with that of a climatological reference period. Three options are given to the user in terms of the plot type: histogram, Cumulative Distribution Function (CDF) and both. The example below shows the result for the latter case. As in other pyClimAir functionalities, this function allows for yearly, seasonal and monthly aggregations.
+
+.. code:: python
+
+    compare_probdist(
+        df1_complete, df_normalclimate, 
+        [-5,0,5,10,15,20,25,30,50], 'Tmax', 'ºC', 
+        climate_normal_period, database, station_name, 
+        plotdir+'/Tmax_probdist.png', dist_type='histogram'
+        )
+
+
+3-variable polar plots: variable, trends and probabilities
+----------------------------------------------------------
+
+An exciting new group of functionalities of pyClimAir is the creation of three-variable polar plots, which allows to visualize several statistics of a given variable as a function of wind speed and direction. This group of functionalities is composed of three functions, each of them performing an specific task:
+With the function :func:`pyclimair.common.threevar_windrose()` the used can easily visualize the (mean or median) values of a given variable for different wind speeds and directions. Moreover, the function :func:`pyclimair.common.threevar_windrose_trend` allows to compute the linear trend of a given variable as a function of wind speed and direction. Finally, the :func:`pyclimair.common.threevar_windrose_probability` computes the probability of a variable meeting a given condition as a function of wind speed and direction.
+
+All of these three functions accept as argument the "grouping_freq" parameter which, as in other functions of pyclimair, controls the temporal frequency of the data aggregation, so wind-dependencies can be analysed for yearly, monthly or seasonal values. 
+
+A set of representative examples of each one of these three functions are shown below:
+
+.. code:: python
+
+    threevar_windrose(
+        df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 
+        'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+        grouping_freq='year', grouping_stat='mean'
+        )
+
+    threevar_windrose_trend(
+        df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 
+        'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+        grouping_freq='season', grouping_stat='mean'
+        )
+
+    threevar_windrose_probability(
+        df1_complete, ['WindSpeed','WindDir','Tmin'], '>20', 
+        climate_normal_period, 'ºC', database, station_name, 
+        plotdir+'/3var_probwindrose_Tmin_month_step1.png', 
+        grouping_freq='month', cmap=cmap_probability
+        )

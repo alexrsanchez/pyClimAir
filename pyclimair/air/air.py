@@ -9,6 +9,7 @@ import warnings
 from scipy import stats, interpolate
 import os
 from pathlib import Path
+from matplotlib.lines import Line2D
 
 """
 Air quality plotting functions
@@ -18,7 +19,6 @@ Contact: ars.rodriguezs@gmail.com
 """
 
 # ruff: noqa
-
 def annual_meteogram_with_pollutant(
     df: pd.DataFrame,
     df_climate: pd.DataFrame,
@@ -578,7 +578,7 @@ def annual_meteogram_with_pollutant(
         for i in range(len(axes)):
             axes[i].tick_params(labelsize=16)
             axes[i].grid(color="black")
-            axes[i].legend(fontsize=14)
+            #axes[i].legend(fontsize=14)
             axes[i].set_xlim(
                 df.index.min() - dt.timedelta(days=2), df.index.max() + dt.timedelta(days=2)
             )
@@ -658,7 +658,7 @@ def annual_meteogram_with_pollutant(
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         plt.text(        
             0.031,
-            0.94,
+            0.89,
             str(year_to_plot) + " last temperature anomaly: " + "%+g"
             % (float(temp_anom.values[0])),
             fontsize=15,
@@ -668,7 +668,7 @@ def annual_meteogram_with_pollutant(
 
         plt.text(        
             0.031,
-            0.94,
+            0.89,
             str(year_to_plot) + " accumulated rainfall anomaly: " + "%+g [%+g %%]"
             % (float(rain_anom.values[0]), float(rain_rel_anom.values[0]) ),
             fontsize=15,
@@ -678,7 +678,7 @@ def annual_meteogram_with_pollutant(
 
         plt.text(        
             0.031,
-            0.94,
+            0.89,
             str(year_to_plot) + " last wind anomaly: %+g"
             % (float(wind_anom.values[0])),
             fontsize=15,
@@ -698,7 +698,7 @@ def annual_meteogram_with_pollutant(
         text.patch.set_alpha(0.5)
         plt.text(
             0.031,
-            0.955,
+            0.96,
             "Climate normal period: %i-%i"
             % (climate_normal_period[0], climate_normal_period[1]),
             fontsize=16,
@@ -706,29 +706,40 @@ def annual_meteogram_with_pollutant(
         )
         plt.text(
             0.031,
-            0.93,
+            0.934,
             "Period with data: %i-%i" % (yearmin, yearmax),
             fontsize=16,
             transform=plt.gcf().transFigure,
         )
         plt.text(
-            0.79,
-            0.955,
+            0.75,
+            0.96,
             "Database: %s" % database,
             fontsize=16,
             transform=plt.gcf().transFigure,
             wrap=True,
         )
         plt.text(
-            0.79,
-            0.93,
+            0.75,
+            0.934,
             "Location: %s" % station_name,
             fontsize=16,
             transform=plt.gcf().transFigure,
             wrap=True,
         )
+
+        # Custom legend
+        custom_lines = [Line2D([0], [0], color='red', lw=4),
+                        Line2D([0], [0], color='black', lw=4)]
+
+        fig.legend(custom_lines, [year_to_plot, 'Climate normal'], bbox_to_anchor=(0.3,0.645), ncol=2, fontsize=15)
+
+        custom_lines2 = [Line2D([0], [0], color='black', lw=2, ls='-'),
+                        Line2D([0], [0], color='black', lw=2, ls='--')]
+        fig.legend(custom_lines2, ['Meteo variables', '%s' %pollutant], bbox_to_anchor=(0.6,0.645), ncol=2, fontsize=15)
+
         plt.subplots_adjust(
-            left=0.05, right=0.95, hspace=0.12, wspace=0.1, bottom=0.03, top=0.9
+            left=0.05, right=0.95, hspace=0.1, wspace=0.1, bottom=0.03, top=0.9
         )
         # fig.autofmt_xdate()
         fig.savefig(filename, dpi=300)
