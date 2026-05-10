@@ -107,127 +107,129 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">signal</span>
 
 <span class="c1"># Import pyclim</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="c1"># Import pyclimair</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyclimair.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">quality_control</span><span class="p">,</span>
+    <span class="n">compute_climate</span><span class="p">,</span>
+    <span class="n">compute_daily_records_oneyear</span><span class="p">,</span>
+    <span class="n">compute_records</span><span class="p">,</span>
+    <span class="n">plot_records_count</span><span class="p">,</span>
+    <span class="n">compute_and_plot_exceedances</span><span class="p">,</span>
+    <span class="n">plot_variable_trends</span><span class="p">,</span>
+    <span class="n">plot_data_vs_climate</span><span class="p">,</span>
+    <span class="n">plot_data_vs_climate_withrecords</span><span class="p">,</span>
+    <span class="n">plot_data_vs_climate_withrecords_multivar</span><span class="p">,</span>
+    <span class="n">plot_periodstats</span><span class="p">,</span>
+    <span class="n">plot_data_and_accum_anoms</span><span class="p">,</span>
+    <span class="n">plot_data_and_annual_cycle</span><span class="p">,</span>
+    <span class="n">plot_timeseries</span><span class="p">,</span>
+    <span class="n">timeseries_extremevalues</span><span class="p">,</span>
+    <span class="n">plot_annual_cycles</span><span class="p">,</span>
+    <span class="n">get_annual_cycle</span><span class="p">,</span>
+    <span class="n">annual_meteogram</span><span class="p">,</span>
+    <span class="n">plot_accumulated_anomalies</span><span class="p">,</span>
+    <span class="n">plot_anomalies</span><span class="p">,</span>
+    <span class="n">compare_probdist</span><span class="p">,</span>
+    <span class="n">categories_evolution</span><span class="p">,</span>
+    <span class="n">threevar_windrose</span><span class="p">,</span>
+    <span class="n">threevar_windrose_trend</span><span class="p">,</span>
+    <span class="n">threevar_windrose_probability</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyclimair.air</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">annual_meteogram_with_pollutant</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyclimair.clim</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compare_with_globaldataset</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyclimair.utils</span><span class="w"> </span><span class="kn">import</span><span class="p">(</span>
+    <span class="n">get_continuous_cmap</span>
+<span class="p">)</span>
+
+
+
+    <span class="c1"># Load the example data</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/data/&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="n">csvfiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;example_data.txt&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">csvfiles</span><span class="p">)</span>
+
+    <span class="c1"># Create metadata</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="mf">361.00</span><span class="p">,</span> <span class="o">-</span><span class="mf">361.00</span><span class="p">,</span> <span class="mi">461</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">metadata</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Estacion&quot;</span><span class="p">,</span> <span class="s2">&quot;Codigo&quot;</span><span class="p">,</span> <span class="s2">&quot;latitud_OK&quot;</span><span class="p">,</span> <span class="s2">&quot;longitud_OK&quot;</span><span class="p">,</span> <span class="s2">&quot;Altitud&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Some useful variables</span>
+    <span class="n">year_to_plot</span> <span class="o">=</span> <span class="mi">2025</span>
+    <span class="n">climate_normal_period</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1991</span><span class="p">,</span> <span class="mi">2020</span><span class="p">]</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Tmin&quot;</span><span class="p">,</span> <span class="s2">&quot;Tmean&quot;</span><span class="p">,</span> <span class="s2">&quot;Tmax&quot;</span><span class="p">,</span> <span class="s2">&quot;Rainfall&quot;</span><span class="p">,</span> <span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span>
+    <span class="n">database</span> <span class="o">=</span> <span class="s2">&quot;Example&quot;</span>
+
+    <span class="c1"># Mapping variables</span>
+    <span class="n">units_list</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># [&#39;ºC&#39;,&#39;ºC&#39;,&#39;ºC&#39;, &#39;m/s&#39;]</span>
+    <span class="n">units_list</span><span class="p">[</span><span class="s2">&quot;Tmin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ºC&quot;</span>
+    <span class="n">units_list</span><span class="p">[</span><span class="s2">&quot;Tmean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ºC&quot;</span>
+    <span class="n">units_list</span><span class="p">[</span><span class="s2">&quot;Tmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ºC&quot;</span>
+    <span class="n">units_list</span><span class="p">[</span><span class="s2">&quot;Rainfall&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mm&quot;</span>
+    <span class="n">units_list</span><span class="p">[</span><span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;m/s&quot;</span>
+
+    <span class="n">wd_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;NNE&quot;</span><span class="p">:</span> <span class="mf">22.5</span><span class="p">,</span>
+        <span class="s2">&quot;NE&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
+        <span class="s2">&quot;ENE&quot;</span><span class="p">:</span> <span class="mf">67.5</span><span class="p">,</span>
+        <span class="s2">&quot;E&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
+        <span class="s2">&quot;ESE&quot;</span><span class="p">:</span> <span class="mf">112.5</span><span class="p">,</span>
+        <span class="s2">&quot;SE&quot;</span><span class="p">:</span> <span class="mi">125</span><span class="p">,</span>
+        <span class="s2">&quot;SSE&quot;</span><span class="p">:</span> <span class="mf">147.5</span><span class="p">,</span>
+        <span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+        <span class="s2">&quot;SSW&quot;</span><span class="p">:</span> <span class="mf">202.5</span><span class="p">,</span>
+        <span class="s2">&quot;SW&quot;</span><span class="p">:</span> <span class="mi">225</span><span class="p">,</span>
+        <span class="s2">&quot;WSW&quot;</span><span class="p">:</span> <span class="mf">247.5</span><span class="p">,</span>
+        <span class="s2">&quot;W&quot;</span><span class="p">:</span> <span class="mi">270</span><span class="p">,</span>
+        <span class="s2">&quot;WNW&quot;</span><span class="p">:</span> <span class="mf">292.5</span><span class="p">,</span>
+        <span class="s2">&quot;NW&quot;</span><span class="p">:</span> <span class="mi">315</span><span class="p">,</span>
+        <span class="s2">&quot;NNW&quot;</span><span class="p">:</span> <span class="mf">337.5</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Select metadata</span>
+    <span class="n">metadatos_sta</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">metadata</span><span class="o">.</span><span class="n">ID</span> <span class="o">==</span> <span class="s2">&quot;example&quot;</span><span class="p">]</span>
+    <span class="n">codigo_sta</span> <span class="o">=</span> <span class="n">metadatos_sta</span><span class="o">.</span><span class="n">ID</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># nombres_mod[listanombres] = nombres_mod[listanombres].replace(&#39;/&#39;,&#39;-&#39;)</span>
+    <span class="n">station_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">metadatos_sta</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">station_name</span> <span class="o">=</span> <span class="n">station_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+
+    <span class="n">plotdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;plots/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="s2">&quot;example&quot;</span><span class="p">))</span>
+    <span class="n">plotdir</span> <span class="o">=</span> <span class="n">plotdir</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">plotdir</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">plotdir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creation of the directory </span><span class="si">%s</span><span class="s2"> failed&quot;</span> <span class="o">%</span> <span class="n">plotdir</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Successfully created the directory </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">plotdir</span><span class="p">)</span>
+
+
+    <span class="c1"># Read data</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">csvfiles</span> <span class="k">if</span> <span class="n">codigo_sta</span> <span class="ow">in</span> <span class="n">x</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;latin-1&quot;</span><span class="p">)</span>
+
+    <span class="n">df1</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span>
+
+    <span class="n">df1</span><span class="p">[</span><span class="s2">&quot;Day&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span>
+    <span class="n">df1</span><span class="p">[</span><span class="s2">&quot;Month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span>
+    <span class="n">df1</span><span class="p">[</span><span class="s2">&quot;Year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span>
+    <span class="n">df1</span><span class="p">[</span><span class="s2">&quot;Accumpcp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span><span class="p">)[</span><span class="s2">&quot;Rainfall&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>import numpy as np
-import matplotlib
-import pandas as pd
-import datetime as dt</p>
-<p>import os</p>
-<p># Import pyclimair
-from pyclimair.common import (</p>
-<blockquote>
-<div><p>quality_control,
-compute_climate,
-compute_daily_records_oneyear,
-compute_records,
-plot_records_count,
-compute_and_plot_exceedances,
-plot_variable_trends,
-plot_data_vs_climate,
-plot_data_vs_climate_withrecords,
-plot_data_vs_climate_withrecords_multivar,
-plot_periodstats,
-plot_data_and_accum_anoms,
-plot_data_and_annual_cycle,
-plot_timeseries,
-timeseries_extremevalues,
-plot_annual_cycles,
-get_annual_cycle,
-annual_meteogram,
-plot_accumulated_anomalies,
-plot_anomalies,
-compare_probdist,
-categories_evolution,
-threevar_windrose,
-threevar_windrose_trend,
-threevar_windrose_probability</p>
-</div></blockquote>
-<p>)</p>
-<dl class="simple">
-<dt>from pyclimair.air import (</dt><dd><p>annual_meteogram_with_pollutant</p>
-</dd>
-</dl>
-<p>)</p>
-<dl class="simple">
-<dt>from pyclimair.clim import (</dt><dd><p>compare_with_globaldataset</p>
-</dd>
-</dl>
-<p>)</p>
-<dl class="simple">
-<dt>from pyclimair.utils import(</dt><dd><p>get_continuous_cmap</p>
-</dd>
-</dl>
-<p>)</p>
-<blockquote>
-<div><p># Load the example data
-path = “%s/data/” % os.getcwd()
-csvfiles = glob.glob(os.path.join(path, “example_data.txt”))
-print(csvfiles)</p>
-<p># Create metadata
-metadata = pd.DataFrame([“example”, “example”, 361.00, -361.00, 461]).T
-metadata.columns = [“Estacion”, “Codigo”, “latitud_OK”, “longitud_OK”, “Altitud”]</p>
-<p># Some useful variables
-year_to_plot = 2025
-climate_normal_period = [1991, 2020]
-variables = [“Tmin”, “Tmean”, “Tmax”, “Rainfall”, “WindSpeed”]
-database = “Example”</p>
-<p># Mapping variables
-units_list = {}  # [‘ºC’,’ºC’,’ºC’, ‘m/s’]
-units_list[“Tmin”] = “ºC”
-units_list[“Tmean”] = “ºC”
-units_list[“Tmax”] = “ºC”
-units_list[“Rainfall”] = “mm”
-units_list[“WindSpeed”] = “m/s”</p>
-<dl class="simple">
-<dt>wd_map = {</dt><dd><p>“N”: 0,
-“NNE”: 22.5,
-“NE”: 45,
-“ENE”: 67.5,
-“E”: 90,
-“ESE”: 112.5,
-“SE”: 125,
-“SSE”: 147.5,
-“S”: 180,
-“SSW”: 202.5,
-“SW”: 225,
-“WSW”: 247.5,
-“W”: 270,
-“WNW”: 292.5,
-“NW”: 315,
-“NNW”: 337.5,</p>
-</dd>
-</dl>
-<p>}</p>
-<p># Select metadata
-metadatos_sta = metadata[metadata.ID == “example”]
-codigo_sta = metadatos_sta.ID.values[0]
-# nombres_mod[listanombres] = nombres_mod[listanombres].replace(‘/’,’-‘)
-station_name = str(metadatos_sta.Name.values[0])
-station_name = station_name.replace(“/”, “-“)</p>
-<p>plotdir = os.path.join(os.getcwd(), “plots/%s/%s” % (database, “example”))
-plotdir = plotdir.replace(”\”, “/”)
-if os.path.isdir(plotdir) == False:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>try:</dt><dd><p>os.mkdir(plotdir)</p>
-</dd>
-<dt>except OSError:</dt><dd><p>print(“Creation of the directory %s failed” % plotdir)</p>
-</dd>
-<dt>else:</dt><dd><p>print(“Successfully created the directory %s “ % plotdir)</p>
-</dd>
-</dl>
-</div></blockquote>
-<p># Read data
-input_file = [x for x in csvfiles if codigo_sta in x][0]
-df1 = pd.read_csv(input_file, sep=”;”, decimal=”,”, header=0, encoding=”latin-1”)</p>
-<p>df1[“Date”] = pd.to_datetime(df1.iloc[:, 0])
-df1 = df1.set_index(“Date”)</p>
-<p>df1[“Day”] = df1.index.day
-df1[“Month”] = df1.index.month
-df1[“Year”] = df1.index.year
-df1[“Accumpcp”] = df1.groupby(df1.index.year)[“Rainfall”].cumsum()</p>
-</div></blockquote>
 </section>
 <section id="plotting-a-timeseries-of-anomalies">
 <h2>Plotting a timeseries of anomalies<a class="headerlink" href="#plotting-a-timeseries-of-anomalies" title="Link to this heading"></a></h2>

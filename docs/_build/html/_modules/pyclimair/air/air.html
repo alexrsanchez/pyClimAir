@@ -1,0 +1,853 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyclimair.air.air &mdash; pyclimair 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pyclimair
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Sections:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">How to use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">Plotting examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyClimAir</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyclimair</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyclimair.air.air</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyclimair.air.air</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.dates</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mdates</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.offsetbox</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnchoredText</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span><span class="p">,</span> <span class="n">interpolate</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Air quality plotting functions</span>
+
+<span class="sd">Author: Alejandro Rodríguez Sánchez</span>
+<span class="sd">Contact: ars.rodriguezs@gmail.com</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># ruff: noqa</span>
+<div class="viewcode-block" id="annual_meteogram_with_pollutant">
+<a class="viewcode-back" href="../../../pyclimair.html#pyclimair.air.annual_meteogram_with_pollutant">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">annual_meteogram_with_pollutant</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">df_climate</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">year_to_plot</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">pollutant</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">climate_normal_period</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">station_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">plot_anoms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">show_seasons</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">pol_subplot</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function allows to plot and compare the annual meteogram of a certain year (year_to_plot) with the climatological normal</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df: DataFrame</span>
+<span class="sd">        DataFrame containing the data</span>
+<span class="sd">    df_climate: DataFrame</span>
+<span class="sd">        DataFrame containing the climatological normal data</span>
+<span class="sd">    year_to_plot: int</span>
+<span class="sd">        Integer indicating the year to be plotted</span>
+<span class="sd">    pollutant: int</span>
+<span class="sd">        String indicating the name of the pollutant to be plotted</span>
+<span class="sd">    climate_normal_period: list</span>
+<span class="sd">        List containing the first and last year of the reference period to be used as climatological normal</span>
+<span class="sd">    database: str</span>
+<span class="sd">        String representing the name of the database from which the plotted data comes</span>
+<span class="sd">    station_name: str</span>
+<span class="sd">        String representing the name of the location of the data</span>
+<span class="sd">    filename: str</span>
+<span class="sd">        String containing the absolute path where the plot is going to be saved</span>
+<span class="sd">    plot_anoms: boolean</span>
+<span class="sd">        If true, temperature and wind values will be plotted as departures from the climatological selected statistic</span>
+<span class="sd">    show_seasons: boolean</span>
+<span class="sd">        If true, the background is plotted with different colors for each climatological season</span>
+<span class="sd">    pol_subplot: boolean</span>
+<span class="sd">        If true, the pollutant will be plotted in a separate subplot. If False, it will be plotted in each one of the existing subplots. </span>
+<span class="sd">        The latter is only possible if plot_anoms is set to False.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;Temp&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;The temperature data should be included in df with column name &quot;Temp&quot;&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;Rainfall&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;The rainfall data should be included in df with column name &quot;Rainfall&quot;&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;WindSpeed&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;The wind speed data should be included in df with column name &quot;WindSpeed&quot;&#39;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pollutant</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;The pollutant data should be included in df&#39;</span>
+        <span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df_climate</span> <span class="o">=</span> <span class="n">df_climate</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">yearmin</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">yearmax</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">]</span>
+    <span class="n">df_climate</span> <span class="o">=</span> <span class="n">df_climate</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">]</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Rainfall&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+    <span class="n">df_climate</span><span class="p">[</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_climate</span><span class="p">[</span><span class="s2">&quot;Rainfall_mean&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+    <span class="c1"># For plotting visuals&#39; purpose</span>
+    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">12</span> <span class="ow">or</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">31</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">-01-01&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">-12-31&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;1D&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">12</span> <span class="ow">or</span> <span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">31</span><span class="p">:</span>
+        <span class="n">df_climate</span> <span class="o">=</span> <span class="n">df_climate</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">-01-01&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">-12-31&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;1D&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Plotting</span>
+    <span class="k">if</span> <span class="n">pol_subplot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">17</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">fmt_minor</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DayLocator</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">AutoDateLocator</span><span class="p">(</span><span class="n">minticks</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">maxticks</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">ConciseDateFormatter</span><span class="p">(</span>
+            <span class="n">locator</span><span class="p">,</span>
+            <span class="n">zero_formats</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">],</span>
+            <span class="n">offset_formats</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Pollutant</span>
+        <span class="p">(</span><span class="n">polmedian</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+        <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Climate normal&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">plot_anoms</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">diff_var</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">mask1</span> <span class="o">=</span> <span class="n">diff_var</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="n">mask2</span> <span class="o">=</span> <span class="n">diff_var</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask1</span><span class="p">[</span><span class="n">mask1</span> <span class="o">==</span> <span class="kc">True</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+                    <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span>
+                        <span class="n">mask1</span>
+                    <span class="p">],</span>
+                    <span class="n">bottom</span><span class="o">=</span><span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">][</span>
+                        <span class="n">mask1</span>
+                    <span class="p">],</span>
+                    <span class="n">height</span><span class="o">=</span><span class="n">diff_var</span><span class="p">[</span><span class="n">mask1</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#34b1eb&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask2</span><span class="p">[</span><span class="n">mask2</span> <span class="o">==</span> <span class="kc">True</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+                    <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span>
+                        <span class="n">mask2</span>
+                    <span class="p">],</span>
+                    <span class="n">bottom</span><span class="o">=</span><span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">][</span>
+                        <span class="n">mask2</span>
+                    <span class="p">],</span>
+                    <span class="n">height</span><span class="o">=</span><span class="n">diff_var</span><span class="p">[</span><span class="n">mask2</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#eb4034&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                <span class="p">)</span>
+
+
+        <span class="c1"># Temperature</span>
+        <span class="p">(</span><span class="n">Tmedian</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Climate normal&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">plot_anoms</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">diff_var</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">mask1</span> <span class="o">=</span> <span class="n">diff_var</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="n">mask2</span> <span class="o">=</span> <span class="n">diff_var</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask1</span><span class="p">[</span><span class="n">mask1</span> <span class="o">==</span> <span class="kc">True</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+                    <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span>
+                        <span class="n">mask1</span>
+                    <span class="p">],</span>
+                    <span class="n">bottom</span><span class="o">=</span><span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">][</span>
+                        <span class="n">mask1</span>
+                    <span class="p">],</span>
+                    <span class="n">height</span><span class="o">=</span><span class="n">diff_var</span><span class="p">[</span><span class="n">mask1</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#34b1eb&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask2</span><span class="p">[</span><span class="n">mask2</span> <span class="o">==</span> <span class="kc">True</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+                    <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span>
+                        <span class="n">mask2</span>
+                    <span class="p">],</span>
+                    <span class="n">bottom</span><span class="o">=</span><span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">][</span>
+                        <span class="n">mask2</span>
+                    <span class="p">],</span>
+                    <span class="n">height</span><span class="o">=</span><span class="n">diff_var</span><span class="p">[</span><span class="n">mask2</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#eb4034&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Rainfall</span>
+        <span class="p">(</span><span class="n">accumrainmedian</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;_nolegend_&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;_nolegend_&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax1</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Rainfall_mean&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Rainfall_mean&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Climate normal&quot;</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Rainfall&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Rainfall&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Wind speed</span>
+        <span class="p">(</span><span class="n">windmedian</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed_median&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed_median&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Climate normal&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">plot_anoms</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed&quot;</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">diff_var</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed_median&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">mask1</span> <span class="o">=</span> <span class="n">diff_var</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="n">mask2</span> <span class="o">=</span> <span class="n">diff_var</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask1</span><span class="p">[</span><span class="n">mask1</span> <span class="o">==</span> <span class="kc">True</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+                    <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                        <span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">mask1</span><span class="p">],</span>
+                    <span class="n">bottom</span><span class="o">=</span><span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                        <span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed_median&quot;</span>
+                    <span class="p">][</span><span class="n">mask1</span><span class="p">],</span>
+                    <span class="n">height</span><span class="o">=</span><span class="n">diff_var</span><span class="p">[</span><span class="n">mask1</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#34b1eb&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask2</span><span class="p">[</span><span class="n">mask2</span> <span class="o">==</span> <span class="kc">True</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+                    <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                        <span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">mask2</span><span class="p">],</span>
+                    <span class="n">bottom</span><span class="o">=</span><span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                        <span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed_median&quot;</span>
+                    <span class="p">][</span><span class="n">mask2</span><span class="p">],</span>
+                    <span class="n">height</span><span class="o">=</span><span class="n">diff_var</span><span class="p">[</span><span class="n">mask2</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#eb4034&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ax</span><span class="p">)):</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
+                <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="c1"># Show seasons</span>
+            <span class="k">if</span> <span class="n">show_seasons</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">season_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#4696db&quot;</span><span class="p">,</span> <span class="s2">&quot;#32a852&quot;</span><span class="p">,</span> <span class="s2">&quot;#da5757&quot;</span><span class="p">,</span> <span class="s2">&quot;#d6db46&quot;</span><span class="p">,</span> <span class="s2">&quot;#4696db&quot;</span><span class="p">]</span>
+                <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#4696db&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#32a852&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#da5757&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#d6db46&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#4696db&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mf">14.5</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Daily temperature&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Daily and accumulated rainfall&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Daily mean wind speed&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Daily mean </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">pollutant</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+
+        <span class="c1"># Add text with anomalies</span>
+        <span class="n">temp_anom</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()][</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_climate</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span> 
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">)][</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span>
+        
+        <span class="n">rain_anom</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()][</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_climate</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span> 
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">)][</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span>
+        
+        <span class="n">rain_rel_anom</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()][</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_climate</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span> 
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">)][</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">df_climate</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span> 
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">)][</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span> 
+
+        <span class="n">wind_anom</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()][</span><span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_climate</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span> 
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">)][</span><span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span>
+        
+        <span class="c1">#bbox = dict(boxstyle=&#39;round&#39;, fc=&#39;blanchedalmond&#39;, ec=&#39;orange&#39;, alpha=0.5)</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s1">&#39;round&#39;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;wheat&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>        
+            <span class="mf">0.031</span><span class="p">,</span>
+            <span class="mf">0.94</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; last temperature anomaly: &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%+g</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">temp_anom</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+            <span class="n">bbox</span><span class="o">=</span><span class="n">props</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>        
+            <span class="mf">0.031</span><span class="p">,</span>
+            <span class="mf">0.94</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; accumulated rainfall anomaly: &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%+g</span><span class="s2"> [</span><span class="si">%+g</span><span class="s2"> </span><span class="si">%%</span><span class="s2">]&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">rain_anom</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">rain_rel_anom</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+            <span class="n">bbox</span><span class="o">=</span><span class="n">props</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>        
+            <span class="mf">0.031</span><span class="p">,</span>
+            <span class="mf">0.94</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; last wind anomaly: </span><span class="si">%+g</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">wind_anom</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+            <span class="n">bbox</span><span class="o">=</span><span class="n">props</span>
+        <span class="p">)</span>    
+
+
+        <span class="n">text</span> <span class="o">=</span> <span class="n">AnchoredText</span><span class="p">(</span>
+            <span class="s2">&quot;Alejandro Rodríguez Sánchez&quot;</span><span class="p">,</span>
+            <span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.24</span><span class="p">,</span> <span class="mf">0.185</span><span class="p">),</span>
+            <span class="n">bbox_transform</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+            <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+            <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">text</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="mf">0.031</span><span class="p">,</span>
+            <span class="mf">0.955</span><span class="p">,</span>
+            <span class="s2">&quot;Climate normal period: </span><span class="si">%i</span><span class="s2">-</span><span class="si">%i</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="n">climate_normal_period</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">climate_normal_period</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="mf">0.031</span><span class="p">,</span>
+            <span class="mf">0.93</span><span class="p">,</span>
+            <span class="s2">&quot;Period with data: </span><span class="si">%i</span><span class="s2">-</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">yearmin</span><span class="p">,</span> <span class="n">yearmax</span><span class="p">),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="mf">0.79</span><span class="p">,</span>
+            <span class="mf">0.955</span><span class="p">,</span>
+            <span class="s2">&quot;Database: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">database</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
+            <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="mf">0.79</span><span class="p">,</span>
+            <span class="mf">0.93</span><span class="p">,</span>
+            <span class="s2">&quot;Location: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">station_name</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
+            <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span>
+            <span class="n">left</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.9</span>
+        <span class="p">)</span>
+        <span class="c1"># fig.autofmt_xdate()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plot_anoms</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;&quot;plot_anoms&quot; must be set to False when &quot;pol_subplot&quot; is set to True.&#39;</span><span class="p">)</span>
+        
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">17</span><span class="p">))</span>
+        <span class="n">gs</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+        <span class="n">fmt_minor</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DayLocator</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">AutoDateLocator</span><span class="p">(</span><span class="n">minticks</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">maxticks</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">ConciseDateFormatter</span><span class="p">(</span>
+            <span class="n">locator</span><span class="p">,</span>
+            <span class="n">zero_formats</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">],</span>
+            <span class="n">offset_formats</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Temperature and pollutant</span>
+        <span class="n">gss</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpecFromSubplotSpec</span><span class="p">(</span>
+            <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">subplot_spec</span><span class="o">=</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.03</span>
+        <span class="p">)</span>
+        <span class="n">ax00</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">ax01</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax00</span><span class="p">)</span>
+
+        <span class="p">(</span><span class="n">Tmedian</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax00</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Climate normal&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax00</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">year_to_plot</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="p">(</span><span class="n">polmedian</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax01</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+        <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Climate normal&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax01</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Rainfall and pollutant</span>
+        <span class="n">gss</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpecFromSubplotSpec</span><span class="p">(</span>
+            <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">subplot_spec</span><span class="o">=</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.03</span>
+        <span class="p">)</span>
+        <span class="n">ax10</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">ax11</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax10</span><span class="p">)</span>
+
+        <span class="n">ax10</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Rainfall_mean&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Rainfall_mean&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Climate normal&quot;</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax10</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Rainfall&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;Rainfall&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+        <span class="p">(</span><span class="n">polmedian</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax11</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+        <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Climate normal&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax11</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+        <span class="c1"># Wind speed and pollutant</span>
+        <span class="n">gss</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpecFromSubplotSpec</span><span class="p">(</span>
+            <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">subplot_spec</span><span class="o">=</span><span class="n">gs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.03</span>
+        <span class="p">)</span>
+        <span class="n">ax20</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">ax21</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax20</span><span class="p">)</span>
+
+        <span class="p">(</span><span class="n">windmedian</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax20</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed_median&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed_median&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Climate normal&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax20</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="s2">&quot;WindSpeed&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="p">(</span><span class="n">polmedian</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax21</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+        <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="o">+</span><span class="s1">&#39;_median&#39;</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Climate normal&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax21</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year_to_plot</span><span class="p">,</span> <span class="n">pollutant</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">year_to_plot</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax00</span><span class="p">,</span> <span class="n">ax01</span><span class="p">,</span> <span class="n">ax10</span><span class="p">,</span> <span class="n">ax11</span><span class="p">,</span> <span class="n">ax20</span><span class="p">,</span> <span class="n">ax21</span><span class="p">]</span>
+
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">axes</span><span class="p">)):</span>
+            <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+            <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+            <span class="c1">#axes[i].legend(fontsize=14)</span>
+            <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+            <span class="c1">#ax[1].legend().set_visible(False)</span>
+
+            <span class="c1"># Show seasons</span>
+            <span class="k">if</span> <span class="n">show_seasons</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">season_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#4696db&quot;</span><span class="p">,</span> <span class="s2">&quot;#32a852&quot;</span><span class="p">,</span> <span class="s2">&quot;#da5757&quot;</span><span class="p">,</span> <span class="s2">&quot;#d6db46&quot;</span><span class="p">,</span> <span class="s2">&quot;#4696db&quot;</span><span class="p">]</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#4696db&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#32a852&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#da5757&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#d6db46&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">),</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#4696db&quot;</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">zorder</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+                <span class="p">)</span>
+
+
+
+        <span class="n">ax00</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Daily temperature and </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">pollutant</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+        <span class="n">ax10</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Daily and accumulated rainfall and </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">pollutant</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+        <span class="n">ax20</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Daily mean wind speed and </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">pollutant</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+
+        <span class="c1"># Add text with anomalies</span>
+        <span class="n">temp_anom</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()][</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_climate</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span> 
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">)][</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span>
+        
+        <span class="n">rain_anom</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()][</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_climate</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span> 
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">)][</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span>
+        
+        <span class="n">rain_rel_anom</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()][</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_climate</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span> 
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">)][</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">df_climate</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span> 
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">)][</span><span class="s2">&quot;Accum. Rainfall&quot;</span><span class="p">]</span> 
+
+        <span class="n">wind_anom</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()][</span><span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_climate</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span> 
+            <span class="p">(</span><span class="n">df_climate</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">last_valid_index</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">)][</span><span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span>
+        
+        <span class="c1">#bbox = dict(boxstyle=&#39;round&#39;, fc=&#39;blanchedalmond&#39;, ec=&#39;orange&#39;, alpha=0.5)</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s1">&#39;round&#39;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;wheat&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>        
+            <span class="mf">0.031</span><span class="p">,</span>
+            <span class="mf">0.89</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; last temperature anomaly: &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%+g</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">temp_anom</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">ax00</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+            <span class="n">bbox</span><span class="o">=</span><span class="n">props</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>        
+            <span class="mf">0.031</span><span class="p">,</span>
+            <span class="mf">0.89</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; accumulated rainfall anomaly: &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%+g</span><span class="s2"> [</span><span class="si">%+g</span><span class="s2"> </span><span class="si">%%</span><span class="s2">]&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">rain_anom</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">rain_rel_anom</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">ax10</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+            <span class="n">bbox</span><span class="o">=</span><span class="n">props</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>        
+            <span class="mf">0.031</span><span class="p">,</span>
+            <span class="mf">0.89</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">year_to_plot</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; last wind anomaly: </span><span class="si">%+g</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">wind_anom</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">ax20</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+            <span class="n">bbox</span><span class="o">=</span><span class="n">props</span>
+        <span class="p">)</span>    
+
+
+        <span class="n">text</span> <span class="o">=</span> <span class="n">AnchoredText</span><span class="p">(</span>
+            <span class="s2">&quot;Alejandro Rodríguez Sánchez&quot;</span><span class="p">,</span>
+            <span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.24</span><span class="p">,</span> <span class="mf">0.185</span><span class="p">),</span>
+            <span class="n">bbox_transform</span><span class="o">=</span><span class="n">ax20</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+            <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+            <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">text</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="mf">0.025</span><span class="p">,</span>
+            <span class="mf">0.975</span><span class="p">,</span>
+            <span class="s2">&quot;Climate normal period: </span><span class="si">%i</span><span class="s2">-</span><span class="si">%i</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="n">climate_normal_period</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">climate_normal_period</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="mf">0.025</span><span class="p">,</span>
+            <span class="mf">0.955</span><span class="p">,</span>
+            <span class="s2">&quot;Period with data: </span><span class="si">%i</span><span class="s2">-</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">yearmin</span><span class="p">,</span> <span class="n">yearmax</span><span class="p">),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="mf">0.4</span><span class="p">,</span>
+            <span class="mf">0.975</span><span class="p">,</span>
+            <span class="s2">&quot;Database: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">database</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
+            <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="mf">0.7</span><span class="p">,</span>
+            <span class="mf">0.975</span><span class="p">,</span>
+            <span class="s2">&quot;Location: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">station_name</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
+            <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Custom legend</span>
+        <span class="n">custom_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+                        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">4</span><span class="p">)]</span>
+
+        <span class="n">fig</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">custom_lines</span><span class="p">,</span> <span class="p">[</span><span class="n">year_to_plot</span><span class="p">,</span> <span class="s1">&#39;Climate normal&#39;</span><span class="p">],</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.33</span><span class="p">,</span><span class="mf">0.645</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">custom_lines2</span> <span class="o">=</span> <span class="p">[</span><span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">),</span>
+                        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)]</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">custom_lines2</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Climatological variables&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span><span class="n">pollutant</span><span class="p">],</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.645</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span>
+            <span class="n">left</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.9</span>
+        <span class="p">)</span>
+        <span class="c1"># fig.autofmt_xdate()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alejandro Rodríguez Sánchez.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -25,127 +25,127 @@ The first step for plotting is, of course, to load the data:
     from scipy import stats, interpolate, signal
 
     # Import pyclim
-import numpy as np
-import matplotlib
-import pandas as pd
-import datetime as dt
+    import numpy as np
+    import matplotlib
+    import pandas as pd
+    import datetime as dt
 
-import os
+    import os
 
-# Import pyclimair
-from pyclimair.common import (
-    quality_control,
-    compute_climate,
-    compute_daily_records_oneyear,
-    compute_records,
-    plot_records_count,
-    compute_and_plot_exceedances,
-    plot_variable_trends,
-    plot_data_vs_climate,
-    plot_data_vs_climate_withrecords,
-    plot_data_vs_climate_withrecords_multivar,
-    plot_periodstats,
-    plot_data_and_accum_anoms,
-    plot_data_and_annual_cycle,
-    plot_timeseries,
-    timeseries_extremevalues,
-    plot_annual_cycles,
-    get_annual_cycle,
-    annual_meteogram,
-    plot_accumulated_anomalies,
-    plot_anomalies,
-    compare_probdist,
-    categories_evolution,
-    threevar_windrose,
-    threevar_windrose_trend,
-    threevar_windrose_probability
-)
+    # Import pyclimair
+    from pyclimair.common import (
+        quality_control,
+        compute_climate,
+        compute_daily_records_oneyear,
+        compute_records,
+        plot_records_count,
+        compute_and_plot_exceedances,
+        plot_variable_trends,
+        plot_data_vs_climate,
+        plot_data_vs_climate_withrecords,
+        plot_data_vs_climate_withrecords_multivar,
+        plot_periodstats,
+        plot_data_and_accum_anoms,
+        plot_data_and_annual_cycle,
+        plot_timeseries,
+        timeseries_extremevalues,
+        plot_annual_cycles,
+        get_annual_cycle,
+        annual_meteogram,
+        plot_accumulated_anomalies,
+        plot_anomalies,
+        compare_probdist,
+        categories_evolution,
+        threevar_windrose,
+        threevar_windrose_trend,
+        threevar_windrose_probability
+    )
 
-from pyclimair.air import (
-    annual_meteogram_with_pollutant
-)
+    from pyclimair.air import (
+        annual_meteogram_with_pollutant
+    )
 
-from pyclimair.clim import (
-    compare_with_globaldataset
-)
+    from pyclimair.clim import (
+        compare_with_globaldataset
+    )
 
-from pyclimair.utils import(
-    get_continuous_cmap
-)
-
-
-
-    # Load the example data
-    path = "%s/data/" % os.getcwd()
-    csvfiles = glob.glob(os.path.join(path, "example_data.txt"))
-    print(csvfiles)
-
-    # Create metadata
-    metadata = pd.DataFrame(["example", "example", 361.00, -361.00, 461]).T
-    metadata.columns = ["Estacion", "Codigo", "latitud_OK", "longitud_OK", "Altitud"]
-
-    # Some useful variables
-    year_to_plot = 2025
-    climate_normal_period = [1991, 2020]
-    variables = ["Tmin", "Tmean", "Tmax", "Rainfall", "WindSpeed"]
-    database = "Example"
-
-    # Mapping variables
-    units_list = {}  # ['ºC','ºC','ºC', 'm/s']
-    units_list["Tmin"] = "ºC"
-    units_list["Tmean"] = "ºC"
-    units_list["Tmax"] = "ºC"
-    units_list["Rainfall"] = "mm"
-    units_list["WindSpeed"] = "m/s"
-
-    wd_map = {
-        "N": 0,
-        "NNE": 22.5,
-        "NE": 45,
-        "ENE": 67.5,
-        "E": 90,
-        "ESE": 112.5,
-        "SE": 125,
-        "SSE": 147.5,
-        "S": 180,
-        "SSW": 202.5,
-        "SW": 225,
-        "WSW": 247.5,
-        "W": 270,
-        "WNW": 292.5,
-        "NW": 315,
-        "NNW": 337.5,
-    }
-
-    # Select metadata
-    metadatos_sta = metadata[metadata.ID == "example"]
-    codigo_sta = metadatos_sta.ID.values[0]
-    # nombres_mod[listanombres] = nombres_mod[listanombres].replace('/','-')
-    station_name = str(metadatos_sta.Name.values[0])
-    station_name = station_name.replace("/", "-")
-
-    plotdir = os.path.join(os.getcwd(), "plots/%s/%s" % (database, "example"))
-    plotdir = plotdir.replace("\\", "/")
-    if os.path.isdir(plotdir) == False:
-        try:
-            os.mkdir(plotdir)
-        except OSError:
-            print("Creation of the directory %s failed" % plotdir)
-        else:
-            print("Successfully created the directory %s " % plotdir)
+    from pyclimair.utils import(
+        get_continuous_cmap
+    )
 
 
-    # Read data
-    input_file = [x for x in csvfiles if codigo_sta in x][0]
-    df1 = pd.read_csv(input_file, sep=";", decimal=",", header=0, encoding="latin-1")
 
-    df1["Date"] = pd.to_datetime(df1.iloc[:, 0])
-    df1 = df1.set_index("Date")
+        # Load the example data
+        path = "%s/data/" % os.getcwd()
+        csvfiles = glob.glob(os.path.join(path, "example_data.txt"))
+        print(csvfiles)
 
-    df1["Day"] = df1.index.day
-    df1["Month"] = df1.index.month
-    df1["Year"] = df1.index.year
-    df1["Accumpcp"] = df1.groupby(df1.index.year)["Rainfall"].cumsum()
+        # Create metadata
+        metadata = pd.DataFrame(["example", "example", 361.00, -361.00, 461]).T
+        metadata.columns = ["Estacion", "Codigo", "latitud_OK", "longitud_OK", "Altitud"]
+
+        # Some useful variables
+        year_to_plot = 2025
+        climate_normal_period = [1991, 2020]
+        variables = ["Tmin", "Tmean", "Tmax", "Rainfall", "WindSpeed"]
+        database = "Example"
+
+        # Mapping variables
+        units_list = {}  # ['ºC','ºC','ºC', 'm/s']
+        units_list["Tmin"] = "ºC"
+        units_list["Tmean"] = "ºC"
+        units_list["Tmax"] = "ºC"
+        units_list["Rainfall"] = "mm"
+        units_list["WindSpeed"] = "m/s"
+
+        wd_map = {
+            "N": 0,
+            "NNE": 22.5,
+            "NE": 45,
+            "ENE": 67.5,
+            "E": 90,
+            "ESE": 112.5,
+            "SE": 125,
+            "SSE": 147.5,
+            "S": 180,
+            "SSW": 202.5,
+            "SW": 225,
+            "WSW": 247.5,
+            "W": 270,
+            "WNW": 292.5,
+            "NW": 315,
+            "NNW": 337.5,
+        }
+
+        # Select metadata
+        metadatos_sta = metadata[metadata.ID == "example"]
+        codigo_sta = metadatos_sta.ID.values[0]
+        # nombres_mod[listanombres] = nombres_mod[listanombres].replace('/','-')
+        station_name = str(metadatos_sta.Name.values[0])
+        station_name = station_name.replace("/", "-")
+
+        plotdir = os.path.join(os.getcwd(), "plots/%s/%s" % (database, "example"))
+        plotdir = plotdir.replace("\\", "/")
+        if os.path.isdir(plotdir) == False:
+            try:
+                os.mkdir(plotdir)
+            except OSError:
+                print("Creation of the directory %s failed" % plotdir)
+            else:
+                print("Successfully created the directory %s " % plotdir)
+
+
+        # Read data
+        input_file = [x for x in csvfiles if codigo_sta in x][0]
+        df1 = pd.read_csv(input_file, sep=";", decimal=",", header=0, encoding="latin-1")
+
+        df1["Date"] = pd.to_datetime(df1.iloc[:, 0])
+        df1 = df1.set_index("Date")
+
+        df1["Day"] = df1.index.day
+        df1["Month"] = df1.index.month
+        df1["Year"] = df1.index.year
+        df1["Accumpcp"] = df1.groupby(df1.index.year)["Rainfall"].cumsum()
 
 
 Plotting a timeseries of anomalies
