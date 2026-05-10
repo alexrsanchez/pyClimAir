@@ -6,33 +6,33 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plotting examples &mdash; pyclim 1.0.1 documentation</title>
+  <title>Plotting examples &mdash; pyclimair 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
-
+  
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=292eb321"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pyClim" href="modules.html" />
-    <link rel="prev" title="How to use" href="usage.html" />
+    <link rel="next" title="pyClimAir" href="modules.html" />
+    <link rel="prev" title="How to use" href="usage.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
 
-
-
+          
+          
           <a href="index.html" class="icon icon-home">
-            pyclim
+            pyclimair
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -56,9 +56,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#identifying-trends-in-a-dataset">Identifying trends in a dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#period-averages">Period averages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#meteograms">Meteograms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comparing-probability-distributions">Comparing probability distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#variable-polar-plots-variable-trends-and-probabilities">3-variable polar plots: variable, trends and probabilities</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">pyClim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyClimAir</a></li>
 </ul>
 
         </div>
@@ -67,7 +69,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">pyclim</a>
+          <a href="index.html">pyclimair</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -84,7 +86,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-
+             
   <section id="plotting-examples">
 <h1>Plotting examples<a class="headerlink" href="#plotting-examples" title="Link to this heading"></a></h1>
 <p>The examples below show how pyClim can be used to make plots. The examples do not cover the whole functionalities of pyClim, but a subset of the most important plotting features. This documentation will be updated progressively to include the remaining functionalities.</p>
@@ -105,81 +107,127 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">signal</span>
 
 <span class="c1"># Import pyclim</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyclim_test</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
-
-<span class="c1"># Load the example data</span>
-<span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/data/&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="n">csvfiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;example_data.txt&quot;</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">csvfiles</span><span class="p">)</span>
-
-<span class="c1"># Create metadata</span>
-<span class="n">metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="mf">361.00</span><span class="p">,</span> <span class="o">-</span><span class="mf">361.00</span><span class="p">,</span> <span class="mi">461</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
-<span class="n">metadata</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Estacion&quot;</span><span class="p">,</span> <span class="s2">&quot;Codigo&quot;</span><span class="p">,</span> <span class="s2">&quot;latitud_OK&quot;</span><span class="p">,</span> <span class="s2">&quot;longitud_OK&quot;</span><span class="p">,</span> <span class="s2">&quot;Altitud&quot;</span><span class="p">]</span>
-
-<span class="c1"># Some useful variables</span>
-<span class="n">year_to_plot</span> <span class="o">=</span> <span class="mi">2025</span>
-<span class="n">climate_normal_period</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1991</span><span class="p">,</span> <span class="mi">2020</span><span class="p">]</span>
-<span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Tmin&quot;</span><span class="p">,</span> <span class="s2">&quot;Tmean&quot;</span><span class="p">,</span> <span class="s2">&quot;Tmax&quot;</span><span class="p">,</span> <span class="s2">&quot;Rainfall&quot;</span><span class="p">,</span> <span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span>
-<span class="n">database</span> <span class="o">=</span> <span class="s2">&quot;Example&quot;</span>
-
-<span class="c1"># Mapping variables</span>
-<span class="n">units_list</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># [&#39;ºC&#39;,&#39;ºC&#39;,&#39;ºC&#39;, &#39;m/s&#39;]</span>
-<span class="n">units_list</span><span class="p">[</span><span class="s2">&quot;Tmin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ºC&quot;</span>
-<span class="n">units_list</span><span class="p">[</span><span class="s2">&quot;Tmean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ºC&quot;</span>
-<span class="n">units_list</span><span class="p">[</span><span class="s2">&quot;Tmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ºC&quot;</span>
-<span class="n">units_list</span><span class="p">[</span><span class="s2">&quot;Rainfall&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mm&quot;</span>
-<span class="n">units_list</span><span class="p">[</span><span class="s2">&quot;WindSpeed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;m/s&quot;</span>
-
-<span class="n">wd_map</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;NNE&quot;</span><span class="p">:</span> <span class="mf">22.5</span><span class="p">,</span>
-    <span class="s2">&quot;NE&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
-    <span class="s2">&quot;ENE&quot;</span><span class="p">:</span> <span class="mf">67.5</span><span class="p">,</span>
-    <span class="s2">&quot;E&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
-    <span class="s2">&quot;ESE&quot;</span><span class="p">:</span> <span class="mf">112.5</span><span class="p">,</span>
-    <span class="s2">&quot;SE&quot;</span><span class="p">:</span> <span class="mi">125</span><span class="p">,</span>
-    <span class="s2">&quot;SSE&quot;</span><span class="p">:</span> <span class="mf">147.5</span><span class="p">,</span>
-    <span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
-    <span class="s2">&quot;SSW&quot;</span><span class="p">:</span> <span class="mf">202.5</span><span class="p">,</span>
-    <span class="s2">&quot;SW&quot;</span><span class="p">:</span> <span class="mi">225</span><span class="p">,</span>
-    <span class="s2">&quot;WSW&quot;</span><span class="p">:</span> <span class="mf">247.5</span><span class="p">,</span>
-    <span class="s2">&quot;W&quot;</span><span class="p">:</span> <span class="mi">270</span><span class="p">,</span>
-    <span class="s2">&quot;WNW&quot;</span><span class="p">:</span> <span class="mf">292.5</span><span class="p">,</span>
-    <span class="s2">&quot;NW&quot;</span><span class="p">:</span> <span class="mi">315</span><span class="p">,</span>
-    <span class="s2">&quot;NNW&quot;</span><span class="p">:</span> <span class="mf">337.5</span><span class="p">,</span>
-<span class="p">}</span>
-
-<span class="c1"># Select metadata</span>
-<span class="n">metadatos_sta</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">metadata</span><span class="o">.</span><span class="n">ID</span> <span class="o">==</span> <span class="s2">&quot;example&quot;</span><span class="p">]</span>
-<span class="n">codigo_sta</span> <span class="o">=</span> <span class="n">metadatos_sta</span><span class="o">.</span><span class="n">ID</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="c1"># nombres_mod[listanombres] = nombres_mod[listanombres].replace(&#39;/&#39;,&#39;-&#39;)</span>
-<span class="n">station_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">metadatos_sta</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">station_name</span> <span class="o">=</span> <span class="n">station_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
-
-<span class="n">plotdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;plots/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="s2">&quot;example&quot;</span><span class="p">))</span>
-<span class="n">plotdir</span> <span class="o">=</span> <span class="n">plotdir</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">plotdir</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">plotdir</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creation of the directory </span><span class="si">%s</span><span class="s2"> failed&quot;</span> <span class="o">%</span> <span class="n">plotdir</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Successfully created the directory </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">plotdir</span><span class="p">)</span>
-
-
-<span class="c1"># Read data</span>
-<span class="n">input_file</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">csvfiles</span> <span class="k">if</span> <span class="n">codigo_sta</span> <span class="ow">in</span> <span class="n">x</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;latin-1&quot;</span><span class="p">)</span>
-
-<span class="n">df1</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="n">df1</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span>
-
-<span class="n">df1</span><span class="p">[</span><span class="s2">&quot;Day&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">day</span>
-<span class="n">df1</span><span class="p">[</span><span class="s2">&quot;Month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span>
-<span class="n">df1</span><span class="p">[</span><span class="s2">&quot;Year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span>
-<span class="n">df1</span><span class="p">[</span><span class="s2">&quot;Accumpcp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span><span class="p">)[</span><span class="s2">&quot;Rainfall&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>import numpy as np
+import matplotlib
+import pandas as pd
+import datetime as dt</p>
+<p>import os</p>
+<p># Import pyclimair
+from pyclimair.common import (</p>
+<blockquote>
+<div><p>quality_control,
+compute_climate,
+compute_daily_records_oneyear,
+compute_records,
+plot_records_count,
+compute_and_plot_exceedances,
+plot_variable_trends,
+plot_data_vs_climate,
+plot_data_vs_climate_withrecords,
+plot_data_vs_climate_withrecords_multivar,
+plot_periodstats,
+plot_data_and_accum_anoms,
+plot_data_and_annual_cycle,
+plot_timeseries,
+timeseries_extremevalues,
+plot_annual_cycles,
+get_annual_cycle,
+annual_meteogram,
+plot_accumulated_anomalies,
+plot_anomalies,
+compare_probdist,
+categories_evolution,
+threevar_windrose,
+threevar_windrose_trend,
+threevar_windrose_probability</p>
+</div></blockquote>
+<p>)</p>
+<dl class="simple">
+<dt>from pyclimair.air import (</dt><dd><p>annual_meteogram_with_pollutant</p>
+</dd>
+</dl>
+<p>)</p>
+<dl class="simple">
+<dt>from pyclimair.clim import (</dt><dd><p>compare_with_globaldataset</p>
+</dd>
+</dl>
+<p>)</p>
+<dl class="simple">
+<dt>from pyclimair.utils import(</dt><dd><p>get_continuous_cmap</p>
+</dd>
+</dl>
+<p>)</p>
+<blockquote>
+<div><p># Load the example data
+path = “%s/data/” % os.getcwd()
+csvfiles = glob.glob(os.path.join(path, “example_data.txt”))
+print(csvfiles)</p>
+<p># Create metadata
+metadata = pd.DataFrame([“example”, “example”, 361.00, -361.00, 461]).T
+metadata.columns = [“Estacion”, “Codigo”, “latitud_OK”, “longitud_OK”, “Altitud”]</p>
+<p># Some useful variables
+year_to_plot = 2025
+climate_normal_period = [1991, 2020]
+variables = [“Tmin”, “Tmean”, “Tmax”, “Rainfall”, “WindSpeed”]
+database = “Example”</p>
+<p># Mapping variables
+units_list = {}  # [‘ºC’,’ºC’,’ºC’, ‘m/s’]
+units_list[“Tmin”] = “ºC”
+units_list[“Tmean”] = “ºC”
+units_list[“Tmax”] = “ºC”
+units_list[“Rainfall”] = “mm”
+units_list[“WindSpeed”] = “m/s”</p>
+<dl class="simple">
+<dt>wd_map = {</dt><dd><p>“N”: 0,
+“NNE”: 22.5,
+“NE”: 45,
+“ENE”: 67.5,
+“E”: 90,
+“ESE”: 112.5,
+“SE”: 125,
+“SSE”: 147.5,
+“S”: 180,
+“SSW”: 202.5,
+“SW”: 225,
+“WSW”: 247.5,
+“W”: 270,
+“WNW”: 292.5,
+“NW”: 315,
+“NNW”: 337.5,</p>
+</dd>
+</dl>
+<p>}</p>
+<p># Select metadata
+metadatos_sta = metadata[metadata.ID == “example”]
+codigo_sta = metadatos_sta.ID.values[0]
+# nombres_mod[listanombres] = nombres_mod[listanombres].replace(‘/’,’-‘)
+station_name = str(metadatos_sta.Name.values[0])
+station_name = station_name.replace(“/”, “-“)</p>
+<p>plotdir = os.path.join(os.getcwd(), “plots/%s/%s” % (database, “example”))
+plotdir = plotdir.replace(”\”, “/”)
+if os.path.isdir(plotdir) == False:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>try:</dt><dd><p>os.mkdir(plotdir)</p>
+</dd>
+<dt>except OSError:</dt><dd><p>print(“Creation of the directory %s failed” % plotdir)</p>
+</dd>
+<dt>else:</dt><dd><p>print(“Successfully created the directory %s “ % plotdir)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p># Read data
+input_file = [x for x in csvfiles if codigo_sta in x][0]
+df1 = pd.read_csv(input_file, sep=”;”, decimal=”,”, header=0, encoding=”latin-1”)</p>
+<p>df1[“Date”] = pd.to_datetime(df1.iloc[:, 0])
+df1 = df1.set_index(“Date”)</p>
+<p>df1[“Day”] = df1.index.day
+df1[“Month”] = df1.index.month
+df1[“Year”] = df1.index.year
+df1[“Accumpcp”] = df1.groupby(df1.index.year)[“Rainfall”].cumsum()</p>
+</div></blockquote>
 </section>
 <section id="plotting-a-timeseries-of-anomalies">
 <h2>Plotting a timeseries of anomalies<a class="headerlink" href="#plotting-a-timeseries-of-anomalies" title="Link to this heading"></a></h2>
@@ -216,7 +264,7 @@
 </section>
 <section id="plotting-accumulated-anomalies">
 <h2>Plotting accumulated anomalies<a class="headerlink" href="#plotting-accumulated-anomalies" title="Link to this heading"></a></h2>
-<p>Use the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.plot_accumulated_anomalies()</span></code> function to plot the accumulated anomalies during a year. Again, the ‘freq’ parameter allows the user to vary the temporal aggregation of the accumulated anomalies.</p>
+<p>Use the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.common.plot_accumulated_anomalies()</span></code> function to plot the accumulated anomalies during a year. Again, the ‘freq’ parameter allows the user to vary the temporal aggregation of the accumulated anomalies.</p>
 <p>Accumulated anomalies from day to day:</p>
 <img alt="_images/Tmean_accum_anoms_daily.png" src="_images/Tmean_accum_anoms_daily.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plot_accumulated_anomalies</span><span class="p">(</span>
@@ -265,7 +313,7 @@
 </section>
 <section id="computing-and-plotting-record-values">
 <h2>Computing and plotting record values<a class="headerlink" href="#computing-and-plotting-record-values" title="Link to this heading"></a></h2>
-<p>For computing the record values, use the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.compute_daily_records()</span></code> function. Then, one can plot the evolution of the number of high and low records with <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.plot_records_count()</span></code>. The following example illustrates how to compute and plot the number of days in each year exceeding a daily record.</p>
+<p>For computing the record values, use the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.common.compute_daily_records()</span></code> function. Then, one can plot the evolution of the number of high and low records with <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.common.plot_records_count()</span></code>. The following example illustrates how to compute and plot the number of days in each year exceeding a daily record.</p>
 <img alt="_images/annual_records_Tmean.png" src="_images/annual_records_Tmean.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot data from a certain period versus the climatological normal</span>
 <span class="n">records_df_allvars</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
@@ -343,7 +391,7 @@
 </section>
 <section id="plotting-data-versus-the-climatological-normal-values">
 <h2>Plotting data versus the climatological normal values<a class="headerlink" href="#plotting-data-versus-the-climatological-normal-values" title="Link to this heading"></a></h2>
-<p>One interesting functionality of the pyClim package is the ability to plot data versus its climatological normal values, including the occurrence of record values given that a DataFrame including records is provided.</p>
+<p>One interesting functionality of the pyClimAir package is the ability to plot data versus its climatological normal values, including the occurrence of record values given that a DataFrame including records is provided.</p>
 <img alt="_images/Tmeantimeseries_climatemedian19912020_withrecords.png" src="_images/Tmeantimeseries_climatemedian19912020_withrecords.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">colors_anom_bars</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#34b1eb&quot;</span><span class="p">,</span> <span class="s2">&quot;#eb4034&quot;</span><span class="p">]</span>
 <span class="n">levels_anom_bars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
@@ -394,7 +442,7 @@
 </section>
 <section id="classify-data-by-categories">
 <h2>Classify data by categories<a class="headerlink" href="#classify-data-by-categories" title="Link to this heading"></a></h2>
-<p>Another visual way to represent the evolution of your data is to classify them by categories and then see the evolution of the occurrency of each category. This is done in pyClim with the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.categories_evolution()</span></code> function.
+<p>Another visual way to represent the evolution of your data is to classify them by categories and then see the evolution of the occurrency of each category. This is done in pyClim with the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.common.categories_evolution()</span></code> function.
 The user can see the evolution of each category, grouped by their monthly, seasonal and yearly occurrences. If no categories’ labels are given, the script computes the labels from the given categories. An example is shown below:</p>
 <img alt="_images/categories_Tmean_default.png" src="_images/categories_Tmean_default.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Categorize data</span>
@@ -433,8 +481,8 @@ The user can see the evolution of each category, grouped by their monthly, seaso
 </section>
 <section id="identifying-trends-in-a-dataset">
 <h2>Identifying trends in a dataset<a class="headerlink" href="#identifying-trends-in-a-dataset" title="Link to this heading"></a></h2>
-<p>pyClim also allows you to rapidly identify trends in a dataset. Several functions allow to do that.</p>
-<p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.plot_variable_trends()</span></code> function, plots the time evolution of a certain variable. It also plots the mean value of each ‘averaging_period’ periods. The ‘grouping’ argument controls the temporal frequency of the variable aggregation, and the ‘grouping_stat’ controls the statistic to be plotted. It can be set to ‘mean’, if the user wants to know the temporal evolution of the average value of a variable, or to ‘sum’ (to see the evolution of the accumulated value of a variable, for example the total rainfall).
+<p>pyClimAir also allows you to rapidly identify trends in a dataset. Several functions allow to do that.</p>
+<p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.common.plot_variable_trends()</span></code> function, plots the time evolution of a certain variable. It also plots the mean value of each ‘averaging_period’ periods. The ‘grouping’ argument controls the temporal frequency of the variable aggregation, and the ‘grouping_stat’ controls the statistic to be plotted. It can be set to ‘mean’, if the user wants to know the temporal evolution of the average value of a variable, or to ‘sum’ (to see the evolution of the accumulated value of a variable, for example the total rainfall).
 The optional argument ‘alldatamean’, which is set to True by default, allows to plot the average value of all the analysed period.</p>
 <img alt="_images/Rainfall_sum_withmean.png" src="_images/Rainfall_sum_withmean.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Evolution of the mean value of a variable</span>
@@ -466,7 +514,7 @@ The optional argument ‘alldatamean’, which is set to True by default, allows
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Another function that allows to identify trends is the <code class="xref py py-func docutils literal notranslate"><span class="pre">timeseries_extremevalues()</span></code> function, which allows the user to plot the evolution of extreme values of a given variable. As usual, the user can control the time discretization of the extreme values. Below, an example for annual and seasonal values is given.</p>
+<p>Another function that allows to identify trends is the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.timeseries_extremevalues()</span></code> function, which allows the user to plot the evolution of extreme values of a given variable. As usual, the user can control the time discretization of the extreme values. Below, an example for annual and seasonal values is given.</p>
 <img alt="_images/Annualextremevalues_Tmax_lines.png" src="_images/Annualextremevalues_Tmax_lines.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">### Seasonal plots</span>
 <span class="n">var</span> <span class="o">=</span> <span class="s2">&quot;Tmax&quot;</span>
@@ -497,7 +545,7 @@ The optional argument ‘alldatamean’, which is set to True by default, allows
 </section>
 <section id="period-averages">
 <h2>Period averages<a class="headerlink" href="#period-averages" title="Link to this heading"></a></h2>
-<p>Use the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.plot_periodaverages()</span></code> function to plot the evolution of the mean or median value of a variable between two days. In the example below, the evolution of the daily mean temperature between June 1st (included) and September 1st (not included) is plotted:</p>
+<p>Use the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclim.common.plot_periodaverages()</span></code> function to plot the evolution of the mean or median value of a variable between two days. In the example below, the evolution of the daily mean temperature between June 1st (included) and September 1st (not included) is plotted:</p>
 <img alt="_images/examplesTmaxperiodaverages.png" src="_images/examplesTmaxperiodaverages.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">### Plot median value of a certain period for every year with data</span>
 <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Tmean&quot;</span><span class="p">]:</span>
@@ -520,8 +568,8 @@ The optional argument ‘alldatamean’, which is set to True by default, allows
 </section>
 <section id="meteograms">
 <h2>Meteograms<a class="headerlink" href="#meteograms" title="Link to this heading"></a></h2>
-<p>pyClim also offers the possibility of displaying data in form of a meteogram. A meteogram is a graphical presentation of one or more meteorological variables with respect to time. pyClim offers to construct a meteogram using Temperature, Rainfall and Wind Speed data, as showed in the example below.
-In pyClim, the meteogram shows, for each variable, a comparison of the given year data with the climatological normal values (provided that a DataFrame with the climate normal values is given). If the “plot_anoms” parameter is set to True, the values of the given year are represented as departures from the climatological normal values, as in this example.</p>
+<p>pyClimAir also offers the possibility of displaying data in form of a meteogram. A meteogram is a graphical presentation of one or more meteorological variables with respect to time. pyClim offers to construct a meteogram using Temperature, Rainfall and Wind Speed data, as showed in the example below.
+In pyClimAir, the meteogram shows, for each variable, a comparison of the given year data with the climatological normal values (provided that a DataFrame with the climate normal values is given). If the “plot_anoms” parameter is set to True, the values of the given year are represented as departures from the climatological normal values, as in this example.</p>
 <img alt="_images/2025_meteogram_bars.png" src="_images/2025_meteogram_bars.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">annual_meteogram</span><span class="p">(</span>
     <span class="n">df1_complete</span><span class="p">,</span>
@@ -535,6 +583,63 @@ In pyClim, the meteogram shows, for each variable, a comparison of the given yea
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>Since version 1.0.0, pyClimAir allows to include a fourth variable in the meteograms, with the aim of comparing the temporal evolution of air pollutants with relevant meteorological variables. This capability is included in <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.air.annual_meteogram_with_pollutant()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">annual_meteogram_with_pollutant</span><span class="p">(</span>
+    <span class="n">df1_complete</span><span class="p">,</span>
+    <span class="n">climate_df_sep</span><span class="p">,</span>
+    <span class="mi">2023</span><span class="p">,</span>
+    <span class="s1">&#39;O3&#39;</span><span class="p">,</span>
+    <span class="n">climate_normal_period</span><span class="p">,</span>
+    <span class="n">database</span><span class="p">,</span> <span class="n">station_name</span><span class="p">,</span>
+    <span class="n">plotdir</span><span class="o">+</span><span class="s1">&#39;/2023_meteogram_withpols_inside.png&#39;</span><span class="p">,</span>
+    <span class="n">plot_anoms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">pol_subplot</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/2023_meteogram_withO3.png" src="_images/2023_meteogram_withO3.png" />
+</section>
+<section id="comparing-probability-distributions">
+<h2>Comparing probability distributions<a class="headerlink" href="#comparing-probability-distributions" title="Link to this heading"></a></h2>
+<p>A capability introduced in version 1.0.0 is the function <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.compare_probdist()</span></code>, which allows to compare the probability distribution of a certain period with that of a climatological reference period. Three options are given to the user in terms of the plot type: histogram, Cumulative Distribution Function (CDF) and both. The example below shows the result for the latter case. As in other pyClimAir functionalities, this function allows for yearly, seasonal and monthly aggregations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">compare_probdist</span><span class="p">(</span>
+    <span class="n">df1_complete</span><span class="p">,</span> <span class="n">df_normalclimate</span><span class="p">,</span>
+    <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">50</span><span class="p">],</span> <span class="s1">&#39;Tmax&#39;</span><span class="p">,</span> <span class="s1">&#39;ºC&#39;</span><span class="p">,</span>
+    <span class="n">climate_normal_period</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">station_name</span><span class="p">,</span>
+    <span class="n">plotdir</span><span class="o">+</span><span class="s1">&#39;/Tmax_probdist.png&#39;</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">=</span><span class="s1">&#39;histogram&#39;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="variable-polar-plots-variable-trends-and-probabilities">
+<h2>3-variable polar plots: variable, trends and probabilities<a class="headerlink" href="#variable-polar-plots-variable-trends-and-probabilities" title="Link to this heading"></a></h2>
+<p>An exciting new group of functionalities of pyClimAir is the creation of three-variable polar plots, which allows to visualize several statistics of a given variable as a function of wind speed and direction. This group of functionalities is composed of three functions, each of them performing an specific task:
+With the function <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose()</span></code> the used can easily visualize the (mean or median) values of a given variable for different wind speeds and directions. Moreover, the function <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_trend()</span></code> allows to compute the linear trend of a given variable as a function of wind speed and direction. Finally, the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_probability()</span></code> computes the probability of a variable meeting a given condition as a function of wind speed and direction.</p>
+<p>All of these three functions accept as argument the “grouping_freq” parameter which, as in other functions of pyclimair, controls the temporal frequency of the data aggregation, so wind-dependencies can be analysed for yearly, monthly or seasonal values.</p>
+<p>A set of representative examples of each one of these three functions are shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">threevar_windrose</span><span class="p">(</span>
+    <span class="n">df1_complete</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;WindSpeed&#39;</span><span class="p">,</span><span class="s1">&#39;WindDir&#39;</span><span class="p">,</span><span class="s1">&#39;Tmin&#39;</span><span class="p">],</span> <span class="n">climate_normal_period</span><span class="p">,</span>
+    <span class="s1">&#39;ºC&#39;</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">station_name</span><span class="p">,</span> <span class="n">plotdir</span><span class="o">+</span><span class="s1">&#39;/3var_windrose_Tmin_pct.png&#39;</span><span class="p">,</span>
+    <span class="n">grouping_freq</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">grouping_stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span>
+    <span class="p">)</span>
+
+<span class="n">threevar_windrose_trend</span><span class="p">(</span>
+    <span class="n">df1_complete</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;WindSpeed&#39;</span><span class="p">,</span><span class="s1">&#39;WindDir&#39;</span><span class="p">,</span><span class="s1">&#39;Tmin&#39;</span><span class="p">],</span> <span class="n">climate_normal_period</span><span class="p">,</span>
+    <span class="s1">&#39;ºC&#39;</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">station_name</span><span class="p">,</span> <span class="n">plotdir</span><span class="o">+</span><span class="s1">&#39;/3var_windrose_Tmin_pct.png&#39;</span><span class="p">,</span>
+    <span class="n">grouping_freq</span><span class="o">=</span><span class="s1">&#39;season&#39;</span><span class="p">,</span> <span class="n">grouping_stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span>
+    <span class="p">)</span>
+
+<span class="n">threevar_windrose_probability</span><span class="p">(</span>
+    <span class="n">df1_complete</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;WindSpeed&#39;</span><span class="p">,</span><span class="s1">&#39;WindDir&#39;</span><span class="p">,</span><span class="s1">&#39;Tmin&#39;</span><span class="p">],</span> <span class="s1">&#39;&gt;20&#39;</span><span class="p">,</span>
+    <span class="n">climate_normal_period</span><span class="p">,</span> <span class="s1">&#39;ºC&#39;</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">station_name</span><span class="p">,</span>
+    <span class="n">plotdir</span><span class="o">+</span><span class="s1">&#39;/3var_probwindrose_Tmin_month_step1.png&#39;</span><span class="p">,</span>
+    <span class="n">grouping_freq</span><span class="o">=</span><span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap_probability</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/3var_windrose_Tmin_pct.png" src="_images/3var_windrose_Tmin_pct.png" />
+<img alt="_images/3var_windrose_trend_Tmin_pct_season.png" src="_images/3var_windrose_trend_Tmin_pct_season.png" />
+<img alt="_images/3var_probwindrose_Tmin_month_step1.png" src="_images/3var_probwindrose_Tmin_month_step1.png" />
 </section>
 </section>
 
@@ -543,7 +648,7 @@ In pyClim, the meteogram shows, for each variable, a comparison of the given yea
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="usage.html" class="btn btn-neutral float-left" title="How to use" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="modules.html" class="btn btn-neutral float-right" title="pyClim" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="pyClimAir" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -555,7 +660,7 @@ In pyClim, the meteogram shows, for each variable, a comparison of the given yea
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-
+   
 
 </footer>
         </div>
@@ -566,7 +671,7 @@ In pyClim, the meteogram shows, for each variable, a comparison of the given yea
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
+  </script> 
 
 </body>
 </html>

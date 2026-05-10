@@ -3,7 +3,16 @@ How to use
 
 Introduction
 ------------
-pyClim is a Python package composed of several Python functions that allows the user to check the quality of their climatological data; to compute climatological normal values; and to plot their data in a simple way -with no need of programming- with the purpose of allowing all kinds of users (from beginners to experienced ones) to extract valuable information from their data in a visual way.
+pyClimAir is a Python package composed of several Python functions that allows the user to check the quality of their climatological data; to compute climatological normal values; and to plot their data in a simple way -with no need of programming- with the purpose of allowing all kinds of users (from beginners to experienced ones) to extract valuable information from their data in a visual way.
+
+Structure
+---------
+pyClimAir is structured in several subpackages, each of one containing functions specific for different themes:
+
+* The pyclim.common subpackage contains all the functions common to climatological and air quality studies.
+* The pyclim.air subpackage includes the functions that are specific of air quality studies.
+* The pyclim.clim subpackage contains the functions that are used specifically for climatological studies.
+
 
 Basic Usage
 -----------
@@ -11,7 +20,7 @@ Basic Usage
 Performing a quality control on your data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To perform a quality control on your data, and remove suspicious data if any, use the :func:`pyclim.quality_control` function. This function needs as a mandatory argument a pandas DataFrame containing the data you want to perform the quality control on, and as optional arguments:
+To perform a quality control on your data, and remove suspicious data if any, use the :func:`pyclim.common.quality_control` function. This function needs as a mandatory argument a pandas DataFrame containing the data you want to perform the quality control on, and as optional arguments:
 
  * the units of your data,
  * the maximum and minimum allowed values for temperature and wind speed (by default, maximum allowed temperature is 50ºC, minimum allowed temperature is -50ºC, and maximum allowed wind speed is 200 km/h).
@@ -32,7 +41,7 @@ In the example below, a quality control is performed on a set of data (df), for 
 Computing the climatological normal values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For several functions within pyClim, it is useful to have the climatological normal values in another separate DataFrame. The :func:`pyclim.compute_climate` function allows the user to do that, given that they provide a list with the initial and end years of the reference period to be used for the computation of climatological normal values.
+For several functions within pyClim, it is useful to have the climatological normal values in another separate DataFrame. The :func:`pyclim.common.compute_climate` function allows the user to do that, given that they provide a list with the initial and end years of the reference period to be used for the computation of climatological normal values.
 The code of the example below extracts the 1991-2020 climatological normal values for the variables "Tmean", "Tmax" and "Tmin" of the "df" DataFrame:
 
 .. code:: python

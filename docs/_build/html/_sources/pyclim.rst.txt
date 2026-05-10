@@ -1,10 +1,10 @@
-pyclim package
-==============
+pyclimair package
+=================
 
 Module contents
 ---------------
 
-.. automodule:: pyclim
+.. automodule:: pyclimair
    :members:
    :show-inheritance:
    :undoc-members:
@@ -13,10 +13,10 @@ Module contents
 Submodules
 ----------
 
-pyclim.pyclim module
+pyclimair.pyclimair module
 --------------------
 
-.. automodule:: pyclim.pyclim
+.. automodule:: pyclimair.pyclimair
    :members:
    :show-inheritance:
    :undoc-members:

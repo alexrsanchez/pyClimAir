@@ -14,7 +14,7 @@ Submodules
 ----------
 
 pyclimair.pyclimair module
---------------------
+--------------------------
 
 .. automodule:: pyclimair.pyclimair
    :members:

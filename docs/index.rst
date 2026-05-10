@@ -11,7 +11,7 @@
 Welcome to pyClimAir's documentation!
 =====================================
 
-.. image:: pyClim_logo_025.png
+.. image:: pyClimAir_logo.png
 
 
 .. toctree::
