@@ -537,29 +537,32 @@ def plot_records_count(
         ],
         fontsize=14,
     )
+
     plt.text(
-        0.03,
-        0.955,
+        0.025,
+        0.975,
         "Period with data: %i-%i" % (yearmin, yearmax),
         fontsize=14,
         transform=plt.gcf().transFigure,
     )
     plt.text(
-        0.8,
-        0.955,
+        0.375,
+        0.975,
         "Database: %s" % database,
         fontsize=14,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
     plt.text(
-        0.8,
-        0.915,
+        0.7,
+        0.975,
         "Location: %s" % station_name,
         fontsize=14,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
+
+
     plt.tight_layout()
     fig.suptitle(
         "%s records for %s in %s" % (title_var[freq], variable, station_name),
@@ -1882,11 +1885,11 @@ def plot_data_vs_climate(
         frameon=True,
     )
     text.patch.set_alpha(0.5)
-    ax.add_artist(text)
+    #ax.add_artist(text)
     if isinstance(df.loc[inidate:enddate, variable].idxmin(), float) is False:
         plt.text(
             0.65,
-            0.0425,
+            0.065,
             "Period min.: %.2f%s" % (df.loc[inidate:enddate, variable].min(), units)
             + " ["
             + str(df.loc[inidate:enddate, variable].idxmin().strftime("%d-%m-%Y"))
@@ -1898,7 +1901,7 @@ def plot_data_vs_climate(
     if isinstance(df.loc[inidate:enddate, variable].idxmax(), float) is False:
         plt.text(
             0.15,
-            0.0425,
+            0.065,
             "Period max.: %.2f%s" % (df.loc[inidate:enddate, variable].max(), units)
             + " ["
             + str(df.loc[inidate:enddate, variable].idxmax().strftime("%d-%m-%Y"))
@@ -1950,36 +1953,37 @@ def plot_data_vs_climate(
             )
 
     plt.text(
-        0.03,
-        0.955,
+        0.025,
+        0.96,
         "Climate normal period: %i-%i"
         % (climate_normal_period[0], climate_normal_period[1]),
         fontsize=12,
         transform=plt.gcf().transFigure,
     )
     plt.text(
-        0.03,
-        0.925,
+        0.28,
+        0.96,
         "Period with data: %i-%i" % (yearmin, yearmax),
         fontsize=12,
         transform=plt.gcf().transFigure,
     )
     plt.text(
-        0.825,
-        0.955,
+        0.55,
+        0.96,
         "Database: %s" % database,
         fontsize=12,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
     plt.text(
-        0.825,
-        0.925,
+        0.78,
+        0.96,
         "Location: %s" % station_name,
         fontsize=12,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
+
     plt.subplots_adjust(hspace=0.1, bottom=0.06, left=0.06, right=0.98, top=0.9)
     plt.savefig(filename, dpi=300)
 
@@ -2350,8 +2354,8 @@ def plot_data_vs_climate_withrecords(
     if isinstance(df.loc[inidate:enddate, variable].idxmin(), float) is False:
         #    if type(df.loc[inidate:enddate, variable].idxmin()) != float:
         plt.text(
-            0.65,
-            0.0425,
+            0.7,
+            0.065,
             "Period min.: %.2f%s" % (df.loc[inidate:enddate, variable].min(), units)
             + " ["
             + str(df.loc[inidate:enddate, variable].idxmin().strftime("%d-%m-%Y"))
@@ -2361,8 +2365,8 @@ def plot_data_vs_climate_withrecords(
         )
     if isinstance(df.loc[inidate:enddate, variable].idxmax(), float) is False:
         plt.text(
-            0.15,
-            0.0425,
+            0.1,
+            0.065,
             "Period max.: %.2f%s" % (df.loc[inidate:enddate, variable].max(), units)
             + " ["
             + str(df.loc[inidate:enddate, variable].idxmax().strftime("%d-%m-%Y"))
@@ -2376,7 +2380,7 @@ def plot_data_vs_climate_withrecords(
     if show_bands is True:
         first_legend = ax.legend(handles=[median, std], loc="lower right", ncol=2)
     else:
-        first_legend = ax.legend(handles=[median], loc="lower right")
+        first_legend = ax.legend(handles=[median], loc="lower center")
 
     # Add the legend manually to the Axes.
     ax.add_artist(first_legend)
@@ -2400,7 +2404,7 @@ def plot_data_vs_climate_withrecords(
         frameon=True,
     )
     text.patch.set_alpha(0.5)
-    ax.add_artist(text)
+    #ax.add_artist(text)
 
     # Show seasons
     if show_seasons is True:
@@ -2443,36 +2447,38 @@ def plot_data_vs_climate_withrecords(
             )
 
     plt.text(
-        0.03,
-        0.955,
+        0.025,
+        0.96,
         "Climate normal period: %i-%i"
         % (climate_normal_period[0], climate_normal_period[1]),
         fontsize=12,
         transform=plt.gcf().transFigure,
     )
     plt.text(
-        0.03,
-        0.915,
+        0.28,
+        0.96,
         "Period with data: %i-%i" % (yearmin, yearmax),
         fontsize=12,
         transform=plt.gcf().transFigure,
     )
     plt.text(
-        0.825,
-        0.955,
+        0.55,
+        0.96,
         "Database: %s" % database,
         fontsize=12,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
     plt.text(
-        0.825,
-        0.915,
+        0.78,
+        0.96,
         "Location: %s" % station_name,
         fontsize=12,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
+
+    plt.subplots_adjust(hspace=0.1, bottom=0.06, left=0.06, right=0.98, top=0.9)
 
     plt.savefig(filename, dpi=300)
 
@@ -3668,7 +3674,7 @@ def plot_periodstats(
     )
     text.patch.set_alpha(0.5)
 
-    ax.add_artist(text)
+    #ax.add_artist(text)
     fig.autofmt_xdate()
     plt.text(
         0.825,
@@ -6087,32 +6093,33 @@ def annual_meteogram(
         frameon=True,
     )
     text.patch.set_alpha(0.5)
+
     plt.text(
-        0.031,
-        0.96,
+        0.025,
+        0.975,
         "Climate normal period: %i-%i"
         % (climate_normal_period[0], climate_normal_period[1]),
         fontsize=16,
         transform=plt.gcf().transFigure,
     )
     plt.text(
-        0.031,
-        0.934,
+        0.025,
+        0.955,
         "Period with data: %i-%i" % (yearmin, yearmax),
         fontsize=16,
         transform=plt.gcf().transFigure,
     )
     plt.text(
-        0.75,
-        0.96,
+        0.4,
+        0.975,
         "Database: %s" % database,
         fontsize=16,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
     plt.text(
-        0.75,
-        0.934,
+        0.7,
+        0.975,
         "Location: %s" % station_name,
         fontsize=16,
         transform=plt.gcf().transFigure,
@@ -6681,7 +6688,7 @@ def compare_probdist(
 
 
     if dist_type.lower() == 'histogram':
-        fig ,axs = plt.subplots(nrows = nrow, ncols = ncol, figsize=(15,7), sharey=True, sharex=True)
+        fig ,axs = plt.subplots(nrows = nrow, ncols = ncol, figsize=(15,9), sharey=True, sharex=True)
         if len(df_list) == 1:
             ax = {}
             ax[0] = axs
@@ -6835,7 +6842,7 @@ def compare_probdist(
                 ax[10].legend(
                 fontsize=14,
                 ncol=3,
-                bbox_to_anchor=(0.0, -0.44, 1.0, 0.102),
+                bbox_to_anchor=(0.0, -0.43, 1.0, 0.102),
                 loc="lower center",
                 frameon=False,
             )  # , transform=plt.gcf().transFigure)
@@ -7440,7 +7447,8 @@ def threevar_windrose(
     filename: str,
     grouping_freq='year',
     grouping_stat='mean',
-    cmap='jet'
+    cmap='jet',
+    wspd_step=1.
 ):
     """
     This function allows to plot a 3-variable windrose
@@ -7468,6 +7476,8 @@ def threevar_windrose(
         The statistic for data grouping
     cmap: str or matplotlib colormap
         Colormap for the third variable representation
+    wspd_step: float
+        Step of the wind speed aggregation
 
     """
 
@@ -7503,7 +7513,7 @@ def threevar_windrose(
     wspd_shifted = wspd_shifted[wspd_shifted != 0]
 
 
-    wspd_factor = 0.5
+    wspd_factor = wspd_step # Step of the wind speed aggregation
 
     #azimuth_resol = int(np.ceil(2*np.pi/max(np.radians(2.25),wdir_shifted.abs().min()))) + 1
     #zenith_resol = np.ceil(wspd_shifted.abs().min())
@@ -7701,7 +7711,7 @@ def threevar_windrose(
     #cbar=fig.colorbar(img, ax=axs, orientation='vertical', fraction=.05, pad=0.15) #plt.colorbar(img)
     plt.text(
         0.025,
-        0.96,
+        0.975,
         "Analysed period: %i-%i"
         % (yearmin_an, yearmax_an),
         fontsize=16,
@@ -7709,14 +7719,14 @@ def threevar_windrose(
     )
     plt.text(
         0.28,
-        0.96,
+        0.975,
         "Period with data: %i-%i" % (yearmin, yearmax),
         fontsize=16,
         transform=plt.gcf().transFigure,
     )
     plt.text(
         0.55,
-        0.96,
+        0.975,
         "Database: %s" % database,
         fontsize=16,
         transform=plt.gcf().transFigure,
@@ -7724,7 +7734,7 @@ def threevar_windrose(
     )
     plt.text(
         0.78,
-        0.96,
+        0.975,
         "Location: %s" % station_name,
         fontsize=16,
         transform=plt.gcf().transFigure,
@@ -7775,7 +7785,8 @@ def threevar_windrose_trend(
     filename: str,
     grouping_freq='year',
     grouping_stat='mean',
-    cmap='RdBu_r'
+    cmap='RdBu_r',
+    wspd_step=1.
 ):
     """
     This function allows to plot a 3-variable windrose
@@ -7803,7 +7814,8 @@ def threevar_windrose_trend(
         The statistic for data grouping
     cmap: str or matplotlib colormap
         Colormap for the third variable representation
-
+    wspd_step: float
+        Step of the wind speed aggregation
     """
 
     df = df.copy()
@@ -7840,7 +7852,7 @@ def threevar_windrose_trend(
     #azimuth_resol = int(np.ceil(2*np.pi/max(np.radians(2.25),wdir_shifted.abs().min()))) + 1
     #zenith_resol = np.ceil(wspd_shifted.abs().min())
 
-    wspd_factor = 0.5
+    wspd_factor = wspd_step # Step of the wind speed aggregation
 
     # Create groups of wind direction and wind speed, for data aggregation
     azimuths_list_deg = np.linspace(0, 2*np.pi, int(np.ceil(2*np.pi/(max(np.radians(22.5),wdir_shifted.abs().min()))))) - max(np.radians(22.5),wdir_shifted.abs().min())/2
@@ -8521,7 +8533,7 @@ def threevar_windrose_probability(
     #cbar=fig.colorbar(img, ax=axs, orientation='vertical', fraction=.05, pad=0.15) #plt.colorbar(img)
     plt.text(
         0.025,
-        0.98,
+        0.975,
         "Analysed period: %i-%i"
         % (yearmin_an, yearmax_an),
         fontsize=16,
@@ -8529,14 +8541,14 @@ def threevar_windrose_probability(
     )
     plt.text(
         0.28,
-        0.98,
+        0.975,
         "Period with data: %i-%i" % (yearmin, yearmax),
         fontsize=16,
         transform=plt.gcf().transFigure,
     )
     plt.text(
         0.55,
-        0.98,
+        0.975,
         "Database: %s" % database,
         fontsize=16,
         transform=plt.gcf().transFigure,
@@ -8544,7 +8556,7 @@ def threevar_windrose_probability(
     )
     plt.text(
         0.78,
-        0.98,
+        0.975,
         "Location: %s" % station_name,
         fontsize=16,
         transform=plt.gcf().transFigure,

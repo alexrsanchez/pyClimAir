@@ -565,13 +565,16 @@ Since version 1.0.0, pyClimAir allows to include a fourth variable in the meteog
         df1_complete,
         climate_df_sep, 
         2023, 
-        'NO2', 
+        'O3', 
         climate_normal_period, 
         database, station_name, 
-        plotdir+'/%i_meteogram_withpols_inside.png' %year_to_plot, 
+        plotdir+'/2023_meteogram_withpols_inside.png', 
         plot_anoms=False, 
         pol_subplot=False
         )
+
+.. image:: ../examples/plots/2023_meteogram_withO3.png
+
 
 Comparing probability distributions
 -----------------------------------
@@ -618,3 +621,9 @@ A set of representative examples of each one of these three functions are shown 
         plotdir+'/3var_probwindrose_Tmin_month_step1.png', 
         grouping_freq='month', cmap=cmap_probability
         )
+
+.. image:: ../examples/plots/3var_windrose_Tmin_pct.png
+
+.. image:: ../examples/plots/3var_windrose_trend_Tmin_pct_season.png
+
+.. image:: ../examples/plots/3var_probwindrose_Tmin_month_step1.png

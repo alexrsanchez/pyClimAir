@@ -5,8 +5,8 @@ Summary: A Python package that makes analysing climatological and/or air quality
 Author-email: Alejandro Rodri­guez Sanchez <ars.rodriguezs@gmail.com>
 Maintainer-email: Alejandro Rodri­guez Sanchez <ars.rodriguezs@gmail.com>
 License-Expression: MIT
-Project-URL: Homepage, https://https://github.com/alexrsanchez/pyClim
-Project-URL: Issues, https://https://github.com/alexrsanchez/pyClim/issues
+Project-URL: Homepage, https://https://github.com/alexrsanchez/pyClimAir
+Project-URL: Issues, https://https://github.com/alexrsanchez/pyClimAir/issues
 Keywords: climate,air quality,timeseries,plotting
 Classifier: Programming Language :: Python :: 3
 Classifier: Operating System :: OS Independent

@@ -696,32 +696,33 @@ def annual_meteogram_with_pollutant(
             frameon=True,
         )
         text.patch.set_alpha(0.5)
+
         plt.text(
-            0.031,
-            0.96,
+            0.025,
+            0.975,
             "Climate normal period: %i-%i"
             % (climate_normal_period[0], climate_normal_period[1]),
             fontsize=16,
             transform=plt.gcf().transFigure,
         )
         plt.text(
-            0.031,
-            0.934,
+            0.025,
+            0.955,
             "Period with data: %i-%i" % (yearmin, yearmax),
             fontsize=16,
             transform=plt.gcf().transFigure,
         )
         plt.text(
-            0.75,
-            0.96,
+            0.4,
+            0.975,
             "Database: %s" % database,
             fontsize=16,
             transform=plt.gcf().transFigure,
             wrap=True,
         )
         plt.text(
-            0.75,
-            0.934,
+            0.7,
+            0.975,
             "Location: %s" % station_name,
             fontsize=16,
             transform=plt.gcf().transFigure,
@@ -732,11 +733,11 @@ def annual_meteogram_with_pollutant(
         custom_lines = [Line2D([0], [0], color='red', lw=4),
                         Line2D([0], [0], color='black', lw=4)]
 
-        fig.legend(custom_lines, [year_to_plot, 'Climate normal'], bbox_to_anchor=(0.3,0.645), ncol=2, fontsize=15)
+        fig.legend(custom_lines, [year_to_plot, 'Climate normal'], bbox_to_anchor=(0.33,0.645), ncol=2, fontsize=15, frameon=False)
 
         custom_lines2 = [Line2D([0], [0], color='black', lw=2, ls='-'),
                         Line2D([0], [0], color='black', lw=2, ls='--')]
-        fig.legend(custom_lines2, ['Meteo variables', '%s' %pollutant], bbox_to_anchor=(0.6,0.645), ncol=2, fontsize=15)
+        fig.legend(custom_lines2, ['Climatological variables', '%s' %pollutant], bbox_to_anchor=(0.9,0.645), ncol=2, fontsize=15, frameon=False)
 
         plt.subplots_adjust(
             left=0.05, right=0.95, hspace=0.1, wspace=0.1, bottom=0.03, top=0.9

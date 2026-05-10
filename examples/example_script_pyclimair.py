@@ -117,7 +117,10 @@ if os.path.isdir(plotdir) is False:
 
 
 # Read data
-input_file = os.path.join(os.getcwd(), "data/example_data.txt")
+# os.getcwd() gets current directory
+# os.path.realpath(__file__) gets file directory (including filename)
+
+input_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data/example_data.txt")
 df1 = pd.read_csv(input_file, sep=";", decimal=".", header=0, encoding="latin-1")
 
 df1["Date"] = pd.to_datetime(df1.iloc[:, 0])
@@ -149,6 +152,8 @@ climate_vars = [
     "Accum.Rainfall",
     "WindSpeed",
     "WindMaxSpeed",
+    "NO2",
+    "O3"
 ]
 
 df1_complete = df1.reindex(
@@ -191,22 +196,22 @@ climate_df_sep = compute_climate(
 ### 3D polar plots
 threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', 
                   database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
-                  grouping_freq='year', grouping_stat='mean')
+                  grouping_freq='year', grouping_stat='mean', wspd_step=2.5)
 threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', 
-                  database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                  database, station_name, plotdir+'/3var_windrose_Tmin_pct_season.png', 
                   grouping_freq='season', grouping_stat='mean')
 threevar_windrose(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 'ºC', 
-                  database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                  database, station_name, plotdir+'/3var_windrose_Tmin_pct_month.png', 
                   grouping_freq='month', grouping_stat='mean')
 
 threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 
-                        'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                        'ºC', database, station_name, plotdir+'/3var_windrose_trend_Tmin_pct.png', 
                         grouping_freq='year', grouping_stat='mean')
 threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 
-                        'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                        'ºC', database, station_name, plotdir+'/3var_windrose_trend_Tmin_pct_season.png', 
                         grouping_freq='season', grouping_stat='mean')
 threevar_windrose_trend(df1_complete, ['WindSpeed','WindDir','Tmin'], climate_normal_period, 
-                        'ºC', database, station_name, plotdir+'/3var_windrose_Tmin_pct.png', 
+                        'ºC', database, station_name, plotdir+'/3var_windrose_trend_Tmin_pct_month.png', 
                         grouping_freq='month', grouping_stat='mean')
 
 threevar_windrose_probability(df1_complete, ['WindSpeed','WindDir','Tmin'], '>20', 
@@ -522,10 +527,10 @@ annual_meteogram_with_pollutant(
     df1_complete,
     climate_df_sep, 
     2023, 
-    'NO2', 
+    'O3', 
     climate_normal_period, 
     database, station_name, 
-    plotdir+'/%i_meteogram_withpols_inside.png' %year_to_plot, 
+    plotdir+'/2023_meteogram_withO3.png', 
     plot_anoms=False, 
     pol_subplot=False)
 

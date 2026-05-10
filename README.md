@@ -2,7 +2,7 @@
 
 ## A Python module to plot climatological and air quality data
 
-![Getting Started](./docs/pyClim_logo.png)
+![Getting Started](./docs/pyClimAir_logo.png)
 
 pyClimAir is a Python package that makes analysing climatological and/or air quality data easy, and pretty!
 
@@ -20,7 +20,7 @@ pip install pyclimair
 
 You can learn about how pyClimAir works and see some examples on its documentation website:
 
-https://pyclim.readthedocs.io/en/latest/index.html
+https://pyclimair.readthedocs.io/en/latest/index.html
 
 ## Contact
 
