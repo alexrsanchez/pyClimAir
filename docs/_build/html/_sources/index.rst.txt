@@ -22,3 +22,4 @@ Welcome to pyClimAir's documentation!
    usage
    plotting
    modules
+   whats_new

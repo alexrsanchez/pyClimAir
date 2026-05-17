@@ -633,7 +633,7 @@ Heat maps of rolling window moving-average plots
 
 This kind of plots, which are created with the :func:`pyclimair.common.window_plot` function, show how a vertain variable has evolved with time, not only its instantaneous value but also its moving-average. The horizontal dimension shows the last analysed year, whereas the vertical dimension shows the lenght of the analysed period.
 For example: If in the image below one focuses only in the uppermost row, they are studying how the yearly-averaged value of daily minimum temperatures has evolved in time. But the 10th row illustrates how the 10-year moving average of daily Tmean has change. Therefore, this kind of plot not only gives the user a perspective of how a variable has changed in time, but also of the persistence of these changes.
-In this first example, the plot shows that the yearly mean value of Tmin has gradually increased in time, and the upward trend is still ongoing, as it is visible for all window's lengths.
+In this first example, the plot shows that the yearly mean value of Tmin has gradually increased in time since approximately 1984, and the upward trend is still ongoing, as the signal is propagating to longer window lengths.
 
 .. image:: ../examples/plots/Tmin_windowplot.png
 

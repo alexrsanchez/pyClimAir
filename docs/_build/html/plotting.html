@@ -58,6 +58,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#meteograms">Meteograms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#comparing-probability-distributions">Comparing probability distributions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#variable-polar-plots-variable-trends-and-probabilities">3-variable polar plots: variable, trends and probabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#heat-maps-of-rolling-window-moving-average-plots">Heat maps of rolling window moving-average plots</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pyClimAir</a></li>
@@ -516,7 +517,7 @@ The optional argument ‘alldatamean’, which is set to True by default, allows
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Another function that allows to identify trends is the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.timeseries_extremevalues()</span></code> function, which allows the user to plot the evolution of extreme values of a given variable. As usual, the user can control the time discretization of the extreme values. Below, an example for annual and seasonal values is given.</p>
+<p>Another function that allows to identify trends is the <a class="reference internal" href="pyclimair.html#pyclimair.common.timeseries_extremevalues" title="pyclimair.common.timeseries_extremevalues"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.timeseries_extremevalues()</span></code></a> function, which allows the user to plot the evolution of extreme values of a given variable. As usual, the user can control the time discretization of the extreme values. Below, an example for annual and seasonal values is given.</p>
 <img alt="_images/Annualextremevalues_Tmax_lines.png" src="_images/Annualextremevalues_Tmax_lines.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">### Seasonal plots</span>
 <span class="n">var</span> <span class="o">=</span> <span class="s2">&quot;Tmax&quot;</span>
@@ -585,7 +586,7 @@ In pyClimAir, the meteogram shows, for each variable, a comparison of the given 
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Since version 1.0.0, pyClimAir allows to include a fourth variable in the meteograms, with the aim of comparing the temporal evolution of air pollutants with relevant meteorological variables. This capability is included in <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.air.annual_meteogram_with_pollutant()</span></code>:</p>
+<p>Since version 1.0.0, pyClimAir allows to include a fourth variable in the meteograms, with the aim of comparing the temporal evolution of air pollutants with relevant meteorological variables. This capability is included in <a class="reference internal" href="pyclimair.html#pyclimair.air.annual_meteogram_with_pollutant" title="pyclimair.air.annual_meteogram_with_pollutant"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.air.annual_meteogram_with_pollutant()</span></code></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">annual_meteogram_with_pollutant</span><span class="p">(</span>
     <span class="n">df1_complete</span><span class="p">,</span>
     <span class="n">climate_df_sep</span><span class="p">,</span>
@@ -603,7 +604,7 @@ In pyClimAir, the meteogram shows, for each variable, a comparison of the given 
 </section>
 <section id="comparing-probability-distributions">
 <h2>Comparing probability distributions<a class="headerlink" href="#comparing-probability-distributions" title="Link to this heading"></a></h2>
-<p>A capability introduced in version 1.0.0 is the function <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.compare_probdist()</span></code>, which allows to compare the probability distribution of a certain period with that of a climatological reference period. Three options are given to the user in terms of the plot type: histogram, Cumulative Distribution Function (CDF) and both. The example below shows the result for the latter case. As in other pyClimAir functionalities, this function allows for yearly, seasonal and monthly aggregations.</p>
+<p>A capability introduced in version 1.0.0 is the function <a class="reference internal" href="pyclimair.html#pyclimair.common.compare_probdist" title="pyclimair.common.compare_probdist"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.compare_probdist()</span></code></a>, which allows to compare the probability distribution of a certain period with that of a climatological reference period. Three options are given to the user in terms of the plot type: histogram, Cumulative Distribution Function (CDF) and both. The example below shows the result for the latter case. As in other pyClimAir functionalities, this function allows for yearly, seasonal and monthly aggregations.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">compare_probdist</span><span class="p">(</span>
     <span class="n">df1_complete</span><span class="p">,</span> <span class="n">df_normalclimate</span><span class="p">,</span>
     <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">50</span><span class="p">],</span> <span class="s1">&#39;Tmax&#39;</span><span class="p">,</span> <span class="s1">&#39;ºC&#39;</span><span class="p">,</span>
@@ -616,7 +617,7 @@ In pyClimAir, the meteogram shows, for each variable, a comparison of the given 
 <section id="variable-polar-plots-variable-trends-and-probabilities">
 <h2>3-variable polar plots: variable, trends and probabilities<a class="headerlink" href="#variable-polar-plots-variable-trends-and-probabilities" title="Link to this heading"></a></h2>
 <p>An exciting new group of functionalities of pyClimAir is the creation of three-variable polar plots, which allows to visualize several statistics of a given variable as a function of wind speed and direction. This group of functionalities is composed of three functions, each of them performing an specific task:
-With the function <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose()</span></code> the used can easily visualize the (mean or median) values of a given variable for different wind speeds and directions. Moreover, the function <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_trend()</span></code> allows to compute the linear trend of a given variable as a function of wind speed and direction. Finally, the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_probability()</span></code> computes the probability of a variable meeting a given condition as a function of wind speed and direction.</p>
+With the function <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose" title="pyclimair.common.threevar_windrose"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose()</span></code></a> the used can easily visualize the (mean or median) values of a given variable for different wind speeds and directions. Moreover, the function <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose_trend" title="pyclimair.common.threevar_windrose_trend"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_trend()</span></code></a> allows to compute the linear trend of a given variable as a function of wind speed and direction. Finally, the <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose_probability" title="pyclimair.common.threevar_windrose_probability"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_probability()</span></code></a> computes the probability of a variable meeting a given condition as a function of wind speed and direction.</p>
 <p>All of these three functions accept as argument the “grouping_freq” parameter which, as in other functions of pyclimair, controls the temporal frequency of the data aggregation, so wind-dependencies can be analysed for yearly, monthly or seasonal values.</p>
 <p>A set of representative examples of each one of these three functions are shown below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">threevar_windrose</span><span class="p">(</span>
@@ -642,6 +643,16 @@ With the function <code class="xref py py-func docutils literal notranslate"><sp
 <img alt="_images/3var_windrose_Tmin_pct.png" src="_images/3var_windrose_Tmin_pct.png" />
 <img alt="_images/3var_windrose_trend_Tmin_pct_season.png" src="_images/3var_windrose_trend_Tmin_pct_season.png" />
 <img alt="_images/3var_probwindrose_Tmin_month_step1.png" src="_images/3var_probwindrose_Tmin_month_step1.png" />
+</section>
+<section id="heat-maps-of-rolling-window-moving-average-plots">
+<h2>Heat maps of rolling window moving-average plots<a class="headerlink" href="#heat-maps-of-rolling-window-moving-average-plots" title="Link to this heading"></a></h2>
+<p>This kind of plots, which are created with the <a class="reference internal" href="pyclimair.html#pyclimair.common.window_plot" title="pyclimair.common.window_plot"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.window_plot()</span></code></a> function, show how a vertain variable has evolved with time, not only its instantaneous value but also its moving-average. The horizontal dimension shows the last analysed year, whereas the vertical dimension shows the lenght of the analysed period.
+For example: If in the image below one focuses only in the uppermost row, they are studying how the yearly-averaged value of daily minimum temperatures has evolved in time. But the 10th row illustrates how the 10-year moving average of daily Tmean has change. Therefore, this kind of plot not only gives the user a perspective of how a variable has changed in time, but also of the persistence of these changes.
+In this first example, the plot shows that the yearly mean value of Tmin has gradually increased in time since approximately 1984, and the upward trend is still ongoing, as the signal is propagating to longer window lengths.</p>
+<img alt="_images/Tmin_windowplot.png" src="_images/Tmin_windowplot.png" />
+<p>On the contrary, in this second example we can see that the annual average of daily rainfall in the example location presents large variations in the short term (uppermost rows), and no significant long-term trend is visible.</p>
+<img alt="_images/Rainfall_windowplot.png" src="_images/Rainfall_windowplot.png" />
+<p>Note: These plots have been obtained with data not available in the example data, as the example dataset is not large enough to properly identify trends.</p>
 </section>
 </section>
 

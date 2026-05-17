@@ -18,7 +18,7 @@ New Features
 
 - Added :func:`pyclimair.air.annual_meteogram_with_pollutant` which allows to plot a meteorological meteogram with an air pollutant as a fourth variable.
 
-- Added :func:`pyclimair.clim.window_plot` which allows to create window plots of any climatological variable
+- Added :func:`pyclimair.common.window_plot` which allows to create window plots of any climatological variable
 
 Fixes
 -----
