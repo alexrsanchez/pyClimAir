@@ -18,7 +18,7 @@ New Features
 
 - Added :func:`pyclimair.air.annual_meteogram_with_pollutant` which allows to plot a meteorological meteogram with an air pollutant as a fourth variable.
 
-
+- Added :func:`pyclimair.clim.window_plot` which allows to create window plots of any climatological variable
 
 Fixes
 -----
@@ -32,3 +32,9 @@ Enhancements
 - :func:`pyclimair.common.categories_evolution` now creates categories' labels automatically, disappearing the "categories_labels" argument.
 
 - Former function pyclimair.plot_periodaverages has been renamed to `pyclimair.common.plot_periodstats`, as it can also plot other statistics than averages.
+
+- Simplification of the :func:`pyclimair.common.plot_data_and_accum_anoms` and  :func:`pyclimair.common.plot_data_and_annual_cycle` functions: Now they read a single variable instead of a list of variables.
+
+- In :func:`pyclimair.common.plot_data_vs_climate`, bottom y-axis limit set to 0 for "Rainfall" to improve visualization.
+
+- Improved visuals for :func:`pyclimair.common.timeseries_extremevalues` function

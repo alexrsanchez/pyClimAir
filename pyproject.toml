@@ -37,9 +37,13 @@ Issues = "https://https://github.com/alexrsanchez/pyClimAir/issues"
 
 [tool.pixi.workspace]
 channels = ["conda-forge"]
-platforms = ["win-64"]
+platforms = ["win-64", "linux-64"]
 
 [tool.pixi.pypi-dependencies]
 pyclimair = { path = ".", editable = true }
 
 [tool.pixi.tasks]
+
+
+[tool.coverage.run]
+branch = true

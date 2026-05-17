@@ -1869,12 +1869,12 @@ def plot_data_vs_climate(
         "Daily %s during period: %s to %s"
         % (
             variable,
-            df.loc[inidate:enddate].index[0].strftime("%d-%m-%Y"),
-            df.loc[inidate:enddate].index[-1].strftime("%d-%m-%Y"),
+            df.loc[inidate:enddate].index[0].strftime("%d-%b-%Y"),
+            df.loc[inidate:enddate].index[-1].strftime("%d-%b-%Y"),
         ),
         fontsize=16,
     )
-    ax.legend(loc="upper left").set_visible(True)
+    ax.legend(loc="upper center", ncols=2).set_visible(True)
     ax.tick_params(labelsize=14)
     text = AnchoredText(
         "Alejandro Rodríguez Sánchez",
@@ -1886,10 +1886,21 @@ def plot_data_vs_climate(
     )
     text.patch.set_alpha(0.5)
     #ax.add_artist(text)
+
+    if variable == 'Rainfall':
+        y_pos = 0.875
+        xmax_pos = 0.7 #0.65
+        xmin_pos = 0.1 #0.15
+        ax.set_ylim(bottom=0)
+    else:
+        y_pos = 0.065
+        xmax_pos = 0.7 #0.65
+        xmin_pos = 0.1 #0.15
+
     if isinstance(df.loc[inidate:enddate, variable].idxmin(), float) is False:
         plt.text(
-            0.65,
-            0.065,
+            xmax_pos,
+            y_pos,
             "Period min.: %.2f%s" % (df.loc[inidate:enddate, variable].min(), units)
             + " ["
             + str(df.loc[inidate:enddate, variable].idxmin().strftime("%d-%m-%Y"))
@@ -1900,8 +1911,8 @@ def plot_data_vs_climate(
     #    if type(df.loc[inidate:enddate, variable].idxmax()) != float:
     if isinstance(df.loc[inidate:enddate, variable].idxmax(), float) is False:
         plt.text(
-            0.15,
-            0.065,
+            xmin_pos,
+            y_pos,
             "Period max.: %.2f%s" % (df.loc[inidate:enddate, variable].max(), units)
             + " ["
             + str(df.loc[inidate:enddate, variable].idxmax().strftime("%d-%m-%Y"))
@@ -2277,7 +2288,7 @@ def plot_data_vs_climate_withrecords(
         color="red",
         marker="o",
         edgecolor="black",
-        label="Days with high record: %i"
+        label="Days above daily high record: %i"
         % records_df["%s_dayrmax" % (variable)].count(),
     )
     drmin = ax.scatter(
@@ -2288,7 +2299,7 @@ def plot_data_vs_climate_withrecords(
         color="blue",
         marker="o",
         edgecolor="black",
-        label="Days with low record: %i"
+        label="Days below daily low record: %i"
         % records_df["%s_dayrmin" % (variable)].count(),
     )
     # Monthly records
@@ -2344,18 +2355,29 @@ def plot_data_vs_climate_withrecords(
         "Daily %s during period: %s to %s"
         % (
             variable,
-            df.loc[inidate:enddate].index[0].strftime("%d-%m-%Y"),
-            df.loc[inidate:enddate].index[-1].strftime("%d-%m-%Y"),
+            df.loc[inidate:enddate].index[0].strftime("%d-%b-%Y"),
+            df.loc[inidate:enddate].index[-1].strftime("%d-%b-%Y"),
         ),
         fontsize=16,
     )
     ax.legend(loc="upper left", ncol=3).set_visible(True)
     ax.tick_params(labelsize=14)
+
+    if variable == 'Rainfall':
+        ax.set_ylim(bottom=0)
+        y_loc = 0.91
+        xmin_loc = 0.068
+        xmax_loc = 0.78
+    else:
+        y_loc = 0.062
+        xmin_loc = 0.1
+        xmax_loc = 0.725
+
     if isinstance(df.loc[inidate:enddate, variable].idxmin(), float) is False:
         #    if type(df.loc[inidate:enddate, variable].idxmin()) != float:
         plt.text(
-            0.7,
-            0.065,
+            xmax_loc,
+            y_loc,
             "Period min.: %.2f%s" % (df.loc[inidate:enddate, variable].min(), units)
             + " ["
             + str(df.loc[inidate:enddate, variable].idxmin().strftime("%d-%m-%Y"))
@@ -2365,8 +2387,8 @@ def plot_data_vs_climate_withrecords(
         )
     if isinstance(df.loc[inidate:enddate, variable].idxmax(), float) is False:
         plt.text(
-            0.1,
-            0.065,
+            xmin_loc,
+            y_loc,
             "Period max.: %.2f%s" % (df.loc[inidate:enddate, variable].max(), units)
             + " ["
             + str(df.loc[inidate:enddate, variable].idxmax().strftime("%d-%m-%Y"))
@@ -2378,7 +2400,7 @@ def plot_data_vs_climate_withrecords(
     # Legends
     # Create a legend for the median.
     if show_bands is True:
-        first_legend = ax.legend(handles=[median, std], loc="lower right", ncol=2)
+        first_legend = ax.legend(handles=[median, std], loc="lower center", ncol=2)
     else:
         first_legend = ax.legend(handles=[median], loc="lower center")
 
@@ -2405,6 +2427,7 @@ def plot_data_vs_climate_withrecords(
     )
     text.patch.set_alpha(0.5)
     #ax.add_artist(text)
+
 
     # Show seasons
     if show_seasons is True:
@@ -3362,7 +3385,7 @@ def plot_data_vs_climate_withrecords_multivar(
     )
     text.patch.set_alpha(0.5)
 
-    ax[0].add_artist(text)
+    #ax[0].add_artist(text)
     ax[0].xaxis.set_major_locator(locator)
     ax[0].xaxis.set_major_formatter(formatter)
     ax[0].set_xlim([inidate - dt.timedelta(days=1), enddate + dt.timedelta(days=1)])
@@ -3440,7 +3463,7 @@ def plot_data_vs_climate_withrecords_multivar(
         transform=plt.gcf().transFigure,
         wrap=True,
     )
-    plt.subplots_adjust(hspace=0.1, bottom=0.06, left=0.1, right=0.9)
+    plt.subplots_adjust(hspace=0.1, bottom=0.06, left=0.08, right=0.92)
     fig.savefig(filename, dpi=300)
 
 
@@ -3704,8 +3727,8 @@ def plot_data_and_accum_anoms(
     df: pd.DataFrame,
     df_climate: pd.DataFrame,
     year_to_plot: int,
-    vars_list: list[str],
-    units_list: list[str],
+    var: str,
+    units: str,
     colormap,
     database: str,
     climate_normal_period: list[int],
@@ -3727,10 +3750,10 @@ def plot_data_and_accum_anoms(
         DataFrame containing the climatological data
     year_to_plot: int
         Integer representing the year of the data to be plotted
-    vars_list: str
-        List of strings containing the name(s) of the variable(s) to be plotted
-    units_list: str
-        List of strings containing the units of the variable(s) to be plotted
+    var: str
+        String containing the name of the variable to be plotted
+    units: str
+        String containing the units of the variable to be plotted
     inidate: datetime.datetime
         First date to be plotted
     enddate: datetime.datetime
@@ -3756,12 +3779,6 @@ def plot_data_and_accum_anoms(
     df = df.copy()
     df_climate = df_climate.copy()
 
-    if len(vars_list) < 1:
-        raise ValueError(
-            "len(vars_list) must be greater or equal than 1. Your vars_list has a length of: %i"
-            % len(vars_list)
-        )
-
     if secondplot_type not in ["accum", "moving"]:
         raise ValueError('"anom_type" must be either "accum" or "moving".')
 
@@ -3784,214 +3801,213 @@ def plot_data_and_accum_anoms(
 
     locator = mdates.MonthLocator()  # minticks=3, maxticks=12)
     formatter = mdates.ConciseDateFormatter(locator)
-    for i in range(len(vars_list)):
-        fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(15, 7), sharex=True)
-        ax = axs.flatten()
-        (median,) = ax[0].plot(
-            df_climate.loc[
-                df_climate.index.year == year_to_plot,
-                "%s_%s" % (vars_list[i], climate_stat),
-            ].index,
-            df_climate.loc[
-                df_climate.index.year == year_to_plot,
-                "%s_%s" % (vars_list[i], climate_stat),
-            ],
-            color="k",
-            label="Climate %s" % climate_stat,
-        )
-        diff_var = (
-            df.loc[df.index.year == year_to_plot, vars_list[i]]
-            - df_climate.loc[
-                df_climate.index.year == year_to_plot,
-                "%s_%s" % (vars_list[i], climate_stat),
-            ]
-        )
-        mask1 = diff_var < 0
-        mask2 = diff_var >= 0
-        ax[0].bar(
-            df_climate.loc[
-                df_climate.index.year == year_to_plot,
-                "%s_%s" % (vars_list[i], climate_stat),
-            ].index[mask1],
-            bottom=df_climate.loc[
-                df_climate.index.year == year_to_plot,
-                "%s_%s" % (vars_list[i], climate_stat),
-            ][mask1],
-            height=diff_var[mask1],
-            color=colormap([-1000]),
-            alpha=0.7,
-        )
-        ax[0].bar(
-            df_climate.loc[
-                df_climate.index.year == year_to_plot,
-                "%s_%s" % (vars_list[i], climate_stat),
-            ].index[mask2],
-            bottom=df_climate.loc[
-                df_climate.index.year == year_to_plot,
-                "%s_%s" % (vars_list[i], climate_stat),
-            ][mask2],
-            height=diff_var[mask2],
-            color=colormap([1000]),
-            alpha=0.7,
+    fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(15, 7), sharex=True)
+    ax = axs.flatten()
+    (median,) = ax[0].plot(
+        df_climate.loc[
+            df_climate.index.year == year_to_plot,
+            "%s_%s" % (var, climate_stat),
+        ].index,
+        df_climate.loc[
+            df_climate.index.year == year_to_plot,
+            "%s_%s" % (var, climate_stat),
+        ],
+        color="k",
+        label="Climate %s" % climate_stat,
+    )
+    diff_var = (
+        df.loc[df.index.year == year_to_plot, var]
+        - df_climate.loc[
+            df_climate.index.year == year_to_plot,
+            "%s_%s" % (var, climate_stat),
+        ]
+    )
+    mask1 = diff_var < 0
+    mask2 = diff_var >= 0
+    ax[0].bar(
+        df_climate.loc[
+            df_climate.index.year == year_to_plot,
+            "%s_%s" % (var, climate_stat),
+        ].index[mask1],
+        bottom=df_climate.loc[
+            df_climate.index.year == year_to_plot,
+            "%s_%s" % (var, climate_stat),
+        ][mask1],
+        height=diff_var[mask1],
+        color=colormap([-1000]),
+        alpha=0.7,
+    )
+    ax[0].bar(
+        df_climate.loc[
+            df_climate.index.year == year_to_plot,
+            "%s_%s" % (var, climate_stat),
+        ].index[mask2],
+        bottom=df_climate.loc[
+            df_climate.index.year == year_to_plot,
+            "%s_%s" % (var, climate_stat),
+        ][mask2],
+        height=diff_var[mask2],
+        color=colormap([1000]),
+        alpha=0.7,
+    )
+
+    ax[0].grid(color="black", alpha=0.5)
+    ax[0].set_ylabel("%s (%s)" % (var, units), fontsize=17)
+
+    # Accumulated anoms or MA anoms
+    anoms_df = (
+        df.loc[df.index.year == year_to_plot, var]
+        - df_climate.loc[
+            df_climate.index.year == year_to_plot,
+            "%s_%s" % (var, climate_stat),
+        ]
+    )
+
+    if secondplot_type == "accum":
+        accum_anom = anoms_df.cumsum()
+        ax[1].plot(accum_anom, color="black", label="Accum. anomaly")
+        ax[1].grid(color="black", alpha=0.5)
+        ax[1].axhline(y=0, linestyle="--")
+        ax[1].set_ylabel(
+            "%s (%s) accum. anomaly" % (var, units), fontsize=17
         )
 
-        ax[0].grid(color="black", alpha=0.5)
-        ax[0].set_ylabel("%s (%s)" % (vars_list[i], units_list[i]), fontsize=17)
-
-        # Accumulated anoms or MA anoms
-        anoms_df = (
-            df.loc[df.index.year == year_to_plot, vars_list[i]]
-            - df_climate.loc[
-                df_climate.index.year == year_to_plot,
-                "%s_%s" % (vars_list[i], climate_stat),
-            ]
+        fig.suptitle(
+            x=0.5,
+            y=0.94,
+            t="%s and accumulated anomaly during period %s to %s"
+            % (
+                var,
+                dt.datetime(year_to_plot, 1, 1).strftime("%d-%b-%Y"),
+                dt.datetime(year_to_plot, 12, 31).strftime("%d-%b-%Y"),
+            ),
+            fontsize=16,
         )
 
-        if secondplot_type == "accum":
-            accum_anom = anoms_df.cumsum()
-            ax[1].plot(accum_anom, color="black", label="Accum. anomaly")
-            ax[1].grid(color="black", alpha=0.5)
-            ax[1].axhline(y=0, linestyle="--")
-            ax[1].set_ylabel(
-                "%s (%s) accum. anomaly" % (vars_list[i], units_list[i]), fontsize=17
+    else:
+        ma_anom = anoms_df.rolling(window=w).mean()
+        ax[1].plot(ma_anom, color="black", label="%i-period MA of anomaly" % w)
+        ax[1].grid(color="black", alpha=0.5)
+        ax[1].axhline(y=0, linestyle="--")
+
+        ax[1].set_ylabel(
+            "%s [%s] %i-period MA anom." % (var, units, w),
+            fontsize=17,
+        )
+
+        fig.suptitle(
+            x=0.5,
+            y=0.94,
+            t="%s and %i-period MA of anomaly during period %s to %s"
+            % (
+                var,
+                w,
+                dt.datetime(year_to_plot, 1, 1).strftime("%d-%b-%Y"),
+                dt.datetime(year_to_plot, 12, 31).strftime("%d-%b-%Y"),
+            ),
+            fontsize=16,
+        )
+
+    # Legends
+    ax[0].legend(loc="upper left", ncol=1).set_visible(True)
+    ax[1].legend(loc="upper left", ncol=1).set_visible(True)
+    ax[0].tick_params(labelsize=14)
+    ax[1].tick_params(labelsize=14)
+    text = AnchoredText(
+        "Alejandro Rodríguez Sánchez",
+        loc=1,
+        bbox_to_anchor=(0.24, 0.185),
+        bbox_transform=ax[0].transAxes,
+        prop={"size": 12},
+        frameon=True,
+    )
+    text.patch.set_alpha(0.5)
+
+    ax[0].add_artist(text)
+    ax[0].xaxis.set_major_locator(locator)
+    ax[0].xaxis.set_major_formatter(formatter)
+    ax[0].set_xlim(
+        [
+            dt.datetime(year_to_plot, 1, 1) - dt.timedelta(days=1),
+            dt.datetime(year_to_plot, 12, 31) + dt.timedelta(days=1),
+        ]
+    )
+
+    # Show seasons
+    if show_seasons is True:
+        season_colors = ["#4696db", "#32a852", "#da5757", "#d6db46", "#4696db"]
+        for i in range(2):
+            ax[i].axvspan(
+                mdates.date2num(dt.datetime(int(year_to_plot), 1, 1)),
+                mdates.date2num(dt.datetime(int(year_to_plot), 3, 1)),
+                color="#4696db",
+                alpha=0.2,
+                zorder=-10,
+            )
+            ax[i].axvspan(
+                mdates.date2num(dt.datetime(int(year_to_plot), 3, 1)),
+                mdates.date2num(dt.datetime(int(year_to_plot), 6, 1)),
+                color="#32a852",
+                alpha=0.2,
+                zorder=-10,
+            )
+            ax[i].axvspan(
+                mdates.date2num(dt.datetime(int(year_to_plot), 6, 1)),
+                mdates.date2num(dt.datetime(int(year_to_plot), 9, 1)),
+                color="#da5757",
+                alpha=0.2,
+                zorder=-10,
+            )
+            ax[i].axvspan(
+                mdates.date2num(dt.datetime(int(year_to_plot), 9, 1)),
+                mdates.date2num(dt.datetime(int(year_to_plot), 12, 1)),
+                color="#d6db46",
+                alpha=0.2,
+                zorder=-10,
+            )
+            ax[i].axvspan(
+                mdates.date2num(dt.datetime(int(year_to_plot), 12, 1)),
+                mdates.date2num(dt.datetime(int(year_to_plot) + 1, 1, 1)),
+                color="#4696db",
+                alpha=0.2,
+                zorder=-10,
             )
 
-            fig.suptitle(
-                x=0.5,
-                y=0.94,
-                t="%s and accumulated anomaly during period %s to %s"
-                % (
-                    vars_list[i],
-                    dt.datetime(year_to_plot, 1, 1).strftime("%d-%b-%Y"),
-                    dt.datetime(year_to_plot, 12, 31).strftime("%d-%b-%Y"),
-                ),
-                fontsize=16,
-            )
-
-        else:
-            ma_anom = anoms_df.rolling(window=w).mean()
-            ax[1].plot(ma_anom, color="black", label="%i-period MA of anomaly" % w)
-            ax[1].grid(color="black", alpha=0.5)
-            ax[1].axhline(y=0, linestyle="--")
-
-            ax[1].set_ylabel(
-                "%s (%s) %i-period MA anom." % (vars_list[i], units_list[i], w),
-                fontsize=17,
-            )
-
-            fig.suptitle(
-                x=0.5,
-                y=0.94,
-                t="%s and %i-period MA of anomaly during period %s to %s"
-                % (
-                    vars_list[i],
-                    w,
-                    dt.datetime(year_to_plot, 1, 1).strftime("%d-%b-%Y"),
-                    dt.datetime(year_to_plot, 12, 31).strftime("%d-%b-%Y"),
-                ),
-                fontsize=16,
-            )
-
-        # Legends
-        ax[0].legend(loc="upper left", ncol=1).set_visible(True)
-        ax[1].legend(loc="upper left", ncol=1).set_visible(True)
-        ax[0].tick_params(labelsize=14)
-        ax[1].tick_params(labelsize=14)
-        text = AnchoredText(
-            "Alejandro Rodríguez Sánchez",
-            loc=1,
-            bbox_to_anchor=(0.24, 0.185),
-            bbox_transform=ax[0].transAxes,
-            prop={"size": 12},
-            frameon=True,
-        )
-        text.patch.set_alpha(0.5)
-
-        ax[0].add_artist(text)
-        ax[0].xaxis.set_major_locator(locator)
-        ax[0].xaxis.set_major_formatter(formatter)
-        ax[0].set_xlim(
-            [
-                dt.datetime(year_to_plot, 1, 1) - dt.timedelta(days=1),
-                dt.datetime(year_to_plot, 12, 31) + dt.timedelta(days=1),
-            ]
-        )
-
-        # Show seasons
-        if show_seasons is True:
-            season_colors = ["#4696db", "#32a852", "#da5757", "#d6db46", "#4696db"]
-            for i in range(2):
-                ax[i].axvspan(
-                    mdates.date2num(dt.datetime(int(year_to_plot), 1, 1)),
-                    mdates.date2num(dt.datetime(int(year_to_plot), 3, 1)),
-                    color="#4696db",
-                    alpha=0.2,
-                    zorder=-10,
-                )
-                ax[i].axvspan(
-                    mdates.date2num(dt.datetime(int(year_to_plot), 3, 1)),
-                    mdates.date2num(dt.datetime(int(year_to_plot), 6, 1)),
-                    color="#32a852",
-                    alpha=0.2,
-                    zorder=-10,
-                )
-                ax[i].axvspan(
-                    mdates.date2num(dt.datetime(int(year_to_plot), 6, 1)),
-                    mdates.date2num(dt.datetime(int(year_to_plot), 9, 1)),
-                    color="#da5757",
-                    alpha=0.2,
-                    zorder=-10,
-                )
-                ax[i].axvspan(
-                    mdates.date2num(dt.datetime(int(year_to_plot), 9, 1)),
-                    mdates.date2num(dt.datetime(int(year_to_plot), 12, 1)),
-                    color="#d6db46",
-                    alpha=0.2,
-                    zorder=-10,
-                )
-                ax[i].axvspan(
-                    mdates.date2num(dt.datetime(int(year_to_plot), 12, 1)),
-                    mdates.date2num(dt.datetime(int(year_to_plot) + 1, 1, 1)),
-                    color="#4696db",
-                    alpha=0.2,
-                    zorder=-10,
-                )
-
-        plt.text(
-            0.03,
-            0.955,
-            "Climate normal period: %i-%i"
-            % (climate_normal_period[0], climate_normal_period[1]),
-            fontsize=12,
-            transform=plt.gcf().transFigure,
-        )
-        # plt.text(0.03, 0.925, 'Period with data: %i-%i' %(df.index.year.min(),df.index.year.max()), fontsize=12, transform=plt.gcf().transFigure)
-        plt.text(
-            0.825,
-            0.955,
-            "Database: %s" % database,
-            fontsize=12,
-            transform=plt.gcf().transFigure,
-            wrap=True,
-        )
-        plt.text(
-            0.825,
-            0.915,
-            "Location: %s" % station_name,
-            fontsize=12,
-            transform=plt.gcf().transFigure,
-            wrap=True,
-        )
-        plt.subplots_adjust(hspace=0.1)
-        fig.savefig(filename, dpi=300)
+    plt.text(
+        0.03,
+        0.955,
+        "Climate normal period: %i-%i"
+        % (climate_normal_period[0], climate_normal_period[1]),
+        fontsize=12,
+        transform=plt.gcf().transFigure,
+    )
+    # plt.text(0.03, 0.925, 'Period with data: %i-%i' %(df.index.year.min(),df.index.year.max()), fontsize=12, transform=plt.gcf().transFigure)
+    plt.text(
+        0.825,
+        0.955,
+        "Database: %s" % database,
+        fontsize=12,
+        transform=plt.gcf().transFigure,
+        wrap=True,
+    )
+    plt.text(
+        0.825,
+        0.915,
+        "Location: %s" % station_name,
+        fontsize=12,
+        transform=plt.gcf().transFigure,
+        wrap=True,
+    )
+    plt.subplots_adjust(hspace=0.1)
+    fig.savefig(filename, dpi=300)
 
 
 def plot_data_and_annual_cycle(
     df: pd.DataFrame,
     df_climate: pd.DataFrame,
     year_to_plot: int,
-    vars_list: list[str],
-    units_list: list[str],
+    var: str,
+    units: str,
     colormap,
     database: str,
     climate_normal_period: list[int],
@@ -4012,10 +4028,10 @@ def plot_data_and_annual_cycle(
         DataFrame containing the climatological data
     year_to_plot: int
         Integer representing the year of the data to be plotted
-    vars_list: str
-        List of strings containing the name(s) of the variable(s) to be plotted
-    units_list: str
-        List of strings with the units of the variable(s) to be plotted
+    var: str
+        Strings containing the name of the variable to be plotted
+    units: str
+        String with the units of the variable to be plotted
     inidate: datetime.datetime
         First date to be plotted
     enddate: datetime.datetime
@@ -4041,14 +4057,9 @@ def plot_data_and_annual_cycle(
     df = df.copy()
     df_climate = df_climate.copy()
 
-    yearmin = df[vars_list].first_valid_index().year  # df.index.year.min()
-    yearmax = df[vars_list].last_valid_index().year
+    yearmin = df[var].first_valid_index().year  # df.index.year.min()
+    yearmax = df[var].last_valid_index().year
 
-    if len(vars_list) < 1:
-        raise ValueError(
-            "len(vars_list) must be greater or equal than 1. Your vars_list has a length of: %i"
-            % len(vars_list)
-        )
 
     df = df[df.index.year == year_to_plot]
     df_climate = df_climate[df_climate.index.year == year_to_plot]
@@ -4069,405 +4080,404 @@ def plot_data_and_annual_cycle(
 
     locator = mdates.MonthLocator()  # minticks=3, maxticks=12)
     formatter = mdates.ConciseDateFormatter(locator)
-    for i in range(len(vars_list)):
-        fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(15, 7), sharex=True)
-        ax = axs.flatten()
-        if units_list[i] not in ["mm", "in", "cm"]:
-            (median,) = ax[0].plot(
-                df_climate.loc[
-                    df_climate.index.year == year_to_plot,
-                    "%s_%s" % (vars_list[i], climate_stat),
-                ].index,
-                df_climate.loc[
-                    df_climate.index.year == year_to_plot,
-                    "%s_%s" % (vars_list[i], climate_stat),
-                ],
-                color="k",
-                label="Climate %s" % climate_stat,
-            )
-            diff_var = (
-                df.loc[df.index.year == year_to_plot, vars_list[i]]
-                - df_climate.loc[
-                    df_climate.index.year == year_to_plot,
-                    "%s_%s" % (vars_list[i], climate_stat),
-                ]
-            )
-            # print(diff_var)
-            mask1 = diff_var < 0
-            mask2 = diff_var >= 0
-
-            ax[0].bar(
-                df_climate.loc[
-                    df_climate.index.year == year_to_plot,
-                    "%s_%s" % (vars_list[i], climate_stat),
-                ].index[mask1],
-                bottom=df_climate.loc[
-                    df_climate.index.year == year_to_plot,
-                    "%s_%s" % (vars_list[i], climate_stat),
-                ][mask1],
-                height=diff_var[mask1],
-                color=colormap([-1000]),
-                alpha=0.7,
-            )
-            ax[0].bar(
-                df_climate.loc[
-                    df_climate.index.year == year_to_plot,
-                    "%s_%s" % (vars_list[i], climate_stat),
-                ].index[mask2],
-                bottom=df_climate.loc[
-                    df_climate.index.year == year_to_plot,
-                    "%s_%s" % (vars_list[i], climate_stat),
-                ][mask2],
-                height=diff_var[mask2],
-                color=colormap([1000]),
-                alpha=0.7,
-            )
-
-            ax[0].grid(color="black", alpha=0.5)
-            ax[0].set_ylabel("%s (%s)" % (vars_list[i], units_list[i]), fontsize=17)
-
-            # Accumulated mean
-            accum_mean = pd.DataFrame(
-                df.loc[df.index.year == year_to_plot, vars_list[i]].cumsum()
-            )
-            accum_mean[vars_list[i] + "_nocount"] = df.loc[
-                df.index.year == year_to_plot, vars_list[i]
-            ]
-            accum_mean["count"] = 0
-            n = 1
-            for h in range(len(accum_mean)):
-                if np.isnan(accum_mean.iloc[h, 1]) is False:
-                    accum_mean.iloc[h, 2] = n
-                    n += 1
-                else:
-                    accum_mean.iloc[h, 2] = n
-
-            accum_mean["cummean"] = accum_mean[vars_list[i]] / accum_mean["count"]
-
-            accum_mean_climate = pd.DataFrame(
-                df_climate.loc[
-                    df_climate.index.year == year_to_plot,
-                    vars_list[i] + "_%s" % climate_stat,
-                ].cumsum()
-            )
-            accum_mean_climate[vars_list[i] + "_nocount"] = df_climate.loc[
+    fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(15, 7), sharex=True)
+    ax = axs.flatten()
+    if units not in ["mm", "in", "cm"]:
+        (median,) = ax[0].plot(
+            df_climate.loc[
                 df_climate.index.year == year_to_plot,
-                vars_list[i] + "_%s" % climate_stat,
+                "%s_%s" % (var, climate_stat),
+            ].index,
+            df_climate.loc[
+                df_climate.index.year == year_to_plot,
+                "%s_%s" % (var, climate_stat),
+            ],
+            color="k",
+            label="Climate %s" % climate_stat,
+        )
+        diff_var = (
+            df.loc[df.index.year == year_to_plot, var]
+            - df_climate.loc[
+                df_climate.index.year == year_to_plot,
+                "%s_%s" % (var, climate_stat),
             ]
-            accum_mean_climate["count"] = 0
-            nc = 1
-            for h in range(len(accum_mean_climate)):
-                if np.isnan(accum_mean_climate.iloc[h, 1]) is False:
-                    accum_mean_climate.iloc[h, 2] = nc
-                    nc += 1
-                else:
-                    accum_mean_climate.iloc[h, 2] = nc
+        )
+        # print(diff_var)
+        mask1 = diff_var < 0
+        mask2 = diff_var >= 0
 
-            accum_mean_climate["cummean climate"] = (
-                accum_mean_climate[vars_list[i] + "_%s" % climate_stat]
-                / accum_mean_climate["count"]
-            )
+        ax[0].bar(
+            df_climate.loc[
+                df_climate.index.year == year_to_plot,
+                "%s_%s" % (var, climate_stat),
+            ].index[mask1],
+            bottom=df_climate.loc[
+                df_climate.index.year == year_to_plot,
+                "%s_%s" % (var, climate_stat),
+            ][mask1],
+            height=diff_var[mask1],
+            color=colormap([-1000]),
+            alpha=0.7,
+        )
+        ax[0].bar(
+            df_climate.loc[
+                df_climate.index.year == year_to_plot,
+                "%s_%s" % (var, climate_stat),
+            ].index[mask2],
+            bottom=df_climate.loc[
+                df_climate.index.year == year_to_plot,
+                "%s_%s" % (var, climate_stat),
+            ][mask2],
+            height=diff_var[mask2],
+            color=colormap([1000]),
+            alpha=0.7,
+        )
 
-            accum_mean_all = pd.concat(
-                [accum_mean["cummean"], accum_mean_climate["cummean climate"]], axis=1
-            )
-            accum_mean_all.columns = [vars_list[i], vars_list[i] + " climate"]
-            accum_mean_all["anomaly"] = (
-                accum_mean_all[vars_list[i]] - accum_mean_all[vars_list[i] + " climate"]
-            )
+        ax[0].grid(color="black", alpha=0.5)
+        ax[0].set_ylabel("%s (%s)" % (var, units), fontsize=17)
 
-            ax[1].plot(
-                accum_mean_all[vars_list[i]],
-                color="black",
-                label="Accum. mean %i" % year_to_plot,
-            )
-            ax[1].plot(
-                accum_mean_all[vars_list[i] + " climate"],
-                color="black",
-                ls="--",
-                label="Accum. mean climate",
-            )
-
-            if fillcolor_gradient is False:
-                ax[1].fill_between(
-                    accum_mean_all.index,
-                    accum_mean_all.loc[:, vars_list[i]],
-                    accum_mean_all.loc[:, "%s climate" % vars_list[i]],
-                    where=accum_mean_all.loc[:, vars_list[i]]
-                    >= accum_mean_all.loc[:, "%s climate" % vars_list[i]],
-                    facecolor="red",
-                    interpolate=True,
-                )
-                ax[1].fill_between(
-                    accum_mean_all.index,
-                    accum_mean_all.loc[:, vars_list[i]],
-                    accum_mean_all.loc[:, "%s climate" % vars_list[i]],
-                    where=accum_mean_all.loc[:, vars_list[i]]
-                    <= accum_mean_all.loc[:, "%s climate" % vars_list[i]],
-                    facecolor="blue",
-                    interpolate=True,
-                )
+        # Accumulated mean
+        accum_mean = pd.DataFrame(
+            df.loc[df.index.year == year_to_plot, var].cumsum()
+        )
+        accum_mean[var + "_nocount"] = df.loc[
+            df.index.year == year_to_plot, var
+        ]
+        accum_mean["count"] = 0
+        n = 1
+        for h in range(len(accum_mean)):
+            if np.isnan(accum_mean.iloc[h, 1]) is False:
+                accum_mean.iloc[h, 2] = n
+                n += 1
             else:
-                cmap, norm = fill_between_colormap(
-                    accum_mean_all.loc[:, vars_list[i]].index,
-                    accum_mean_all.loc[:, vars_list[i]],
-                    accum_mean_all.loc[:, "%s climate" % vars_list[i]],
-                    cmap=accum_mean_all,
-                    alpha=0.9,
-                )
-                # Add color bar
-                cax = ax[1].inset_axes([1.025, 0, 0.025, 0.95])
-                cbar = plt.colorbar(
-                    matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax
-                )  # , shrink=.98,ticks=levels, pad=0.02)
-                cbar.ax.tick_params(labelsize=14)
-                cbar.ax.set_title(units_list[i], fontsize=14)
+                accum_mean.iloc[h, 2] = n
 
-            ax[1].grid(color="black", alpha=0.5)
-            ax[1].set_ylabel(
-                "%s (%s) accum. mean" % (vars_list[i], units_list[i]), fontsize=17
+        accum_mean["cummean"] = accum_mean[var] / accum_mean["count"]
+
+        accum_mean_climate = pd.DataFrame(
+            df_climate.loc[
+                df_climate.index.year == year_to_plot,
+                var + "_%s" % climate_stat,
+            ].cumsum()
+        )
+        accum_mean_climate[var + "_nocount"] = df_climate.loc[
+            df_climate.index.year == year_to_plot,
+            var + "_%s" % climate_stat,
+        ]
+        accum_mean_climate["count"] = 0
+        nc = 1
+        for h in range(len(accum_mean_climate)):
+            if np.isnan(accum_mean_climate.iloc[h, 1]) is False:
+                accum_mean_climate.iloc[h, 2] = nc
+                nc += 1
+            else:
+                accum_mean_climate.iloc[h, 2] = nc
+
+        accum_mean_climate["cummean climate"] = (
+            accum_mean_climate[var + "_%s" % climate_stat]
+            / accum_mean_climate["count"]
+        )
+
+        accum_mean_all = pd.concat(
+            [accum_mean["cummean"], accum_mean_climate["cummean climate"]], axis=1
+        )
+        accum_mean_all.columns = [var, var + " climate"]
+        accum_mean_all["anomaly"] = (
+            accum_mean_all[var] - accum_mean_all[var + " climate"]
+        )
+
+        ax[1].plot(
+            accum_mean_all[var],
+            color="black",
+            label="Accum. mean %i" % year_to_plot,
+        )
+        ax[1].plot(
+            accum_mean_all[var + " climate"],
+            color="black",
+            ls="--",
+            label="Accum. mean climate",
+        )
+
+        if fillcolor_gradient is False:
+            ax[1].fill_between(
+                accum_mean_all.index,
+                accum_mean_all.loc[:, var],
+                accum_mean_all.loc[:, "%s climate" % var],
+                where=accum_mean_all.loc[:, var]
+                >= accum_mean_all.loc[:, "%s climate" % var],
+                facecolor="red",
+                interpolate=True,
             )
-
-            # Indicate last accumulated anomaly:
-            # these are matplotlib.patch.Patch properties
-            props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)
-            ax[1].text(
-                x=0.7,
-                y=0.05,
-                s="Last accumulated anomaly: %.1f %s"
-                % (
-                    accum_mean_all.dropna(subset=["anomaly"]).iloc[-1, :]["anomaly"],
-                    units_list[i],
-                ),
-                transform=ax[1].transAxes,
-                fontsize=14,
-                bbox=props,
+            ax[1].fill_between(
+                accum_mean_all.index,
+                accum_mean_all.loc[:, var],
+                accum_mean_all.loc[:, "%s climate" % var],
+                where=accum_mean_all.loc[:, var]
+                <= accum_mean_all.loc[:, "%s climate" % var],
+                facecolor="blue",
+                interpolate=True,
             )
-
-            fig.suptitle(
-                x=0.5,
-                y=0.94,
-                t="Daily %s and accumulated mean during period %s to %s"
-                % (
-                    vars_list[i],
-                    dt.datetime(year_to_plot, 1, 1).strftime("%d-%b-%Y"),
-                    dt.datetime(year_to_plot, 12, 31).strftime("%d-%b-%Y"),
-                ),
-                fontsize=16,
-            )
-
         else:
-            diff_var1 = (
-                df.loc[df.index.year == year_to_plot, vars_list[i]]
-                - df_climate.loc[
-                    df_climate.index.year == year_to_plot,
-                    "%s_%s" % (vars_list[i], climate_stat),
-                ]
+            cmap, norm = fill_between_colormap(
+                accum_mean_all.loc[:, var].index,
+                accum_mean_all.loc[:, var],
+                accum_mean_all.loc[:, "%s climate" % var],
+                cmap=accum_mean_all,
+                alpha=0.9,
             )
-            mask1 = diff_var1 > 0
-            mask2 = diff_var1 < 0
-            mask3 = diff_var1 = 0
+            # Add color bar
+            cax = ax[1].inset_axes([1.025, 0, 0.025, 0.95])
+            cbar = plt.colorbar(
+                matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax
+            )  # , shrink=.98,ticks=levels, pad=0.02)
+            cbar.ax.tick_params(labelsize=14)
+            cbar.ax.set_title(units, fontsize=14)
 
-            ax[0].bar(
-                df.loc[df.index.year == year_to_plot, vars_list[i]].index[mask1],
-                df.loc[df.index.year == year_to_plot, vars_list[i]][mask1],
-                color="#32a852",
-                edgecolor="black",
-                linewidth=0.8,
-            )
-            ax[0].bar(
-                df.loc[df.index.year == year_to_plot, vars_list[i]].index[mask2],
-                df.loc[df.index.year == year_to_plot, vars_list[i]][mask2],
-                color="#996100",
-                edgecolor="black",
-                linewidth=0.8,
-            )
-            ax[0].bar(
-                df.loc[df.index.year == year_to_plot, vars_list[i]].index[mask3],
-                df.loc[df.index.year == year_to_plot, vars_list[i]][mask3],
-                color="black",
-                edgecolor="black",
-                linewidth=0.8,
-            )
-
-            # Accumulated value
-            cum_df = pd.concat(
-                [
-                    df.loc[df.index.year == year_to_plot, vars_list[i]].cumsum(),
-                    df_climate.loc[
-                        df_climate.index.year == year_to_plot,
-                        vars_list[i] + "_%s" % climate_stat,
-                    ].cumsum(),
-                ],
-                axis=1,
-            )
-            cum_df.columns = [vars_list[i], vars_list[i] + " climate"]
-            cum_df["anomaly"] = cum_df[vars_list[i]] - cum_df[vars_list[i] + " climate"]
-
-            ax[1].plot(
-                cum_df[vars_list[i]],
-                color="black",
-                label="Accum. rainfall %i" % year_to_plot,
-            )
-            ax[1].plot(
-                cum_df[vars_list[i] + " climate"],
-                color="black",
-                label="Accum. rainfall climate",
-            )
-
-            if fillcolor_gradient is False:
-                ax[1].fill_between(
-                    cum_df.index,
-                    accum_mean_all.loc[:, vars_list[i]],
-                    cum_df.loc[:, "%s climate" % vars_list[i]],
-                    where=cum_df.loc[:, vars_list[i]]
-                    >= cum_df.loc[:, "%s climate" % vars_list[i]],
-                    facecolor="red",
-                    interpolate=True,
-                )
-                ax[1].fill_between(
-                    cum_df.index,
-                    accum_mean_all.loc[:, vars_list[i]],
-                    cum_df.loc[:, "%s climate" % vars_list[i]],
-                    where=cum_df.loc[:, vars_list[i]]
-                    <= cum_df.loc[:, "%s climate" % vars_list[i]],
-                    facecolor="blue",
-                    interpolate=True,
-                )
-            else:
-                g = fill_between_colormap(
-                    cum_df.loc[:, vars_list[i]].index,
-                    cum_df.loc[:, vars_list[i]],
-                    cum_df.loc[:, "%s climate" % vars_list[i]],
-                    cmap=cum_df,
-                    alpha=0.9,
-                )
-                # axins = ax[1].inset_axes([0.8, 0.01, 0.17, 0.02])
-            # cbar = matplotlib.colorbar.ColorbarBase(axins, cmap=cum_df, orientation='horizontal',location='lower right')
-
-            ax[1].grid(color="black", alpha=0.5)
-            ax[1].set_ylabel(
-                "%s (%s) accum." % (vars_list[i], units_list[i]), fontsize=17
-            )
-
-            # Indicate last accumulated anomaly:
-            # these are matplotlib.patch.Patch properties
-            props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)
-            ax[1].text(
-                x=0.5,
-                y=0.04,
-                s="Last accumulated anomaly: %.1f"
-                % cum_df.dropna(subset=["anomaly"]).iloc[-1, :]["anomaly"],
-                transform=ax[1].transAxes,
-                fontsize=14,
-                bbox=props,
-            )
-
-            fig.suptitle(
-                x=0.5,
-                y=0.94,
-                t="Timeseries of %s and accumulated mean during period %s to %s"
-                % (
-                    vars_list[i],
-                    dt.datetime(year_to_plot, 1, 1).strftime("%d-%b-%Y"),
-                    dt.datetime(year_to_plot, 12, 31).strftime("%d-%b-%Y"),
-                ),
-                fontsize=16,
-            )
-
-        # Legends
-        ax[0].legend(loc="upper left", ncol=1).set_visible(True)
-        ax[1].legend(loc="upper left", ncol=1).set_visible(True)
-        ax[0].tick_params(labelsize=14)
-        ax[1].tick_params(labelsize=14)
-        text = AnchoredText(
-            "Alejandro Rodríguez Sánchez",
-            loc=1,
-            bbox_to_anchor=(0.24, 0.185),
-            bbox_transform=ax[0].transAxes,
-            prop={"size": 12},
-            frameon=True,
+        ax[1].grid(color="black", alpha=0.5)
+        ax[1].set_ylabel(
+            "%s (%s) accum. mean" % (var, units), fontsize=17
         )
-        text.patch.set_alpha(0.5)
 
-        ax[0].add_artist(text)
-        ax[0].xaxis.set_major_locator(locator)
-        ax[0].xaxis.set_major_formatter(formatter)
-        ax[0].set_xlim(
-            [
-                dt.datetime(year_to_plot, 1, 1) - dt.timedelta(days=1),
-                dt.datetime(year_to_plot, 12, 31) + dt.timedelta(days=1),
+        # Indicate last accumulated anomaly:
+        # these are matplotlib.patch.Patch properties
+        props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)
+        ax[1].text(
+            x=0.7,
+            y=0.05,
+            s="Last accumulated anomaly: %.1f %s"
+            % (
+                accum_mean_all.dropna(subset=["anomaly"]).iloc[-1, :]["anomaly"],
+                units,
+            ),
+            transform=ax[1].transAxes,
+            fontsize=14,
+            bbox=props,
+        )
+
+        fig.suptitle(
+            x=0.5,
+            y=0.94,
+            t="Daily %s and accumulated mean during period %s to %s"
+            % (
+                var,
+                dt.datetime(year_to_plot, 1, 1).strftime("%d-%b-%Y"),
+                dt.datetime(year_to_plot, 12, 31).strftime("%d-%b-%Y"),
+            ),
+            fontsize=16,
+        )
+
+    else:
+        diff_var1 = (
+            df.loc[df.index.year == year_to_plot, var]
+            - df_climate.loc[
+                df_climate.index.year == year_to_plot,
+                "%s_%s" % (var, climate_stat),
             ]
         )
+        mask1 = diff_var1 > 0
+        mask2 = diff_var1 < 0
+        mask3 = diff_var1 = 0
 
-        # Show seasons
-        if show_seasons is True:
-            season_colors = ["#4696db", "#32a852", "#da5757", "#d6db46", "#4696db"]
-            for i in range(2):
-                ax[i].axvspan(
-                    mdates.date2num(dt.datetime(int(year_to_plot), 1, 1)),
-                    mdates.date2num(dt.datetime(int(year_to_plot), 3, 1)),
-                    color="#4696db",
-                    alpha=0.2,
-                    zorder=-10,
-                )
-                ax[i].axvspan(
-                    mdates.date2num(dt.datetime(int(year_to_plot), 3, 1)),
-                    mdates.date2num(dt.datetime(int(year_to_plot), 6, 1)),
-                    color="#32a852",
-                    alpha=0.2,
-                    zorder=-10,
-                )
-                ax[i].axvspan(
-                    mdates.date2num(dt.datetime(int(year_to_plot), 6, 1)),
-                    mdates.date2num(dt.datetime(int(year_to_plot), 9, 1)),
-                    color="#da5757",
-                    alpha=0.2,
-                    zorder=-10,
-                )
-                ax[i].axvspan(
-                    mdates.date2num(dt.datetime(int(year_to_plot), 9, 1)),
-                    mdates.date2num(dt.datetime(int(year_to_plot), 12, 1)),
-                    color="#d6db46",
-                    alpha=0.2,
-                    zorder=-10,
-                )
-                ax[i].axvspan(
-                    mdates.date2num(dt.datetime(int(year_to_plot), 12, 1)),
-                    mdates.date2num(dt.datetime(int(year_to_plot) + 1, 1, 1)),
-                    color="#4696db",
-                    alpha=0.2,
-                    zorder=-10,
-                )
+        ax[0].bar(
+            df.loc[df.index.year == year_to_plot, var].index[mask1],
+            df.loc[df.index.year == year_to_plot, var][mask1],
+            color="#32a852",
+            edgecolor="black",
+            linewidth=0.8,
+        )
+        ax[0].bar(
+            df.loc[df.index.year == year_to_plot, var].index[mask2],
+            df.loc[df.index.year == year_to_plot, var][mask2],
+            color="#996100",
+            edgecolor="black",
+            linewidth=0.8,
+        )
+        ax[0].bar(
+            df.loc[df.index.year == year_to_plot, var].index[mask3],
+            df.loc[df.index.year == year_to_plot, var][mask3],
+            color="black",
+            edgecolor="black",
+            linewidth=0.8,
+        )
 
-        plt.text(
-            0.03,
-            0.955,
-            "Climate normal period: %i-%i"
-            % (climate_normal_period[0], climate_normal_period[1]),
-            fontsize=12,
-            transform=plt.gcf().transFigure,
+        # Accumulated value
+        cum_df = pd.concat(
+            [
+                df.loc[df.index.year == year_to_plot, var].cumsum(),
+                df_climate.loc[
+                    df_climate.index.year == year_to_plot,
+                    var + "_%s" % climate_stat,
+                ].cumsum(),
+            ],
+            axis=1,
         )
-        # plt.text(0.03, 0.925, 'Period with data: %i-%i' %(df.index.year.min(),df.index.year.max()), fontsize=12, transform=plt.gcf().transFigure)
-        plt.text(
-            0.825,
-            0.955,
-            "Database: %s" % database,
-            fontsize=12,
-            transform=plt.gcf().transFigure,
+        cum_df.columns = [var, var + " climate"]
+        cum_df["anomaly"] = cum_df[var] - cum_df[var + " climate"]
+
+        ax[1].plot(
+            cum_df[var],
+            color="black",
+            label="Accum. rainfall %i" % year_to_plot,
         )
-        plt.text(
-            0.825,
-            0.925,
-            "Location: %s" % station_name,
-            fontsize=12,
-            transform=plt.gcf().transFigure,
+        ax[1].plot(
+            cum_df[var + " climate"],
+            color="black",
+            label="Accum. rainfall climate",
         )
-        plt.subplots_adjust(hspace=0.1)
-        fig.savefig(
-            filename,
-            dpi=300,
+
+        if fillcolor_gradient is False:
+            ax[1].fill_between(
+                cum_df.index,
+                accum_mean_all.loc[:, var],
+                cum_df.loc[:, "%s climate" % var],
+                where=cum_df.loc[:, var]
+                >= cum_df.loc[:, "%s climate" % var],
+                facecolor="red",
+                interpolate=True,
+            )
+            ax[1].fill_between(
+                cum_df.index,
+                accum_mean_all.loc[:, var],
+                cum_df.loc[:, "%s climate" % var],
+                where=cum_df.loc[:, var]
+                <= cum_df.loc[:, "%s climate" % var],
+                facecolor="blue",
+                interpolate=True,
+            )
+        else:
+            g = fill_between_colormap(
+                cum_df.loc[:, var].index,
+                cum_df.loc[:, var],
+                cum_df.loc[:, "%s climate" % var],
+                cmap=cum_df,
+                alpha=0.9,
+            )
+            # axins = ax[1].inset_axes([0.8, 0.01, 0.17, 0.02])
+        # cbar = matplotlib.colorbar.ColorbarBase(axins, cmap=cum_df, orientation='horizontal',location='lower right')
+
+        ax[1].grid(color="black", alpha=0.5)
+        ax[1].set_ylabel(
+            "%s (%s) accum." % (var, units), fontsize=17
         )
+
+        # Indicate last accumulated anomaly:
+        # these are matplotlib.patch.Patch properties
+        props = dict(boxstyle="round", facecolor="wheat", alpha=0.5)
+        ax[1].text(
+            x=0.5,
+            y=0.04,
+            s="Last accumulated anomaly: %.1f"
+            % cum_df.dropna(subset=["anomaly"]).iloc[-1, :]["anomaly"],
+            transform=ax[1].transAxes,
+            fontsize=14,
+            bbox=props,
+        )
+
+        fig.suptitle(
+            x=0.5,
+            y=0.94,
+            t="Timeseries of %s and accumulated mean during period %s to %s"
+            % (
+                var,
+                dt.datetime(year_to_plot, 1, 1).strftime("%d-%b-%Y"),
+                dt.datetime(year_to_plot, 12, 31).strftime("%d-%b-%Y"),
+            ),
+            fontsize=16,
+        )
+
+    # Legends
+    ax[0].legend(loc="upper left", ncol=1).set_visible(True)
+    ax[1].legend(loc="upper left", ncol=1).set_visible(True)
+    ax[0].tick_params(labelsize=14)
+    ax[1].tick_params(labelsize=14)
+    text = AnchoredText(
+        "Alejandro Rodríguez Sánchez",
+        loc=1,
+        bbox_to_anchor=(0.24, 0.185),
+        bbox_transform=ax[0].transAxes,
+        prop={"size": 12},
+        frameon=True,
+    )
+    text.patch.set_alpha(0.5)
+
+        #ax[0].add_artist(text)
+    ax[0].xaxis.set_major_locator(locator)
+    ax[0].xaxis.set_major_formatter(formatter)
+    ax[0].set_xlim(
+        [
+            dt.datetime(year_to_plot, 1, 1) - dt.timedelta(days=1),
+            dt.datetime(year_to_plot, 12, 31) + dt.timedelta(days=1),
+        ]
+    )
+
+    # Show seasons
+    if show_seasons is True:
+        season_colors = ["#4696db", "#32a852", "#da5757", "#d6db46", "#4696db"]
+        for i in range(2):
+            ax[i].axvspan(
+                mdates.date2num(dt.datetime(int(year_to_plot), 1, 1)),
+                mdates.date2num(dt.datetime(int(year_to_plot), 3, 1)),
+                color="#4696db",
+                alpha=0.2,
+                zorder=-10,
+            )
+            ax[i].axvspan(
+                mdates.date2num(dt.datetime(int(year_to_plot), 3, 1)),
+                mdates.date2num(dt.datetime(int(year_to_plot), 6, 1)),
+                color="#32a852",
+                alpha=0.2,
+                zorder=-10,
+            )
+            ax[i].axvspan(
+                mdates.date2num(dt.datetime(int(year_to_plot), 6, 1)),
+                mdates.date2num(dt.datetime(int(year_to_plot), 9, 1)),
+                color="#da5757",
+                alpha=0.2,
+                zorder=-10,
+            )
+            ax[i].axvspan(
+                mdates.date2num(dt.datetime(int(year_to_plot), 9, 1)),
+                mdates.date2num(dt.datetime(int(year_to_plot), 12, 1)),
+                color="#d6db46",
+                alpha=0.2,
+                zorder=-10,
+            )
+            ax[i].axvspan(
+                mdates.date2num(dt.datetime(int(year_to_plot), 12, 1)),
+                mdates.date2num(dt.datetime(int(year_to_plot) + 1, 1, 1)),
+                color="#4696db",
+                alpha=0.2,
+                zorder=-10,
+            )
+
+    plt.text(
+        0.03,
+        0.955,
+        "Climate normal period: %i-%i"
+        % (climate_normal_period[0], climate_normal_period[1]),
+        fontsize=12,
+        transform=plt.gcf().transFigure,
+    )
+    # plt.text(0.03, 0.925, 'Period with data: %i-%i' %(df.index.year.min(),df.index.year.max()), fontsize=12, transform=plt.gcf().transFigure)
+    plt.text(
+        0.825,
+        0.955,
+        "Database: %s" % database,
+        fontsize=12,
+        transform=plt.gcf().transFigure,
+    )
+    plt.text(
+        0.825,
+        0.925,
+        "Location: %s" % station_name,
+        fontsize=12,
+        transform=plt.gcf().transFigure,
+    )
+    plt.subplots_adjust(hspace=0.1)
+    fig.savefig(
+        filename,
+        dpi=300,
+    )
 
 
 def plot_timeseries(
@@ -4822,7 +4832,7 @@ def timeseries_extremevalues(
         # ax1.legend(bbox_to_anchor=(0.4, -0.22),ncol=2,fontsize=14).set_visible(True)
         # ax2.legend().set_visible(False)
 
-        fig.text(x=0.02, y=0.25, s="%s [%s]" % (var, units), rotation=90, fontsize=22)
+        #fig.text(x=0.02, y=0.25, s="%s [%s]" % (var, units), rotation=90, fontsize=22)
 
         ax1.tick_params(axis="both", labelsize=18)
         ax2.tick_params(axis="both", labelsize=18)
@@ -4862,7 +4872,7 @@ def timeseries_extremevalues(
             wrap=True,
         )
         plt.subplots_adjust(left=0.07, right=0.98, hspace=0.1, wspace=0.1, bottom=0.06)
-        fig.suptitle("Annual extreme values for %s" % (var), fontsize=24)
+        fig.suptitle("Annual %s [%s] extreme values" % (var, units), fontsize=24)
         fig.savefig(filename, dpi=300)
 
     elif time_scale.lower() == "month":
@@ -4892,7 +4902,7 @@ def timeseries_extremevalues(
         df_extremes = df_extremes.reset_index()
 
         ##  Broken y-axis figure
-        fig = plt.figure(figsize=(16, 10))  # (8, 3, sharex=True, figsize=(15,10))
+        fig = plt.figure(figsize=(16, 12.5))  # (8, 3, sharex=True, figsize=(15,10))
         gs = matplotlib.gridspec.GridSpec(4, 3, hspace=0.3, wspace=0.2, figure=fig)
         for n in range(12):
             df_plot = (
@@ -4911,15 +4921,15 @@ def timeseries_extremevalues(
             slope_max, intercept_max, r_value_max, pv_max, se_max = stats.linregress(
                 df_plot.index, df_plot["max. value"]
             )
-            ax0.plot(
+            (max_plot,) = ax0.plot(
                 df_plot.index,
                 df_plot["max. value"],
                 "-o",
                 color="r",
                 markersize=9,
-                label="Annual max.",
+                label="Maximum",
             )
-            ax0.plot(
+            (max_t,) = ax0.plot(
                 df_plot.index,
                 intercept_max + slope_max * df_plot.index,
                 "r",
@@ -4930,15 +4940,15 @@ def timeseries_extremevalues(
             slope_p90, intercept_p90, r_value_p90, pv_p90, se_p90 = stats.linregress(
                 df_plot.index, df_plot["p90 value"]
             )
-            ax0.plot(
+            (p90_plot,) = ax0.plot(
                 df_plot.index,
                 df_plot["p90 value"],
                 "-o",
                 color="salmon",
                 markersize=9,
-                label="Annual p90",
+                label="90th percentile",
             )
-            ax0.plot(
+            (p90_t,) = ax0.plot(
                 df_plot.index,
                 intercept_p90 + slope_p90 * df_plot.index,
                 "salmon",
@@ -4949,15 +4959,15 @@ def timeseries_extremevalues(
             slope_p10, intercept_p10, r_value_p10, pv_p10, se_p10 = stats.linregress(
                 df_plot.index, df_plot["p10 value"]
             )
-            ax1.plot(
+            (p10_plot,) = ax1.plot(
                 df_plot.index,
                 df_plot["p10 value"],
                 "-o",
                 color="deepskyblue",
                 markersize=9,
-                label="Annual p10",
+                label="10th percentile",
             )
-            ax1.plot(
+            (p10_t,) = ax1.plot(
                 df_plot.index,
                 intercept_p10 + slope_p10 * df_plot.index,
                 "deepskyblue",
@@ -4968,15 +4978,15 @@ def timeseries_extremevalues(
             slope_min, intercept_min, r_value_min, pv_min, se_min = stats.linregress(
                 df_plot.index, df_plot["min. value"]
             )
-            ax1.plot(
+            (min_plot,) = ax1.plot(
                 df_plot.index,
                 df_plot["min. value"],
                 "-o",
                 color="blue",
                 markersize=9,
-                label="Annual min.",
+                label="Minimum",
             )
-            ax1.plot(
+            (min_t,) = ax1.plot(
                 df_plot.index,
                 intercept_min + slope_min * df_plot.index,
                 "blue",
@@ -5003,6 +5013,9 @@ def timeseries_extremevalues(
                 labeltop=False, labelsize=15
             )  # don't put tick labels at the top
 
+            if n < 9:
+                ax1.tick_params(axis='x', labelsize=0)
+
             if ax1.get_ylim()[1] < ax0.get_ylim()[0]:
                 ax1.set_ylim(
                     [
@@ -5026,21 +5039,42 @@ def timeseries_extremevalues(
                 ax1.plot([0, 1], [1, 1], transform=ax1.transAxes, **kwargs)
 
             # legend
-            if n == 10:
+            #if n == 10:
                 # ax0.legend(bbox_to_anchor=(0.3, -0.52),ncol=2,fontsize=13).set_visible(True)
                 # Put a legend below current axis
-                ax1.legend(
-                    loc="upper center",
-                    bbox_to_anchor=(0.4, -0.25),
-                    fancybox=True,
-                    shadow=True,
-                    ncol=5,
-                    fontsize=13,
-                )
-                ax0.legend().set_visible(False)
+            ax0.legend(handles=[max_t, p90_t], 
+                       fontsize=11, 
+                       bbox_to_anchor=(0.4, 1.18),
+                       ncol=1,
+                       frameon=False,
+                       bbox_transform=ax0.transAxes,
+                       loc='right').set_visible(
+                True
+            )  
+            other_legend = ax1.legend(handles=[p10_t, min_t], 
+                                      fontsize=11, 
+                                      bbox_to_anchor=(1, 2.22),
+                                      ncol=1,
+                                      frameon=False,
+                                      bbox_transform=ax1.transAxes,
+                                      loc='right'
+                                      )
+
+            # Add the legend manually to the Axes.
+            ax1.add_artist(other_legend)
+
+            if n == 10:
+                ax1.legend(handles=[max_plot, p90_plot, p10_plot, min_plot], 
+                        fontsize=12.5, 
+                        ncol=4,
+                        bbox_to_anchor=(0.5, -0.16),
+                        frameon=False).set_visible(True) 
             else:
-                ax0.legend().set_visible(False)
-                ax1.legend().set_visible(False)
+                ax1.legend(handles=[max_plot, p90_plot, p10_plot, min_plot], 
+                        fontsize=12.5, 
+                        ncol=4,
+                        bbox_to_anchor=(0.3, -0.1)).set_visible(False)                 
+
 
             ax0.grid(color="black", alpha=0.3)
             ax0.set_xlabel("")
@@ -5054,11 +5088,11 @@ def timeseries_extremevalues(
             ax0.set_title(month_names[n], fontsize=16)
 
         # Text
-        fig.text(x=0.02, y=0.25, s="%s [%s]" % (var, units), rotation=90, fontsize=22)
+        #fig.text(x=0.02, y=0.25, s="%s [%s]" % (var, units), rotation=90, fontsize=22)
 
         plt.text(
             0.03,
-            0.96,
+            0.97,
             "Climate normal period: %i-%i"
             % (climate_normal_period[0], climate_normal_period[1]),
             fontsize=14,
@@ -5066,14 +5100,14 @@ def timeseries_extremevalues(
         )
         plt.text(
             0.03,
-            0.925,
+            0.9475,
             "Period with data: %i-%i" % (yearmin, yearmax),
             fontsize=14,
             transform=plt.gcf().transFigure,
         )
         plt.text(
             0.8,
-            0.96,
+            0.97,
             "Database: %s" % database,
             fontsize=14,
             transform=plt.gcf().transFigure,
@@ -5081,15 +5115,15 @@ def timeseries_extremevalues(
         )
         plt.text(
             0.8,
-            0.925,
+            0.9475,
             "Location: %s" % station_name,
             fontsize=14,
             transform=plt.gcf().transFigure,
             wrap=True,
         )
-        plt.subplots_adjust(left=0.07, right=0.98, hspace=0.1, wspace=0.1, bottom=0.05)
+        plt.subplots_adjust(left=0.05, right=0.98, hspace=0.1, wspace=0.1, bottom=0.05, top=0.91)
 
-        fig.suptitle("Monthly extreme values for %s" % (var), fontsize=24)
+        fig.suptitle("Monthly %s [%s] extreme values" % (var, units), fontsize=24)
         fig.savefig(filename, dpi=300)
 
     elif time_scale.lower() == "season":
@@ -5113,7 +5147,7 @@ def timeseries_extremevalues(
             "June-July-August",
             "September-October-November",
         ]
-        fig = plt.figure(figsize=(16, 10))  # (8, 3, sharex=True, figsize=(15,10))
+        fig = plt.figure(figsize=(17, 10))  # (8, 3, sharex=True, figsize=(15,10))
         gs = matplotlib.gridspec.GridSpec(2, 2, hspace=0.3, wspace=0.2, figure=fig)
         # ax = axs.flatten()
         for n in range(4):
@@ -5139,7 +5173,7 @@ def timeseries_extremevalues(
                 "-o",
                 color="r",
                 markersize=9,
-                label="Annual max.",
+                label="Maximum",
             )
             (a_t,) = ax0.plot(
                 df_plot.index,
@@ -5158,7 +5192,7 @@ def timeseries_extremevalues(
                 "-o",
                 color="salmon",
                 markersize=9,
-                label="Annual p90",
+                label="90th percentile",
             )
             (b_t,) = ax0.plot(
                 df_plot.index,
@@ -5177,7 +5211,7 @@ def timeseries_extremevalues(
                 "-o",
                 color="deepskyblue",
                 markersize=9,
-                label="Annual p10",
+                label="10th percentile",
             )
             (c_t,) = ax1.plot(
                 df_plot.index,
@@ -5196,7 +5230,7 @@ def timeseries_extremevalues(
                 "-o",
                 color="blue",
                 markersize=9,
-                label="Annual min.",
+                label="Minimum",
             )
             (d_t,) = ax1.plot(
                 df_plot.index,
@@ -5234,9 +5268,9 @@ def timeseries_extremevalues(
                 )
             else:
                 # Slanted lines
-                d = 0.5  # proportion of vertical to horizontal extent of the slanted line
+                d1 = 0.5  # proportion of vertical to horizontal extent of the slanted line
                 kwargs = dict(
-                    marker=[(-1, -d), (1, d)],
+                    marker=[(-1, -d1), (1, d1)],
                     markersize=12,
                     linestyle="none",
                     color="k",
@@ -5249,13 +5283,30 @@ def timeseries_extremevalues(
 
             # Create another legend for the records.
             # second_legend = ax1.legend(handles=[a_t, b_t], bbox_to_anchor=(0.1, 1.05), ncol=2)
-            ax1.legend(handles=[a_t, b_t, c_t, d_t], fontsize=13, ncol=2).set_visible(
+            ax1.legend(handles=[a_t, b_t, c_t, d_t], fontsize=12.2, 
+                       ncol=4, bbox_to_anchor=(1.01, 0.5),
+                       frameon=False).set_visible(
                 True
-            )  # , bbox_to_anchor=(0.99, 1.06), ncol=2, fontsize=13).set_visible(True)
+            )  
+            # , bbox_to_anchor=(0.99, 1.06), ncol=2, fontsize=13).set_visible(True)
             # ax1.legend(handles=[c_t, d_t], loc='upper right', ncol=2)
             # Add the legend manually to the Axes.
             # fig.add_artist(second_legend)
             # fig.add_artist(third_legend)
+
+            if n == 2:
+                ax0.legend(handles=[a, b, c, d], 
+                        fontsize=12.5, 
+                        ncol=4,
+                        bbox_to_anchor=(1.55, 1.4),
+                        frameon=False).set_visible(True) 
+            else:
+                ax0.legend(handles=[a, b, c, d], 
+                        fontsize=12.5, 
+                        ncol=4,
+                        bbox_to_anchor=(0.3, -1.1)).set_visible(False)                 
+
+
 
             ax0.grid(color="black", alpha=0.3)
             ax0.set_xlabel("")
@@ -5299,9 +5350,9 @@ def timeseries_extremevalues(
             transform=plt.gcf().transFigure,
             wrap=True,
         )
-        plt.subplots_adjust(left=0.07, right=0.98, hspace=0.1, wspace=0.1, bottom=0.05)
+        plt.subplots_adjust(left=0.06, right=0.98, hspace=0.1, wspace=0.1, bottom=0.05)
 
-        fig.suptitle("Seasonal extreme values for %s" % (var), fontsize=24)
+        fig.suptitle("Seasonal %s [%s] extreme values" % (var, units), fontsize=24)
         fig.savefig(filename, dpi=300)
 
 
@@ -6734,8 +6785,12 @@ def compare_probdist(
                                 ha='center', va='bottom',fontsize=16, zorder=10, color='blue')
 
 
-            ax[p].text(min(ax[p].get_xlim()), 0.95, 'Selected period frequencies ', ha='left', va='bottom',fontsize=15, zorder=10, color='blue')
-            ax[p].text(min(ax[p].get_xlim()), 0.9, 'Climate frequencies ', ha='left', va='bottom',fontsize=15, zorder=10)
+            #ax[p].text(min(ax[p].get_xlim()), 0.95, 'Selected period frequencies ', ha='left', va='bottom',fontsize=15, zorder=10, color='blue')
+            #ax[p].text(min(ax[p].get_xlim()), 0.9, 'Climate frequencies ', ha='left', va='bottom',fontsize=15, zorder=10)
+
+            fig.text(0.1, 0.87, 'Selected period frequencies', ha='left', va='bottom',fontsize=16, zorder=10, color='blue')
+            fig.text(0.35, 0.87, 'Climate normal frequencies', ha='left', va='bottom',fontsize=16, zorder=10)
+
 
             if len(df_list) == 4:
                 if p in [0, 2]:
@@ -6775,7 +6830,7 @@ def compare_probdist(
         plt.text(
             0.031,
             0.925,
-            "Period with data: %i-%i" % (yearmin, yearmax),
+            "Selected period: %i-%i" % (yearmin, yearmax),
             fontsize=14,
             transform=plt.gcf().transFigure,
         )
@@ -6863,7 +6918,7 @@ def compare_probdist(
         plt.text(
             0.031,
             0.925,
-            "Period with data: %i-%i" % (yearmin, yearmax),
+            "Selected period: %i-%i" % (yearmin, yearmax),
             fontsize=14,
             transform=plt.gcf().transFigure,
         )
@@ -6960,9 +7015,11 @@ def compare_probdist(
                                     ha='center', va='bottom',fontsize=16, zorder=10, color='blue')
 
 
-                ax0.text(min(ax0.get_xlim()), 0.95, 'Selected period frequencies ', ha='left', va='bottom',fontsize=15, zorder=10, color='blue')
-                ax0.text(min(ax0.get_xlim()), 0.9, 'Climate frequencies ', ha='left', va='bottom',fontsize=15, zorder=10)
+                #ax0.text(min(ax0.get_xlim()), 0.95, 'Selected period frequencies ', ha='left', va='bottom',fontsize=15, zorder=10, color='blue')
+                #ax0.text(min(ax0.get_xlim()), 0.9, 'Climate frequencies ', ha='left', va='bottom',fontsize=15, zorder=10)
 
+                fig.text(0.1, 0.9, 'Selected period frequencies', ha='left', va='bottom',fontsize=16, zorder=10, color='blue')
+                fig.text(0.35, 0.9, 'Climate normal frequencies', ha='left', va='bottom',fontsize=16, zorder=10)
 
             # Cumulative distributions.
             ax1.ecdf(df_climate_var, label="Climate CDF", lw=1.2, color='k')
@@ -7049,7 +7106,7 @@ def compare_probdist(
 
         plt.text(
             0.03,
-            0.96,
+            0.97,
             "Climate normal period: %i-%i"
             % (climate_normal_period[0], climate_normal_period[1]),
             fontsize=15,
@@ -7057,21 +7114,21 @@ def compare_probdist(
         )
         plt.text(
             0.031,
-            0.925,
-            "Period with data: %i-%i" % (yearmin, yearmax),
+            0.94,
+            "Selected period: %i-%i" % (yearmin, yearmax),
             fontsize=15,
             transform=plt.gcf().transFigure,
         )
         plt.text(
             0.78,
-            0.96,
+            0.97,
             "Database: %s" % database,
             fontsize=15,
             transform=plt.gcf().transFigure,
         )
         plt.text(
             0.78,
-            0.925,
+            0.94,
             "Location: %s" % station_name,
             fontsize=15,
             transform=plt.gcf().transFigure,
@@ -7082,7 +7139,7 @@ def compare_probdist(
             "%s [%s] CDF" % (var, units), fontsize=24, y=0.965
         )
         plt.subplots_adjust(
-            left=0.07, right=0.98, hspace=0.2, wspace=0.12, bottom=0.065, top=0.89
+            left=0.07, right=0.98, hspace=0.2, wspace=0.12, bottom=0.065, top=0.9
         )
         fig.savefig(filename, dpi=300)
 
@@ -8595,4 +8652,149 @@ def threevar_windrose_probability(
 
     fig.suptitle("Probability of %s%s [%s] for different wind speeds and directions" % (extra_var, condition, units), fontsize=25, y=0.955, wrap=True)
     fig.savefig(filename, dpi=300)
+
+
+def window_plot(    
+    df: pd.DataFrame,
+    var: str,
+    units: str,
+    database: str,
+    station_name: str,
+    filename: str,
+    cmap,
+    norm=None,
+    add_contours=True
+):
+    """
+    This function allows to perform window plots for a certain variable
+    Parameters
+    ----------
+    df: DataFrame
+        DataFrame containing the data
+    var: str
+        String containing the name of the variable to be plotted
+    units: str
+        String containing the units of the variable to be plotted
+    database: str
+        String containing the name of the database from which the plotted data comes
+    station_name: str
+        String containing the name of the location of the data
+    filename: str
+        String containing the absolute path where the plot is going to be saved
+    cmap: matplotlib colormap
+        Colormap to be used in plotting
+    norm: mpl.colors.BoundaryNorm
+        Normalization of the colormap values
+    add_contours: boolean
+        If True, contours are superposed to the window plot.
+    """
+
+    df = df.copy()
+    yearmin = df[var].first_valid_index().year  # df.index.year.min()
+    yearmax = df[var].last_valid_index().year
+
+    # Para hacer la "trend window" tenemos que hacer este test, para ventanas de diferentes años y para diferentes periodos
+    window_df = pd.DataFrame(index=np.arange(0,yearmax-yearmin,1), columns= np.arange(yearmin, yearmax+1, 1))
+
+    annual_mean_df = pd.DataFrame(index=np.arange(yearmin, yearmax+1, 1), columns=[var])
+
+    for i in annual_mean_df.index: # Compute annual mean
+        annual_mean_df.loc[i,var] = float(df[df.index.year == i][var].groupby(pd.Grouper(freq='YE')).mean().values[0])
+
+    for i in annual_mean_df.index: # Compute mean value for each window
+        max_window = i - yearmin
+        for j in range(max_window):
+            window_values = annual_mean_df.loc[i-j:i]
+            window_values_mean = float(window_values.mean().values[0])
+
+            window_df.loc[j,i] = window_values_mean
+
+    window_df.index += 1
+    #window_df = window_df.replace(np.nan,0)
+
+    print(window_df)
+
+    nticks_X = 7
+    nticks_Y = 10
+    major_loc = np.ceil(len(window_df.columns)/min(nticks_X, len(window_df.columns)))
+    major_loc_Y = np.ceil(len(window_df.index)/min(nticks_Y, len(window_df.index)))
+#    if len(window_df.columns) < 10:
+#        nticks = 5
+#    elif len(window_df.columns) >= 10 and len(window_df.columns) < 20:
+#        nticks = 2
+
+    fig = plt.figure(figsize=(14,7))
+    ax = plt.gca()
+    im=ax.matshow(window_df.astype(float),cmap=cmap,norm=norm,aspect='auto', zorder=120) #clim=[-1.5,1.5],aspect='auto')
+    # ax.contour(cambio_minimas, levels=[-0.05,-0.01,0.01,0.05], colors='black',linewidths=1)
+    ax.grid(color='grey',alpha=0.2)
+    if add_contours == True:
+        if len(window_df.columns) < 20:
+            print('The "add_contours" option is not recommended for small datasets (< 20 years of data) as the resulting contours can be unaesthetic')
+        val_range = window_df.max().max() - window_df.min().min()
+        if val_range < 1:
+            contour_levs = np.arange(np.floor(window_df.min().min()), np.ceil(window_df.max().max()), 0.2)
+        elif val_range >= 1 and val_range < 2:
+            contour_levs = np.arange(np.floor(window_df.min().min()), np.ceil(window_df.max().max()), 0.4)
+        elif val_range >= 2 and val_range < 3:
+            contour_levs = np.arange(np.floor(window_df.min().min()), np.ceil(window_df.max().max()), 0.5)
+        else:
+            contour_levs = np.arange(np.floor(window_df.min().min()), np.ceil(window_df.max().max()), 1)
+
+        linestyles = []
+        for lev in contour_levs:
+            if lev < 0:
+                linestyles.append('-')
+            else:
+                linestyles.append('--')
+        
+        CS1 = ax.contour(window_df.astype(float), levels=contour_levs, colors='black',linewidths=1, zorder=122,ls=linestyles)
+        ax.clabel(CS1, CS1.levels[::2], fontsize=10, zorder=122)
+
+    ax.set_title('%s [%s] window plot' %(var, units),fontsize=20)
+    ax.set_xlabel("Window's last year",fontsize=17)
+    ax.set_ylabel("Window's length (years)",fontsize=17)
+    ax.set_xticks(np.arange(0,len(np.arange(yearmin, yearmax+1,1)), 1))
+    ax.set_xticklabels(np.arange(yearmin, yearmax+1,1))
+    ax.set_yticks(np.arange(0,len(window_df.index),1))
+    ax.set_yticklabels(window_df.index)
+    ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(major_loc))
+    ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
+    ax.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(major_loc_Y))
+    ax.yaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
+    ax.tick_params(axis="x", bottom=True, top=True, labelbottom=True, labeltop=False, labelsize=15)
+    ax.tick_params(axis="y", labelsize=15)
+    cbar=fig.colorbar(im,extend='both')
+    cbar.set_label('%s' %units)
+
+
+    plt.text(
+        0.03,
+        0.96,
+        "Period with data: %i-%i" % (yearmin, yearmax),
+        fontsize=16,
+        transform=plt.gcf().transFigure,
+    )
+    plt.text(
+        0.4,
+        0.96,
+        "Database: %s" % database,
+        fontsize=16,
+        transform=plt.gcf().transFigure,
+        wrap=True,
+    )
+    plt.text(
+        0.75,
+        0.96,
+        "Location: %s" % station_name,
+        fontsize=16,
+        transform=plt.gcf().transFigure,
+        wrap=True,
+    )
+
+    plt.subplots_adjust(
+            left=0.07, right=0.98, 
+            bottom=0.05, top=0.87
+        )
+    fig.savefig(filename,dpi=300)   
 

@@ -140,4 +140,3 @@ def compare_with_globaldataset(
     ax.margins(0.01, 0.05)
     plt.tight_layout()
     plt.savefig(filename, dpi=300)
-

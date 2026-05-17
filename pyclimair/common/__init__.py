@@ -25,7 +25,8 @@ from .common import (
     categories_evolution,
     threevar_windrose,
     threevar_windrose_trend,
-    threevar_windrose_probability
+    threevar_windrose_probability,
+    window_plot
 )
 
 
@@ -53,7 +54,8 @@ __all__ = ['quality_control',
            'categories_evolution',
            'threevar_windrose',
            'threevar_windrose_trend',
-           'threevar_windrose_probability'
+           'threevar_windrose_probability',
+           'window_plot'
            ]
 #from .pyclimair import *
 
