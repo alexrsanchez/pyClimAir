@@ -1,0 +1,149 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What’s new &mdash; pyclimair 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="pyclimair package" href="pyclimair.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyclimair
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Sections:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">How to use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Plotting examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyClimAir</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#version-1-0-0">Version 1.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#new-features">New Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fixes">Fixes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#enhancements">Enhancements</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyclimair</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">What’s new</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/whats_new.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="what-s-new">
+<h1>What’s new<a class="headerlink" href="#what-s-new" title="Link to this heading"></a></h1>
+</section>
+<section id="version-1-0-0">
+<h1>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h1>
+<p>This release reorganizes the functions with the aim of expanding the package for air quality users and improve the scalability of the package, and adds several new functionalities: one for air quality purposes and three common for climatological and air quality purposes.</p>
+<section id="new-features">
+<h2>New Features<a class="headerlink" href="#new-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added <a class="reference internal" href="pyclimair.html#pyclimair.common.compare_probdist" title="pyclimair.common.compare_probdist"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.compare_probdist()</span></code></a> which compares the probability distribution of a variable in a certain period versus the climatological normal.</p></li>
+<li><p>Added <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose" title="pyclimair.common.threevar_windrose"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose()</span></code></a> which allows to plot a variable as a function of wind speed and direction and for different temporal aggregations: yearly, seasonal or monthly.</p></li>
+<li><p>Added <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose_trend" title="pyclimair.common.threevar_windrose_trend"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_trend()</span></code></a> which allows to plot the linear trend of a given variable as a function of wind speed and direction and for different temporal aggregations: yearly, seasonal or monthly.</p></li>
+<li><p>Added <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose_probability" title="pyclimair.common.threevar_windrose_probability"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_probability()</span></code></a> which allows to compute the probability of occurrence of a given condition as a function of wind speed and direction and for different temporal aggregations: yearly, seasonal or monthly.</p></li>
+<li><p>Added <a class="reference internal" href="pyclimair.html#pyclimair.air.annual_meteogram_with_pollutant" title="pyclimair.air.annual_meteogram_with_pollutant"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.air.annual_meteogram_with_pollutant()</span></code></a> which allows to plot a meteorological meteogram with an air pollutant as a fourth variable.</p></li>
+<li><p>Added <a class="reference internal" href="pyclimair.html#pyclimair.common.window_plot" title="pyclimair.common.window_plot"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.window_plot()</span></code></a> which allows to create window plots of any climatological variable</p></li>
+</ul>
+</section>
+<section id="fixes">
+<h2>Fixes<a class="headerlink" href="#fixes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>In <a class="reference internal" href="pyclimair.html#pyclimair.common.plot_variable_trends" title="pyclimair.common.plot_variable_trends"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.plot_variable_trends()</span></code></a>, <a class="reference internal" href="pyclimair.html#pyclimair.common.compute_and_plot_exceedances" title="pyclimair.common.compute_and_plot_exceedances"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.compute_and_plot_exceedances()</span></code></a> and <code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.plot_periodaverages()</span></code>, when grouping_stat is ‘sum’, if all values are NaN it now plots as NaN instead of zero. This fixes wrong trend and averages computations due to unrealistic zeros.</p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.categories_evolution()</span></code> now shows NaN values, fixing unrealistic frequencies</p></li>
+</ul>
+</section>
+<section id="enhancements">
+<h2>Enhancements<a class="headerlink" href="#enhancements" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="pyclimair.html#pyclimair.common.categories_evolution" title="pyclimair.common.categories_evolution"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.categories_evolution()</span></code></a> now creates categories’ labels automatically, disappearing the “categories_labels” argument.</p></li>
+<li><p>Former function pyclimair.plot_periodaverages has been renamed to <cite>pyclimair.common.plot_periodstats</cite>, as it can also plot other statistics than averages.</p></li>
+<li><p>Simplification of the <a class="reference internal" href="pyclimair.html#pyclimair.common.plot_data_and_accum_anoms" title="pyclimair.common.plot_data_and_accum_anoms"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.plot_data_and_accum_anoms()</span></code></a> and  <a class="reference internal" href="pyclimair.html#pyclimair.common.plot_data_and_annual_cycle" title="pyclimair.common.plot_data_and_annual_cycle"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.plot_data_and_annual_cycle()</span></code></a> functions: Now they read a single variable instead of a list of variables.</p></li>
+<li><p>In <a class="reference internal" href="pyclimair.html#pyclimair.common.plot_data_vs_climate" title="pyclimair.common.plot_data_vs_climate"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.plot_data_vs_climate()</span></code></a>, bottom y-axis limit set to 0 for “Rainfall” to improve visualization.</p></li>
+<li><p>Improved visuals for <a class="reference internal" href="pyclimair.html#pyclimair.common.timeseries_extremevalues" title="pyclimair.common.timeseries_extremevalues"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.timeseries_extremevalues()</span></code></a> function</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyclimair.html" class="btn btn-neutral float-left" title="pyclimair package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alejandro Rodríguez Sánchez.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
