@@ -7,7 +7,20 @@ You can install pyClimAir with the following command:
     
     pip install pyclimair
 
-For testing purposes, you can also install from TestPyPI:
+
+
+Development versions
+-------------------
+
+To install the most recent development version, install from github:
+
+
+.. code:: python
+
+    python -m pip install git+https://github.com/alexrsanchez/pyClimAir.git
+
+
+or from TestPypi:
 
 .. code:: python
 
