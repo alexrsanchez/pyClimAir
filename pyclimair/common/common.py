@@ -3434,7 +3434,7 @@ def plot_data_vs_climate_withrecords_multivar(
 
     plt.text(
         0.03,
-        0.955,
+        0.96,
         "Climate normal period: %i-%i"
         % (climate_normal_period[0], climate_normal_period[1]),
         fontsize=12,
@@ -3449,7 +3449,7 @@ def plot_data_vs_climate_withrecords_multivar(
     )
     plt.text(
         0.825,
-        0.955,
+        0.96,
         "Database: %s" % database,
         fontsize=12,
         transform=plt.gcf().transFigure,
@@ -3457,7 +3457,7 @@ def plot_data_vs_climate_withrecords_multivar(
     )
     plt.text(
         0.825,
-        0.915,
+        0.91,
         "Location: %s" % station_name,
         fontsize=12,
         transform=plt.gcf().transFigure,
@@ -3700,7 +3700,7 @@ def plot_periodstats(
     #ax.add_artist(text)
     fig.autofmt_xdate()
     plt.text(
-        0.825,
+        0.125,
         0.935,
         "Database: %s" % database,
         fontsize=12,
@@ -3709,7 +3709,7 @@ def plot_periodstats(
     )
     plt.text(
         0.825,
-        0.905,
+        0.935,
         "Location: %s" % station_name,
         fontsize=12,
         transform=plt.gcf().transFigure,
@@ -3923,7 +3923,7 @@ def plot_data_and_accum_anoms(
     )
     text.patch.set_alpha(0.5)
 
-    ax[0].add_artist(text)
+    #ax[0].add_artist(text)
     ax[0].xaxis.set_major_locator(locator)
     ax[0].xaxis.set_major_formatter(formatter)
     ax[0].set_xlim(
@@ -3975,7 +3975,7 @@ def plot_data_and_accum_anoms(
 
     plt.text(
         0.03,
-        0.955,
+        0.96,
         "Climate normal period: %i-%i"
         % (climate_normal_period[0], climate_normal_period[1]),
         fontsize=12,
@@ -3984,7 +3984,7 @@ def plot_data_and_accum_anoms(
     # plt.text(0.03, 0.925, 'Period with data: %i-%i' %(df.index.year.min(),df.index.year.max()), fontsize=12, transform=plt.gcf().transFigure)
     plt.text(
         0.825,
-        0.955,
+        0.96,
         "Database: %s" % database,
         fontsize=12,
         transform=plt.gcf().transFigure,
@@ -3992,7 +3992,7 @@ def plot_data_and_accum_anoms(
     )
     plt.text(
         0.825,
-        0.915,
+        0.91,
         "Location: %s" % station_name,
         fontsize=12,
         transform=plt.gcf().transFigure,
@@ -4452,7 +4452,7 @@ def plot_data_and_annual_cycle(
 
     plt.text(
         0.03,
-        0.955,
+        0.96,
         "Climate normal period: %i-%i"
         % (climate_normal_period[0], climate_normal_period[1]),
         fontsize=12,
@@ -4461,17 +4461,18 @@ def plot_data_and_annual_cycle(
     # plt.text(0.03, 0.925, 'Period with data: %i-%i' %(df.index.year.min(),df.index.year.max()), fontsize=12, transform=plt.gcf().transFigure)
     plt.text(
         0.825,
-        0.955,
+        0.96,
         "Database: %s" % database,
         fontsize=12,
         transform=plt.gcf().transFigure,
     )
     plt.text(
         0.825,
-        0.925,
+        0.91,
         "Location: %s" % station_name,
         fontsize=12,
         transform=plt.gcf().transFigure,
+        wrap=True
     )
     plt.subplots_adjust(hspace=0.1)
     fig.savefig(
@@ -5281,14 +5282,6 @@ def timeseries_extremevalues(
                 ax0.plot([0, 1], [0, 0], transform=ax0.transAxes, **kwargs)
                 ax1.plot([0, 1], [1, 1], transform=ax1.transAxes, **kwargs)
 
-            # Create another legend for the records.
-            # second_legend = ax1.legend(handles=[a_t, b_t], bbox_to_anchor=(0.1, 1.05), ncol=2)
-            ax1.legend(handles=[a_t, b_t, c_t, d_t], fontsize=12.2, 
-                       ncol=4, bbox_to_anchor=(1.01, 0.5),
-                       frameon=False).set_visible(
-                True
-            )  
-            # , bbox_to_anchor=(0.99, 1.06), ncol=2, fontsize=13).set_visible(True)
             # ax1.legend(handles=[c_t, d_t], loc='upper right', ncol=2)
             # Add the legend manually to the Axes.
             # fig.add_artist(second_legend)
@@ -5315,6 +5308,21 @@ def timeseries_extremevalues(
 
             ax0.set_ylabel("", fontsize=0)
             ax1.set_ylabel("", fontsize=0)
+
+            # Create another legend for the records.
+            other_legend = ax1.legend(handles=[a_t, b_t, c_t, d_t], 
+                                      fontsize=12, 
+                                      bbox_to_anchor=(0.96, 1.02),
+                                      ncol=4,
+                                      frameon=False,
+                                      bbox_transform=ax1.transAxes,
+                                      loc='right'
+                                      )
+
+            # Add the legend manually to the Axes.
+            ax1.add_artist(other_legend)
+
+
 
             # Axis title
             ax0.set_title(season_labels[n], fontsize=18)
@@ -5734,7 +5742,7 @@ def plot_annual_cycles(
     )
     plt.text(
         0.8,
-        0.92,
+        0.90,
         "Location: %s" % station_name,
         fontsize=14,
         transform=plt.gcf().transFigure,
@@ -7768,7 +7776,7 @@ def threevar_windrose(
     #cbar=fig.colorbar(img, ax=axs, orientation='vertical', fraction=.05, pad=0.15) #plt.colorbar(img)
     plt.text(
         0.025,
-        0.975,
+        0.97,
         "Analysed period: %i-%i"
         % (yearmin_an, yearmax_an),
         fontsize=16,
@@ -7776,22 +7784,22 @@ def threevar_windrose(
     )
     plt.text(
         0.28,
-        0.975,
+        0.97,
         "Period with data: %i-%i" % (yearmin, yearmax),
         fontsize=16,
         transform=plt.gcf().transFigure,
     )
     plt.text(
-        0.55,
-        0.975,
+        0.545,
+        0.97,
         "Database: %s" % database,
         fontsize=16,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
     plt.text(
-        0.78,
-        0.975,
+        0.765,
+        0.97,
         "Location: %s" % station_name,
         fontsize=16,
         transform=plt.gcf().transFigure,
@@ -7820,7 +7828,7 @@ def threevar_windrose(
 
     else:
         plt.subplots_adjust(
-            left=0.02, right=0.8, hspace=0.13, wspace=0.12, bottom=0.05, top=0.86
+            left=0.02, right=0.8, hspace=0.13, wspace=0.12, bottom=0.05, top=0.85
         )
 
         cbar_ax = fig.add_axes([0.85, 0.08, 0.04, 0.8])
@@ -8143,8 +8151,6 @@ def threevar_windrose_trend(
         ax = axs.flatten()
 
     for p in range(len(df_trends_list)):
-        print('p')
-        print(p)
 
         if len(df_trends_list) == 4:
             ax[p].set_title(
@@ -8712,8 +8718,6 @@ def window_plot(
     window_df.index += 1
     #window_df = window_df.replace(np.nan,0)
 
-    print(window_df)
-
     nticks_X = 7
     nticks_Y = 10
     major_loc = np.ceil(len(window_df.columns)/min(nticks_X, len(window_df.columns)))
@@ -8770,24 +8774,24 @@ def window_plot(
 
     plt.text(
         0.03,
-        0.96,
+        0.95,
         "Period with data: %i-%i" % (yearmin, yearmax),
-        fontsize=16,
+        fontsize=15,
         transform=plt.gcf().transFigure,
     )
     plt.text(
         0.4,
-        0.96,
+        0.95,
         "Database: %s" % database,
-        fontsize=16,
+        fontsize=15,
         transform=plt.gcf().transFigure,
         wrap=True,
     )
     plt.text(
         0.75,
-        0.96,
+        0.95,
         "Location: %s" % station_name,
-        fontsize=16,
+        fontsize=15,
         transform=plt.gcf().transFigure,
         wrap=True,
     )

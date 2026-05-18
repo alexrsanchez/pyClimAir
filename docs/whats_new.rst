@@ -12,13 +12,13 @@ New Features
 
 - Added :func:`pyclimair.common.threevar_windrose` which allows to plot a variable as a function of wind speed and direction and for different temporal aggregations: yearly, seasonal or monthly.
 
-- Added :func:`pyclimair.common.threevar_windrose_trend` which allows to plot the linear trend of a given variable as a function of wind speed and direction and for different temporal aggregations: yearly, seasonal or monthly.
+- Added :func:`pyclimair.common.threevar_windrose_trend` that allows to plot the linear trend of a given variable as a function of wind speed and direction and for different temporal aggregations: yearly, seasonal or monthly.
 
 - Added :func:`pyclimair.common.threevar_windrose_probability` which allows to compute the probability of occurrence of a given condition as a function of wind speed and direction and for different temporal aggregations: yearly, seasonal or monthly.
 
 - Added :func:`pyclimair.air.annual_meteogram_with_pollutant` which allows to plot a meteorological meteogram with an air pollutant as a fourth variable.
 
-- Added :func:`pyclimair.common.window_plot` which allows to create window plots of any climatological variable
+- Added :func:`pyclimair.common.window_plot` that allows to create rolling window moving-average plots plots of any variable.
 
 Fixes
 -----
