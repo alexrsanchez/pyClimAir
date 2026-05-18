@@ -29,3 +29,7 @@ Do you have any questions or suggestions? Have you found a bug? Open an issue or
 Alejandro Rodríguez Sánchez
 
 Email: ars.rodriguezs@gmail.com
+
+## Acknowledgements
+
+The author wants to thank María de la Peña García for the logo design and her patience and Juan José Velasco Horcajada for his helpful assistance and unvaluable advice!
