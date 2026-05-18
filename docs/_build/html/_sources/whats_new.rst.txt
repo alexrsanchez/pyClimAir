@@ -6,6 +6,8 @@ Version 1.0.0
 
 This release reorganizes the functions with the aim of expanding the package for air quality users and improve the scalability of the package, and adds several new functionalities: one for air quality purposes and three common for climatological and air quality purposes.
 
+Thanks to Juan José Velasco Horcajada for his extremely helpful advice and to María de la Peña García for the logo design!
+
 New Features
 ------------
 - Added :func:`pyclimair.common.compare_probdist` which compares the probability distribution of a variable in a certain period versus the climatological normal.
