@@ -45,6 +45,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../usage.html">How to use</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">Plotting examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyClimAir</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../whats_new.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../whats_new.html#version-1-0-0">Version 1.0.0</a></li>
 </ul>
 
         </div>
@@ -3537,7 +3539,7 @@
 
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.03</span><span class="p">,</span>
-        <span class="mf">0.955</span><span class="p">,</span>
+        <span class="mf">0.96</span><span class="p">,</span>
         <span class="s2">&quot;Climate normal period: </span><span class="si">%i</span><span class="s2">-</span><span class="si">%i</span><span class="s2">&quot;</span>
         <span class="o">%</span> <span class="p">(</span><span class="n">climate_normal_period</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">climate_normal_period</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
@@ -3552,7 +3554,7 @@
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.825</span><span class="p">,</span>
-        <span class="mf">0.955</span><span class="p">,</span>
+        <span class="mf">0.96</span><span class="p">,</span>
         <span class="s2">&quot;Database: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">database</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
@@ -3560,7 +3562,7 @@
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.825</span><span class="p">,</span>
-        <span class="mf">0.915</span><span class="p">,</span>
+        <span class="mf">0.91</span><span class="p">,</span>
         <span class="s2">&quot;Location: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">station_name</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
@@ -3806,7 +3808,7 @@
     <span class="c1">#ax.add_artist(text)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">autofmt_xdate</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
-        <span class="mf">0.825</span><span class="p">,</span>
+        <span class="mf">0.125</span><span class="p">,</span>
         <span class="mf">0.935</span><span class="p">,</span>
         <span class="s2">&quot;Database: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">database</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
@@ -3815,7 +3817,7 @@
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.825</span><span class="p">,</span>
-        <span class="mf">0.905</span><span class="p">,</span>
+        <span class="mf">0.935</span><span class="p">,</span>
         <span class="s2">&quot;Location: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">station_name</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
@@ -4032,7 +4034,7 @@
     <span class="p">)</span>
     <span class="n">text</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 
-    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="c1">#ax[0].add_artist(text)</span>
     <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
     <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
     <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span>
@@ -4084,7 +4086,7 @@
 
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.03</span><span class="p">,</span>
-        <span class="mf">0.955</span><span class="p">,</span>
+        <span class="mf">0.96</span><span class="p">,</span>
         <span class="s2">&quot;Climate normal period: </span><span class="si">%i</span><span class="s2">-</span><span class="si">%i</span><span class="s2">&quot;</span>
         <span class="o">%</span> <span class="p">(</span><span class="n">climate_normal_period</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">climate_normal_period</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
@@ -4093,7 +4095,7 @@
     <span class="c1"># plt.text(0.03, 0.925, &#39;Period with data: %i-%i&#39; %(df.index.year.min(),df.index.year.max()), fontsize=12, transform=plt.gcf().transFigure)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.825</span><span class="p">,</span>
-        <span class="mf">0.955</span><span class="p">,</span>
+        <span class="mf">0.96</span><span class="p">,</span>
         <span class="s2">&quot;Database: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">database</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
@@ -4101,7 +4103,7 @@
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.825</span><span class="p">,</span>
-        <span class="mf">0.915</span><span class="p">,</span>
+        <span class="mf">0.91</span><span class="p">,</span>
         <span class="s2">&quot;Location: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">station_name</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
@@ -4564,7 +4566,7 @@
 
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.03</span><span class="p">,</span>
-        <span class="mf">0.955</span><span class="p">,</span>
+        <span class="mf">0.96</span><span class="p">,</span>
         <span class="s2">&quot;Climate normal period: </span><span class="si">%i</span><span class="s2">-</span><span class="si">%i</span><span class="s2">&quot;</span>
         <span class="o">%</span> <span class="p">(</span><span class="n">climate_normal_period</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">climate_normal_period</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
@@ -4573,17 +4575,18 @@
     <span class="c1"># plt.text(0.03, 0.925, &#39;Period with data: %i-%i&#39; %(df.index.year.min(),df.index.year.max()), fontsize=12, transform=plt.gcf().transFigure)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.825</span><span class="p">,</span>
-        <span class="mf">0.955</span><span class="p">,</span>
+        <span class="mf">0.96</span><span class="p">,</span>
         <span class="s2">&quot;Database: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">database</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.825</span><span class="p">,</span>
-        <span class="mf">0.925</span><span class="p">,</span>
+        <span class="mf">0.91</span><span class="p">,</span>
         <span class="s2">&quot;Location: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">station_name</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
+        <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
@@ -5399,14 +5402,6 @@
                 <span class="n">ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax0</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax1</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-            <span class="c1"># Create another legend for the records.</span>
-            <span class="c1"># second_legend = ax1.legend(handles=[a_t, b_t], bbox_to_anchor=(0.1, 1.05), ncol=2)</span>
-            <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="p">[</span><span class="n">a_t</span><span class="p">,</span> <span class="n">b_t</span><span class="p">,</span> <span class="n">c_t</span><span class="p">,</span> <span class="n">d_t</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mf">12.2</span><span class="p">,</span> 
-                       <span class="n">ncol</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.01</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
-                       <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span>
-                <span class="kc">True</span>
-            <span class="p">)</span>  
-            <span class="c1"># , bbox_to_anchor=(0.99, 1.06), ncol=2, fontsize=13).set_visible(True)</span>
             <span class="c1"># ax1.legend(handles=[c_t, d_t], loc=&#39;upper right&#39;, ncol=2)</span>
             <span class="c1"># Add the legend manually to the Axes.</span>
             <span class="c1"># fig.add_artist(second_legend)</span>
@@ -5433,6 +5428,21 @@
 
             <span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># Create another legend for the records.</span>
+            <span class="n">other_legend</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="p">[</span><span class="n">a_t</span><span class="p">,</span> <span class="n">b_t</span><span class="p">,</span> <span class="n">c_t</span><span class="p">,</span> <span class="n">d_t</span><span class="p">],</span> 
+                                      <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> 
+                                      <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.96</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">),</span>
+                                      <span class="n">ncol</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                                      <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                      <span class="n">bbox_transform</span><span class="o">=</span><span class="n">ax1</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+                                      <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;right&#39;</span>
+                                      <span class="p">)</span>
+
+            <span class="c1"># Add the legend manually to the Axes.</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">other_legend</span><span class="p">)</span>
+
+
 
             <span class="c1"># Axis title</span>
             <span class="n">ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">season_labels</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
@@ -5855,7 +5865,7 @@
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.8</span><span class="p">,</span>
-        <span class="mf">0.92</span><span class="p">,</span>
+        <span class="mf">0.90</span><span class="p">,</span>
         <span class="s2">&quot;Location: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">station_name</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
@@ -7910,7 +7920,7 @@
     <span class="c1">#cbar=fig.colorbar(img, ax=axs, orientation=&#39;vertical&#39;, fraction=.05, pad=0.15) #plt.colorbar(img)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.025</span><span class="p">,</span>
-        <span class="mf">0.975</span><span class="p">,</span>
+        <span class="mf">0.97</span><span class="p">,</span>
         <span class="s2">&quot;Analysed period: </span><span class="si">%i</span><span class="s2">-</span><span class="si">%i</span><span class="s2">&quot;</span>
         <span class="o">%</span> <span class="p">(</span><span class="n">yearmin_an</span><span class="p">,</span> <span class="n">yearmax_an</span><span class="p">),</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
@@ -7918,22 +7928,22 @@
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.28</span><span class="p">,</span>
-        <span class="mf">0.975</span><span class="p">,</span>
+        <span class="mf">0.97</span><span class="p">,</span>
         <span class="s2">&quot;Period with data: </span><span class="si">%i</span><span class="s2">-</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">yearmin</span><span class="p">,</span> <span class="n">yearmax</span><span class="p">),</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
-        <span class="mf">0.55</span><span class="p">,</span>
-        <span class="mf">0.975</span><span class="p">,</span>
+        <span class="mf">0.545</span><span class="p">,</span>
+        <span class="mf">0.97</span><span class="p">,</span>
         <span class="s2">&quot;Database: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">database</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
         <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
-        <span class="mf">0.78</span><span class="p">,</span>
-        <span class="mf">0.975</span><span class="p">,</span>
+        <span class="mf">0.765</span><span class="p">,</span>
+        <span class="mf">0.97</span><span class="p">,</span>
         <span class="s2">&quot;Location: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">station_name</span><span class="p">,</span>
         <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
@@ -7962,7 +7972,7 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span>
-            <span class="n">left</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.13</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.86</span>
+            <span class="n">left</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.13</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.85</span>
         <span class="p">)</span>
 
         <span class="n">cbar_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
@@ -8288,8 +8298,6 @@
         <span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_trends_list</span><span class="p">)):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_trends_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
             <span class="n">ax</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
@@ -8863,8 +8871,6 @@
     <span class="n">window_df</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="c1">#window_df = window_df.replace(np.nan,0)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="n">window_df</span><span class="p">)</span>
-
     <span class="n">nticks_X</span> <span class="o">=</span> <span class="mi">7</span>
     <span class="n">nticks_Y</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">major_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">window_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">/</span><span class="nb">min</span><span class="p">(</span><span class="n">nticks_X</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">window_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)))</span>
@@ -8921,24 +8927,24 @@
 
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.03</span><span class="p">,</span>
-        <span class="mf">0.96</span><span class="p">,</span>
+        <span class="mf">0.95</span><span class="p">,</span>
         <span class="s2">&quot;Period with data: </span><span class="si">%i</span><span class="s2">-</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">yearmin</span><span class="p">,</span> <span class="n">yearmax</span><span class="p">),</span>
-        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.4</span><span class="p">,</span>
-        <span class="mf">0.96</span><span class="p">,</span>
+        <span class="mf">0.95</span><span class="p">,</span>
         <span class="s2">&quot;Database: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">database</span><span class="p">,</span>
-        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
         <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
         <span class="mf">0.75</span><span class="p">,</span>
-        <span class="mf">0.96</span><span class="p">,</span>
+        <span class="mf">0.95</span><span class="p">,</span>
         <span class="s2">&quot;Location: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">station_name</span><span class="p">,</span>
-        <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">transFigure</span><span class="p">,</span>
         <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>

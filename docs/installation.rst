@@ -10,7 +10,7 @@ You can install pyClimAir with the following command:
 
 
 Development versions
--------------------
+--------------------
 
 To install the most recent development version, install from github:
 

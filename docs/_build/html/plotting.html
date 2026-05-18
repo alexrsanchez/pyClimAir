@@ -62,6 +62,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pyClimAir</a></li>
+<li class="toctree-l1"><a class="reference internal" href="whats_new.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="whats_new.html#version-1-0-0">Version 1.0.0</a></li>
 </ul>
 
         </div>
@@ -141,7 +143,8 @@
     <span class="n">categories_evolution</span><span class="p">,</span>
     <span class="n">threevar_windrose</span><span class="p">,</span>
     <span class="n">threevar_windrose_trend</span><span class="p">,</span>
-    <span class="n">threevar_windrose_probability</span>
+    <span class="n">threevar_windrose_probability</span><span class="p">,</span>
+    <span class="n">window_plot</span>
 <span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyclimair.air</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -617,7 +620,7 @@ In pyClimAir, the meteogram shows, for each variable, a comparison of the given 
 <section id="variable-polar-plots-variable-trends-and-probabilities">
 <h2>3-variable polar plots: variable, trends and probabilities<a class="headerlink" href="#variable-polar-plots-variable-trends-and-probabilities" title="Link to this heading"></a></h2>
 <p>An exciting new group of functionalities of pyClimAir is the creation of three-variable polar plots, which allows to visualize several statistics of a given variable as a function of wind speed and direction. This group of functionalities is composed of three functions, each of them performing an specific task:
-With the function <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose" title="pyclimair.common.threevar_windrose"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose()</span></code></a> the used can easily visualize the (mean or median) values of a given variable for different wind speeds and directions. Moreover, the function <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose_trend" title="pyclimair.common.threevar_windrose_trend"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_trend()</span></code></a> allows to compute the linear trend of a given variable as a function of wind speed and direction. Finally, the <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose_probability" title="pyclimair.common.threevar_windrose_probability"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_probability()</span></code></a> computes the probability of a variable meeting a given condition as a function of wind speed and direction.</p>
+With the function <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose" title="pyclimair.common.threevar_windrose"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose()</span></code></a> the user can easily visualize the (mean or median) values of a given variable for different wind speeds and directions. Moreover, the function <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose_trend" title="pyclimair.common.threevar_windrose_trend"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_trend()</span></code></a> allows to compute the linear trend of a given variable as a function of wind speed and direction. Finally, the <a class="reference internal" href="pyclimair.html#pyclimair.common.threevar_windrose_probability" title="pyclimair.common.threevar_windrose_probability"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyclimair.common.threevar_windrose_probability()</span></code></a> computes the probability of a variable meeting a given condition as a function of wind speed and direction.</p>
 <p>All of these three functions accept as argument the “grouping_freq” parameter which, as in other functions of pyclimair, controls the temporal frequency of the data aggregation, so wind-dependencies can be analysed for yearly, monthly or seasonal values.</p>
 <p>A set of representative examples of each one of these three functions are shown below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">threevar_windrose</span><span class="p">(</span>
@@ -652,6 +655,14 @@ In this first example, the plot shows that the yearly mean value of Tmin has gra
 <img alt="_images/Tmin_windowplot.png" src="_images/Tmin_windowplot.png" />
 <p>On the contrary, in this second example we can see that the annual average of daily rainfall in the example location presents large variations in the short term (uppermost rows), and no significant long-term trend is visible.</p>
 <img alt="_images/Rainfall_windowplot.png" src="_images/Rainfall_windowplot.png" />
+<p>Set the “add_contours” parameter to True if you want to display contour values over the windows, although this option is not recommended for short time series (lower than 20 years of data) as it can result in unaesthetic plots.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">window_plot</span><span class="p">(</span>
+    <span class="n">climate_df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span>
+    <span class="n">station_name</span><span class="p">,</span> <span class="n">plotdir</span><span class="o">+</span><span class="s1">&#39;/</span><span class="si">%s</span><span class="s1">_windowplot.png&#39;</span> <span class="o">%</span><span class="n">var</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="n">cmap_window</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">add_contours</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
 <p>Note: These plots have been obtained with data not available in the example data, as the example dataset is not large enough to properly identify trends.</p>
 </section>
 </section>

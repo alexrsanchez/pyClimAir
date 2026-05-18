@@ -58,7 +58,8 @@ The first step for plotting is, of course, to load the data:
         categories_evolution,
         threevar_windrose,
         threevar_windrose_trend,
-        threevar_windrose_probability
+        threevar_windrose_probability,
+        window_plot
     )
 
     from pyclimair.air import (
@@ -595,7 +596,7 @@ A capability introduced in version 1.0.0 is the function :func:`pyclimair.common
 ----------------------------------------------------------
 
 An exciting new group of functionalities of pyClimAir is the creation of three-variable polar plots, which allows to visualize several statistics of a given variable as a function of wind speed and direction. This group of functionalities is composed of three functions, each of them performing an specific task:
-With the function :func:`pyclimair.common.threevar_windrose()` the used can easily visualize the (mean or median) values of a given variable for different wind speeds and directions. Moreover, the function :func:`pyclimair.common.threevar_windrose_trend` allows to compute the linear trend of a given variable as a function of wind speed and direction. Finally, the :func:`pyclimair.common.threevar_windrose_probability` computes the probability of a variable meeting a given condition as a function of wind speed and direction.
+With the function :func:`pyclimair.common.threevar_windrose()` the user can easily visualize the (mean or median) values of a given variable for different wind speeds and directions. Moreover, the function :func:`pyclimair.common.threevar_windrose_trend` allows to compute the linear trend of a given variable as a function of wind speed and direction. Finally, the :func:`pyclimair.common.threevar_windrose_probability` computes the probability of a variable meeting a given condition as a function of wind speed and direction.
 
 All of these three functions accept as argument the "grouping_freq" parameter which, as in other functions of pyclimair, controls the temporal frequency of the data aggregation, so wind-dependencies can be analysed for yearly, monthly or seasonal values. 
 
@@ -631,7 +632,7 @@ A set of representative examples of each one of these three functions are shown 
 Heat maps of rolling window moving-average plots
 ------------------------------------------------
 
-This kind of plots, which are created with the :func:`pyclimair.common.window_plot` function, show how a vertain variable has evolved with time, not only its instantaneous value but also its moving-average. The horizontal dimension shows the last analysed year, whereas the vertical dimension shows the lenght of the analysed period.
+This kind of plots, which are created with the :func:`pyclimair.common.window_plot()` function, show how a vertain variable has evolved with time, not only its instantaneous value but also its moving-average. The horizontal dimension shows the last analysed year, whereas the vertical dimension shows the lenght of the analysed period.
 For example: If in the image below one focuses only in the uppermost row, they are studying how the yearly-averaged value of daily minimum temperatures has evolved in time. But the 10th row illustrates how the 10-year moving average of daily Tmean has change. Therefore, this kind of plot not only gives the user a perspective of how a variable has changed in time, but also of the persistence of these changes.
 In this first example, the plot shows that the yearly mean value of Tmin has gradually increased in time since approximately 1984, and the upward trend is still ongoing, as the signal is propagating to longer window lengths.
 
@@ -641,6 +642,16 @@ In this first example, the plot shows that the yearly mean value of Tmin has gra
 On the contrary, in this second example we can see that the annual average of daily rainfall in the example location presents large variations in the short term (uppermost rows), and no significant long-term trend is visible.
 
 .. image:: ../examples/plots/Rainfall_windowplot.png
+
+Set the "add_contours" parameter to True if you want to display contour values over the windows, although this option is not recommended for short time series (lower than 20 years of data) as it can result in unaesthetic plots.
+
+.. code:: python
+
+    window_plot(
+        climate_df, var, units, database, 
+        station_name, plotdir+'/%s_windowplot.png' %var, 
+        cmap=cmap_window, norm=norm, add_contours=True
+        )
 
 
 Note: These plots have been obtained with data not available in the example data, as the example dataset is not large enough to properly identify trends.
